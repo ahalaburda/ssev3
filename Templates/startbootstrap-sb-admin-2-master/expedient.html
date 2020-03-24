@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>SSE - Inicio</title>
+
+  <!-- Custom fonts for this template-->
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link
+    href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+    rel="stylesheet">
+
+  <!-- Custom styles for this template-->
+  <link href="css/sb-admin-2.min.css" rel="stylesheet">
+  <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/sse.css">
+</head>
+
+<body id="page-top">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Sidebar -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark" id="sidebar-width">
+
+      <!-- Sidebar - Brand -->
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="expedient.html">
+        <div class="sidebar-brand-text mx-3">SSE <sup>3</sup></div>
+      </a>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider my-0">
+
+      <!-- Nav Item - Inicio -->
+      <li class="nav-item active">
+        <a class="nav-link" href="expedient.html">
+          <i class="fas fa-fw fa-tachometer-alt"></i>
+          <span>Inicio</span></a>
+      </li>
+
+      <!-- Nav Item - Graficos -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" aria-expanded="false">
+          <i class="fas fa-fw fa-chart-bar"></i>
+          <span>Graficos</span>
+        </a>
+      </li>
+
+      <!-- Nav Item - Consultas -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#">
+          <i class="fas fa-fw fa-search"></i>
+          <span>Consultas</span>
+        </a>
+      </li>
+
+      <!-- Nav Item - Reportes -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#">
+          <i class="fas fa-fw fa-folder"></i>
+          <span>Reportes</span>
+        </a>
+      </li>
+
+      <!-- Nav Item - Rutas -->
+      <li class="nav-item">
+        <a class="nav-link" href="type-of-expedient.html">
+          <i class="fas fa-fw fa-chart-area"></i>
+          <span>Tipos de<br>&emsp;&emsp;Expedientes</span></a>
+      </li>
+    </ul>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div id="content">
+
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+          <!-- Sidebar Toggle (Topbar) -->
+          <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+            <i class="fa fa-bars"></i>
+          </button>
+
+          <!-- Topbar Navbar -->
+          <ul class="navbar-nav ml-auto">
+
+            <!-- Nav Item - Configuraciones -->
+            <li class="nav-item dropdown no-arrow mx-1">
+              <a class="nav-link dropdown-toggle" href="#" role="button">
+                <i class="fas fa-cogs fa-fw"></i>
+              </a>
+            </li>
+
+            <!-- Nav Item - Notificaciones -->
+            <li class="nav-item dropdown no-arrow mx-1">
+              <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-bell fa-fw"></i>
+                <!-- Counter - Messages -->
+                <span class="badge badge-danger badge-counter">2</span>
+              </a>
+              <!-- Dropdown - Messages -->
+              <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                aria-labelledby="messagesDropdown">
+                <h6 class="dropdown-header">
+                  Notificaciones
+                </h6>
+                <a class="dropdown-item d-flex align-items-center" href="#">
+                  <div class="dropdown-list-image mr-3">
+                    <img class="rounded-circle" src="https://source.unsplash.com/fn_BT9fwg_E/60x60" alt="">
+                    <div class="status-indicator bg-success"></div>
+                  </div>
+                  <div>
+                    <div class="text-truncate">Nuevo Expediente recibido.</div>
+                    <div class="small text-gray-500">Mesa de entrada</div>
+                  </div>
+                </a>
+                <a class="dropdown-item d-flex align-items-center" href="#">
+                  <div class="dropdown-list-image mr-3">
+                    <img class="rounded-circle" src="https://source.unsplash.com/AU4VPcFN4LE/60x60" alt="">
+                    <div class="status-indicator"></div>
+                  </div>
+                  <div>
+                    <div class="text-truncate">I have the photos that you ordered last month, how would you like them
+                      sent to you?</div>
+                    <div class="small text-gray-500">Jae Chun · 1d</div>
+                  </div>
+                </a>
+                <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
+              </div>
+            </li>
+
+            <!-- Nav Divider -->
+            <div class="topbar-divider d-none d-sm-block"></div>
+
+            <!-- Nav Item - User Information -->
+            <li class="nav-item dropdown no-arrow">
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small">dvelazquez</span>
+                <img class="img-profile rounded-circle" src="https://source.unsplash.com/kmTq5GU6c-0/60x60">
+              </a>
+              <!-- Dropdown - User Information -->
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="#">
+                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Cambiar contraseña
+                </a>
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Cerrar Sesion
+                </a>
+              </div>
+            </li>
+
+          </ul>
+
+        </nav>
+        <!-- End of Topbar -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+
+          <!-- Page Heading -->
+          <div class="d-sm-flex align-items-center mb-4">
+            <h1 class="h3 mb-0 text-gray-800 mr-auto">Expedientes</h1>
+            <div class="button-group">
+              <a href="#" class="btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#newModal"><i
+                  class="fas fa-plus fa-sm text-white-50"></i> Nuevo</a>
+              <a href="#" class="btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#processModal"><i
+                  class="fas fa-pencil-alt fa-sm text-white-50"></i> Procesar</a>
+            </div>
+          </div>
+
+          <!-- DataTables Expedients -->
+          <div class="card shadow mb-4">
+            <div class="card-header">
+              <a href="#" class="btn btn-sm btn-success shadow-sm">Recibido</a>
+              <a href="#" class="btn btn-sm btn-warning shadow-sm">No Recibido</a>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive small-size">
+                <table class="table table-sm table-bordered table-hover" id="dataTable">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Numero</th>
+                      <th>Fecha Me</th>
+                      <th>Origen</th>
+                      <th>Tipo</th>
+                      <th>Descripcion</th>
+                      <th>Estado</th>
+                      <th>Dependencia</th>
+                      <th>Nro. Interno</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>49957</td>
+                      <td>4456/2020</td>
+                      <td>2020-01-10 08:30:31</td>
+                      <td>FAC Ingenieria</td>
+                      <td>Pago de remuneraciones</td>
+                      <td>Pedido Inicial de Proyectores Gs. 35.000.000 OG 530-534 F30</td>
+                      <td><span class="badge badge-warning">No Recibido</span></td>
+                      <td>Mesa Entrada</td>
+                      <td>3893/2020</td>
+                      <td class="text-center">
+                        <div class="btn-group">
+                          <button class="btn btn-sm btn-link text-primary" data-toggle="modal"
+                            data-target="#processModal"><i class="fas fa-pencil-alt"></i></button>
+                          <button class="btn btn-sm btn-link text-primary"><i class="far fa-eye"></i></button>
+                          <button class="btn btn-sm btn-link text-primary"><i class="far fa-comment"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Activo</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td>Pago de inversiones y Bienes (por Patrimonio)</td>
+                      <td><span class="badge badge-success">Recibido</span></td>
+                      <td></td>
+                      <td></td>
+                      <td class="text-center">
+                        <div class="btn-group">
+                          <button class="btn btn-sm btn-link text-primary"><i class="fas fa-pencil-alt"></i></button>
+                          <button class="btn btn-sm btn-link text-primary"><i class="far fa-eye"></i></button>
+                          <button class="btn btn-sm btn-link text-primary"><i class="far fa-comment"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Activo</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td>Pago de viaticos y movilidad facultades</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td class="text-center">
+                        <div class="btn-group">
+                          <button class="btn btn-sm btn-link text-primary"><i class="far fa-eye"></i></button>
+                          <button class="btn btn-sm btn-link text-primary"><i class="far fa-comment"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Inactivo</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td>Solicitud de concurso para seleccion de personal (Form 001 A)</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td class="text-center">
+                        <div class="btn-group">
+                          <button class="btn btn-sm btn-link text-primary"><i class="far fa-eye"></i></button>
+                          <button class="btn btn-sm btn-link text-primary"><i class="far fa-comment"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Activo</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td>Nombramientos - remuneraciones (Form 001 B)</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td class="text-center">
+                        <div class="btn-group">
+                          <button class="btn btn-sm btn-link text-primary"><i class="far fa-eye"></i></button>
+                          <button class="btn btn-sm btn-link text-primary"><i class="far fa-comment"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Activo</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td>Contratos - remuneraciones (Form 001 B)</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td class="text-center">
+                        <div class="btn-group">
+                          <button class="btn btn-sm btn-link text-primary"><i class="far fa-eye"></i></button>
+                          <button class="btn btn-sm btn-link text-primary"><i class="far fa-comment"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Activo</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td>Pago de viaticos y movilidad rectorado</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td class="text-center">
+                        <div class="btn-group">
+                          <button class="btn btn-sm btn-link text-primary"><i class="far fa-eye"></i></button>
+                          <button class="btn btn-sm btn-link text-primary"><i class="far fa-comment"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Activo</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td>Pago de viaticos y movilidad al exterior</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td class="text-center">
+                        <div class="btn-group">
+                          <button class="btn btn-sm btn-link text-primary"><i class="far fa-eye"></i></button>
+                          <button class="btn btn-sm btn-link text-primary"><i class="far fa-comment"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Inactivo</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td>Informe de viaticos al exterior</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td class="text-center">
+                        <div class="btn-group">
+                          <button class="btn btn-sm btn-link text-primary"><i class="far fa-eye"></i></button>
+                          <button class="btn btn-sm btn-link text-primary"><i class="far fa-comment"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Activo</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td>Provision de fondo fijo</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td class="text-center">
+                        <div class="btn-group">
+                          <button class="btn btn-sm btn-link text-primary"><i class="far fa-eye"></i></button>
+                          <button class="btn btn-sm btn-link text-primary"><i class="far fa-comment"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <!-- /.container-fluid -->
+
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+      <footer class="sticky-footer bg-white">
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+            <span>Copyright &copy; SSE 3 2019</span>
+          </div>
+        </div>
+      </footer>
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <!-- Logout Modal-->
+  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Estas Seguro?</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">Seleciona "Cerrar Sesion" si estas listo para cerrar tu sesion.</div>
+        <div class="modal-footer">
+          <button class="btn btn-sm btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
+          <a class="btn btn-sm btn-primary" href="login.html">Cerrar Sesion</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Expedient Modal -->
+  <div class="modal fade" id="newModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Informacion sobre Expediente</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-row">
+              <div class="form-group col">
+                <label>Interno/Externo</label><!-- definir nombre -->
+                <select class="form-control form-control-sm">
+                  <option>Interno</option>
+                  <option>Externo</option>
+                </select>
+              </div>
+              <div class="form-group col">
+                <label>Tipo de Expediente</label>
+                <select class="form-control form-control-sm">
+                  <option>Pago de remuneraciones</option>
+                  <option>Nombramientos - remuneraciones (Form 001 B)</option>
+                  <option>Pago de viaticos y movilidad rectorado</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col">
+                <label>Origen</label>
+                <select class="form-control form-control-sm">
+                  <option>Gabinete del Rector</option>
+                  <option>Direccion Gral. de Administracion y Finanzas</option>
+                  <option>Direccion Administrativa</option>
+                  <option>Direccion Financiera</option>
+                </select>
+              </div>
+              <div class="form-group col">
+                <label>Destino</label>
+                <select class="form-control form-control-sm">
+                  <option>Gabinete del Rector</option>
+                  <option>Direccion Gral. de Administracion y Finanzas</option>
+                  <option>Direccion Administrativa</option>
+                  <option>Direccion Financiera</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col">
+                <label>Fecha</label>
+                <input class="form-control" value="2020-03-12 09:38:26" disabled>
+              </div>
+              <div class="form-group col">
+                <label>Instancia Inicial</label>
+                <select class="form-control form-control-sm">
+                  <option>Gabinete del Rector</option>
+                  <option>Direccion Gral. de Administracion y Finanzas</option>
+                  <option>Direccion Administrativa</option>
+                  <option>Direccion Financiera</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col">
+                <label>Descripcion</label>
+                <textarea class="form-control" placeholder="Agrega una descripcion"></textarea>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-sm btn-primary">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Process Modal-->
+  <div class="modal fade" id="processModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Procesar Expediente</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-row">
+              <div class="form-group col">
+                <div class="form-row">
+                  <div class="form-group col">
+                    <label>Numero de Expediente</label>
+                    <input class="form-control" value="1245/2020" disabled>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col">
+                    <label>Tipo de Expediente</label>
+                    <input class="form-control" value="Pago de remuneraciones" disabled>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group col">
+                <label>Descripcion</label>
+                <textarea class="form-control"
+                  placeholder="Pedido Inicial de Proyectores Gs. 35.000.000 OG 530-534 F30"></textarea>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col">
+                <label>Dependencia Anterior</label>
+                <input class="form-control" value="FAC Ciencias y Tecnologias" disabled>
+              </div>
+              <div class="form-group col">
+                <label>Dependencia Actual</label>
+                <input class="form-control" value="Mesa de Entrada" disabled>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col">
+                <label>Estado</label>
+                <select class="form-control form-control-sm">
+                  <option>No Recibido</option>
+                  <option>Recibido</option>
+                  <option>Derivado</option>
+                  <option>Rechazado</option>
+                  <option>Anulado</option>
+                </select>
+              </div>
+              <div class="form-group col"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col">
+                <label>Comentario</label>
+                <textarea class="form-control" placeholder="Agrega un comentario"></textarea>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-sm btn-primary">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="js/sb-admin-2.min.js"></script>
+
+  <!-- Page level plugins -->
+  <script src="vendor/datatables/jquery.dataTables.min.js"></script>
+  <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+  <!-- Page level custom scripts -->
+  <script src="js/demo/datatables-demo.js"></script>
+
+</body>
+
+</html>
