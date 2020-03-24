@@ -73,7 +73,7 @@
 
       <!-- Nav Item - Rutas -->
       <li class="nav-item">
-        <a class="nav-link" href="type-of-records.html">
+        <a class="nav-link" href="type-of-expedient.html">
           <i class="fas fa-fw fa-chart-area"></i>
           <span>Tipos de<br>&emsp;&emsp;Expedientes</span></a>
       </li>
@@ -180,18 +180,16 @@
             <div class="button-group">
               <a href="#" class="btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#newModal"><i
                   class="fas fa-plus fa-sm text-white-50"></i> Nuevo</a>
-              <a href="#" class="btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#"><i
-                  class="fas fa-check fa-sm text-white-50"></i> Procesar</a>
-          </div>
+              <a href="#" class="btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#processModal"><i
+                  class="fas fa-pencil-alt fa-sm text-white-50"></i> Procesar</a>
+            </div>
           </div>
 
           <!-- DataTables Expedients -->
           <div class="card shadow mb-4">
-            <div class="card-header py-3">
-              <div class="btn-group ml-auto">
-                <a href="#" class="btn btn-sm btn-success shadow-sm">Recibido</a>
-                <a href="#" class="btn btn-sm btn-warning shadow-sm">No Recibido</a>
-              </div>
+            <div class="card-header">
+              <a href="#" class="btn btn-sm btn-success shadow-sm">Recibido</a>
+              <a href="#" class="btn btn-sm btn-warning shadow-sm">No Recibido</a>
             </div>
             <div class="card-body">
               <div class="table-responsive small-size">
@@ -223,7 +221,8 @@
                       <td>3893/2020</td>
                       <td class="text-center">
                         <div class="btn-group">
-                          <button class="btn btn-sm btn-link text-primary"><i class="fas fa-pencil-alt"></i></button>
+                          <button class="btn btn-sm btn-link text-primary" data-toggle="modal"
+                            data-target="#processModal"><i class="fas fa-pencil-alt"></i></button>
                           <button class="btn btn-sm btn-link text-primary"><i class="far fa-eye"></i></button>
                           <button class="btn btn-sm btn-link text-primary"><i class="far fa-comment"></i></button>
                         </div>
@@ -517,7 +516,76 @@
   </div>
 
   <!-- Process Modal-->
-  
+  <div class="modal fade" id="processModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Procesar Expediente</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-row">
+              <div class="form-group col">
+                <div class="form-row">
+                  <div class="form-group col">
+                    <label>Numero de Expediente</label>
+                    <input class="form-control" value="1245/2020" disabled>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col">
+                    <label>Tipo de Expediente</label>
+                    <input class="form-control" value="Pago de remuneraciones" disabled>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group col">
+                <label>Descripcion</label>
+                <textarea class="form-control"
+                  placeholder="Pedido Inicial de Proyectores Gs. 35.000.000 OG 530-534 F30"></textarea>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col">
+                <label>Dependencia Anterior</label>
+                <input class="form-control" value="FAC Ciencias y Tecnologias" disabled>
+              </div>
+              <div class="form-group col">
+                <label>Dependencia Actual</label>
+                <input class="form-control" value="Mesa de Entrada" disabled>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col">
+                <label>Estado</label>
+                <select class="form-control form-control-sm">
+                  <option>No Recibido</option>
+                  <option>Recibido</option>
+                  <option>Derivado</option>
+                  <option>Rechazado</option>
+                  <option>Anulado</option>
+                </select>
+              </div>
+              <div class="form-group col"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col">
+                <label>Comentario</label>
+                <textarea class="form-control" placeholder="Agrega un comentario"></textarea>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-sm btn-primary">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Bootstrap core JavaScript-->
   <script src="vendor/jquery/jquery.min.js"></script>
