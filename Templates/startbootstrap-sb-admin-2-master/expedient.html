@@ -182,17 +182,17 @@
                   class="fas fa-plus fa-sm text-white-50"></i> Nuevo</a>
               <a href="#" class="btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#"><i
                   class="fas fa-check fa-sm text-white-50"></i> Procesar</a>
-              <a href="#" class="btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#">Agregar Imp.
-                Presupuestaria</a>
-            <div class="btn-group">
-              <a href="#" class="btn btn-sm btn-primary shadow-sm">Recibido</a>
-              <a href="#" class="btn btn-sm btn-primary shadow-sm">No Recibido</a>
-            </div>
           </div>
           </div>
 
           <!-- DataTables Expedients -->
           <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <div class="btn-group ml-auto">
+                <a href="#" class="btn btn-sm btn-success shadow-sm">Recibido</a>
+                <a href="#" class="btn btn-sm btn-warning shadow-sm">No Recibido</a>
+              </div>
+            </div>
             <div class="card-body">
               <div class="table-responsive small-size">
                 <table class="table table-sm table-bordered table-hover" id="dataTable">
@@ -218,11 +218,12 @@
                       <td>FAC Ingenieria</td>
                       <td>Pago de remuneraciones</td>
                       <td>Pedido Inicial de Proyectores Gs. 35.000.000 OG 530-534 F30</td>
-                      <td>No Recibido</td>
+                      <td><span class="badge badge-warning">No Recibido</span></td>
                       <td>Mesa Entrada</td>
                       <td>3893/2020</td>
                       <td class="text-center">
                         <div class="btn-group">
+                          <button class="btn btn-sm btn-link text-primary"><i class="fas fa-pencil-alt"></i></button>
                           <button class="btn btn-sm btn-link text-primary"><i class="far fa-eye"></i></button>
                           <button class="btn btn-sm btn-link text-primary"><i class="far fa-comment"></i></button>
                         </div>
@@ -235,11 +236,12 @@
                       <td></td>
                       <td></td>
                       <td>Pago de inversiones y Bienes (por Patrimonio)</td>
-                      <td></td>
+                      <td><span class="badge badge-success">Recibido</span></td>
                       <td></td>
                       <td></td>
                       <td class="text-center">
                         <div class="btn-group">
+                          <button class="btn btn-sm btn-link text-primary"><i class="fas fa-pencil-alt"></i></button>
                           <button class="btn btn-sm btn-link text-primary"><i class="far fa-eye"></i></button>
                           <button class="btn btn-sm btn-link text-primary"><i class="far fa-comment"></i></button>
                         </div>
@@ -513,6 +515,9 @@
       </div>
     </div>
   </div>
+
+  <!-- Process Modal-->
+  
 
   <!-- Bootstrap core JavaScript-->
   <script src="vendor/jquery/jquery.min.js"></script>
