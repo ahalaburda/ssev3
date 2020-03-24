@@ -38,7 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'corsheaders'
+    'corsheaders',
+    'djmoney',
+    'apps.expedientes',
+    'apps.dependencias',
+    'apps.lotes',
+    'apps.tipos_de_expedientes'
 ]
 
 MIDDLEWARE = [
