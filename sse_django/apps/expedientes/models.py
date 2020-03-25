@@ -1,6 +1,7 @@
 import os
 from djmoney.models.fields import MoneyField
 from django.db import models
+from django.conf import settings
 from apps.dependencias.models import Dependencia
 from apps.tipos_de_expedientes.models import Tipo_de_expediente
 from apps.lotes.models import Lote
@@ -8,18 +9,30 @@ from apps.lotes.models import Lote
 class Estado(models.Model):
 	descripcion = models.CharField(max_length=50)
 	activo  = models.BooleanField(default=True)
+
+	class Meta:
+		verbose_name_plural = "Estados"
+
 	def __str__(self):
 		return str(self.descripcion)
 
 class Prioridad(models.Model):
 	descripcion = models.CharField(max_length=50)
 	activo  = models.BooleanField(default=True)
+
+	class Meta:
+		verbose_name_plural = "Prioridades"
+
 	def __str__(self):
 		return str(self.descripcion)
 
 class Objeto_de_Gasto(models.Model):
 	descripcion = models.CharField(max_length=50)
 	activo  = models.BooleanField(default=True)
+
+	class Meta:
+		verbose_name_plural = "Objetos de Gastos"
+
 	def __str__(self):
 		return str(self.descripcion)
 
@@ -39,7 +52,10 @@ class Expediente(models.Model):
 
 	fecha_creacion = models.DateTimeField(auto_now_add=True, blank=True)
 	fecha_actualizacion = models.DateTimeField(auto_now=True, blank=True)
-	
+
+	class Meta:
+		verbose_name_plural = "Expedientes"
+
 	def __str__(self):
 		return str(self.id)+" - "+str(self.numero_mesa_de_entrada)+"/"+str(self.anho)
 
@@ -59,6 +75,9 @@ class Instancia(models.Model):
 	fecha_recepcion = models.DateTimeField()
 	fecha_final = models.DateTimeField()
 
+	class Meta:
+		verbose_name_plural = "Instancias"
+
 	def getViewFinalDate(self):
 		return str(self.fecha_final.strftime("%d-%m-%Y - %Hhs"))
 
@@ -71,8 +90,11 @@ class Instancia(models.Model):
 class Comentario(models.Model):
 	descripcion = models.TextField(blank=False, null=False)
 	instancia_id = models.ForeignKey(Instancia, related_name='instancia', null=False, blank=False, on_delete=models.CASCADE)
-	# usuario_id = models.ForeignKey(User, null=False, blank=False, on_delete=models.CASCADE)
+	usuario_id = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE)
 	fecha_creacion = models.DateTimeField(auto_now_add=True, blank=True)
+
+	class Meta:
+		verbose_name_plural = "Comentarios"
 
 	def __str__(self):
 		return str(self.instancia_id)+" - "+str(self.descripcion)+" - "+str(self.usuario_id)
