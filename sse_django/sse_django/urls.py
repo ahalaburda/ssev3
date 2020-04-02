@@ -20,6 +20,7 @@ urlpatterns = [
 	path('api-auth/', include('rest_framework.urls')),
 	path('admin/', admin.site.urls),
 	path('api/', include('apps.dependencias.api.urls')),
+	path('api/', include('apps.expedientes.api.urls')),
 ]
 
 # from django.conf.urls import url, include
