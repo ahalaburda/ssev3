@@ -21,6 +21,7 @@ urlpatterns = [
 	path('admin/', admin.site.urls),
 	path('api/', include('apps.dependencias.api.urls')),
 	path('api/', include('apps.expedientes.api.urls')),
+	path('api/', include('apps.lotes.api.urls')),
 ]
 
 # from django.conf.urls import url, include
