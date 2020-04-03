@@ -1,13 +1,13 @@
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from ..models import Lote
 from .serializers import LoteSerializer
 
 
-class LoteListView(ListAPIView):
+class LoteListView(ListCreateAPIView):
     queryset = Lote.objects.all()
     serializer_class = LoteSerializer
 
 
-class LoteDetailView(RetrieveAPIView):
+class LoteDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Lote.objects.all()
     serializer_class = LoteSerializer
