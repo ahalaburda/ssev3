@@ -22,7 +22,7 @@ class ComentarioListView(ListCreateAPIView):
 	queryset = Comentario.objects.all()
 	serializer_class = ComentarioSerializer
 
-class ComentarioDetailView(RetrieveAPIView):
+class ComentarioDetailView(RetrieveUpdateDestroyAPIView):
 	queryset = Comentario.objects.all()
 	serializer_class = ComentarioSerializer
 
@@ -30,6 +30,6 @@ class Objeto_de_GastoListView(ListCreateAPIView):
 	queryset = Objeto_de_Gasto.objects.all()
 	serializer_class = Objeto_de_GastoSerializer
 
-class Objeto_de_GastoDetailView(RetrieveAPIView):
+class Objeto_de_GastoDetailView(RetrieveUpdateDestroyAPIView):
 	queryset = Objeto_de_Gasto.objects.all()
 	serializer_class = Objeto_de_GastoSerializer
