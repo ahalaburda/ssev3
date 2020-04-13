@@ -1,15 +1,22 @@
-from rest_framework.generics import ListAPIView, RetrieveAPIView, ListCreateAPIView
-
-from apps.expedientes.models import Expediente, Comentario, Objeto_de_Gasto
-from .serializers import ExpedienteSerializer, ComentarioSerializer, Objeto_de_GastoSerializer
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from apps.expedientes.models import Expediente, Instancia, Comentario, Objeto_de_Gasto
+from .serializers import ExpedienteSerializer, InstanciaSerializer, ComentarioSerializer, Objeto_de_GastoSerializer
 
 class ExpedienteListView(ListCreateAPIView):
-	queryset = Expediente.objects.all()
-	serializer_class = ExpedienteSerializer
+    queryset = Expediente.objects.all()
+    serializer_class = ExpedienteSerializer
 
-class ExpedienteDetailView(RetrieveAPIView):
-	queryset = Expediente.objects.all()
-	serializer_class = ExpedienteSerializer
+class ExpedienteDetailView(RetrieveUpdateDestroyAPIView):
+    queryset = Expediente.objects.all()
+    serializer_class = ExpedienteSerializer
+
+class InstanciaListView(ListCreateAPIView):
+    queryset = Instancia.objects.all()
+    serializer_class = InstanciaSerializer
+
+class InstanciaDetailView(RetrieveUpdateDestroyAPIView):
+    queryset = Instancia.objects.all()
+    serializer_class = InstanciaSerializer
 
 class ComentarioListView(ListCreateAPIView):
 	queryset = Comentario.objects.all()
