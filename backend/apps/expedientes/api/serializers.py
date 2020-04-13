@@ -6,7 +6,6 @@ class Objeto_de_GastoSerializer(serializers.ModelSerializer):
 		model = Objeto_de_Gasto
 		fields = '__all__'
 
-
 class ExpedienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Expediente

@@ -7,7 +7,7 @@ from .views import Objeto_de_GastoListView, Objeto_de_GastoDetailView
 
 urlpatterns = [
 	path('expedientes',ExpedienteListView.as_view()),
-	path('expdedientes/<pk>',ExpedienteDetailView.as_view()),
+	path('expedientes/<pk>',ExpedienteDetailView.as_view()),
 	path('instancias', InstanciaListView.as_view()),
 	path('instancias/<pk>', InstanciaDetailView.as_view()),
 	path('comentarios', ComentarioListView.as_view()),
