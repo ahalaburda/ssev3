@@ -1,6 +1,6 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from apps.expedientes.models import Expediente, Instancia
-from .serializers import ExpedienteSerializer, InstanciaSerializer
+from apps.expedientes.models import Expediente, Instancia, Estado
+from .serializers import ExpedienteSerializer, InstanciaSerializer, EstadoSerializer
 
 
 class ExpedienteListView(ListCreateAPIView):
@@ -21,3 +21,13 @@ class InstanciaListView(ListCreateAPIView):
 class InstanciaDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Instancia.objects.all()
     serializer_class = InstanciaSerializer
+
+
+class EstadoListView(ListCreateAPIView):
+    queryset = Estado.objects.all()
+    serializer_class = EstadoSerializer
+
+
+class EstadoDetailView(RetrieveUpdateDestroyAPIView):
+    queryset = Estado.objects.all()
+    serializer_class = EstadoSerializer
