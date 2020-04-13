@@ -1,10 +1,10 @@
 from django.urls import path
 from .views import ExpedienteListView, ExpedienteDetailView
 from .views import InstanciaListView, InstanciaDetailView
-from .views import EstadoListView, EstadoDetailView
 from .views import ComentarioListView, ComentarioDetailView
 from .views import Objeto_de_GastoListView, Objeto_de_GastoDetailView
 from .views import PrioridadListView, PrioridadDetailView
+
 
 urlpatterns = [
 	path('expedientes',ExpedienteListView.as_view()),
