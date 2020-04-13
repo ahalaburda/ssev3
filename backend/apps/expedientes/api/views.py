@@ -1,6 +1,7 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from apps.expedientes.models import Expediente, Instancia, Estado, Comentario, Objeto_de_Gasto
-from .serializers import ExpedienteSerializer, InstanciaSerializer, EstadoSerializer, ComentarioSerializer, Objeto_de_GastoSerializer
+from apps.expedientes.models import Expediente, Instancia, Estado, Comentario, Objeto_de_Gasto, Prioridad
+from .serializers import ExpedienteSerializer, InstanciaSerializer, EstadoSerializer, ComentarioSerializer, \
+    Objeto_de_GastoSerializer, PrioridadSerializer
 
 
 class ExpedienteListView(ListCreateAPIView):
@@ -51,3 +52,13 @@ class Objeto_de_GastoListView(ListCreateAPIView):
 class Objeto_de_GastoDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Objeto_de_Gasto.objects.all()
     serializer_class = Objeto_de_GastoSerializer
+
+
+class PrioridadListView(ListCreateAPIView):
+    queryset = Prioridad.objects.all()
+    serializer_class = PrioridadSerializer
+
+
+class PrioridadDetailView(RetrieveUpdateDestroyAPIView):
+    queryset = Prioridad.objects.all()
+    serializer_class = PrioridadSerializer

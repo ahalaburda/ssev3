@@ -4,6 +4,7 @@ from .views import InstanciaListView, InstanciaDetailView
 from .views import EstadoListView, EstadoDetailView
 from .views import ComentarioListView, ComentarioDetailView
 from .views import Objeto_de_GastoListView, Objeto_de_GastoDetailView
+from .views import PrioridadListView, PrioridadDetailView
 
 urlpatterns = [
 	path('expedientes',ExpedienteListView.as_view()),
@@ -16,4 +17,6 @@ urlpatterns = [
 	path('objetos_de_gastos/<pk>', Objeto_de_GastoDetailView.as_view()),
 	path('estados', EstadoListView.as_view()),
 	path('estados/<pk>', EstadoDetailView.as_view()),
+	path('prioridades', PrioridadListView.as_view()),
+	path('prioridades/<pk>', PrioridadDetailView.as_view()),
 ]

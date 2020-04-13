@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from apps.expedientes.models import Expediente, Instancia, Estado, Comentario, Objeto_de_Gasto
+from apps.expedientes.models import Expediente, Instancia, Estado, Comentario, Objeto_de_Gasto, Prioridad
 
 
 class ExpedienteSerializer(serializers.ModelSerializer):
@@ -30,4 +30,10 @@ class Objeto_de_GastoSerializer(serializers.ModelSerializer):
 class ComentarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comentario
+        fields = '__all__'
+
+
+class PrioridadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Prioridad
         fields = '__all__'
