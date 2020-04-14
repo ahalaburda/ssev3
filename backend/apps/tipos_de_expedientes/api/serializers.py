@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from ..models import Tipo_de_expediente, Tipo_de_expediente_detalle
+from apps.tipos_de_expedientes.models import Tipo_de_expediente, Tipo_de_expediente_detalle
+
 
 class Tipo_de_expedienteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,3 +11,4 @@ class Tipo_de_expediente_detalleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tipo_de_expediente_detalle
         fields = '__all__'
+        depth = 1
