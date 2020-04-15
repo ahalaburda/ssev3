@@ -1,6 +1,6 @@
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import CreateAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from apps.expedientes.models import Expediente, Instancia, Comentario, Objeto_de_Gasto, Prioridad, Estado
-from .serializers import ExpedienteSerializer, InstanciaSerializer, ComentarioSerializer, Objeto_de_GastoSerializer, PrioridadSerializer, EstadoSerializer
+from .serializers import ExpedienteSerializer, InstanciaSerializer, InstanciaNewUpdateSerializer, ComentarioSerializer, Objeto_de_GastoSerializer, PrioridadSerializer, EstadoSerializer
 
 class ExpedienteListView(ListCreateAPIView):
     queryset = Expediente.objects.all()
@@ -12,11 +12,22 @@ class ExpedienteDetailView(RetrieveUpdateDestroyAPIView):
 
 class InstanciaListView(ListCreateAPIView):
     queryset = Instancia.objects.all()
-    serializer_class = InstanciaSerializer
+
+    def get_serializer_class(self):
+        if self.request.method in ['POST']:
+            return InstanciaNewUpdateSerializer
+        return InstanciaSerializer
+
 
 class InstanciaDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Instancia.objects.all()
-    serializer_class = InstanciaSerializer
+
+    def get_serializer_class(self):
+        if self.request.method in ['PUT']:
+            return InstanciaNewUpdateSerializer
+        elif self.request.method in ['PATCH']:
+            return InstanciaNewUpdateSerializer
+        return InstanciaSerializer
 
 class ComentarioListView(ListCreateAPIView):
     queryset = Comentario.objects.all()
