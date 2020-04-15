@@ -5,5 +5,5 @@ from apps.lotes.models import Lote
 class LoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lote
-        fields = ('descripcion', 'fecha_creacion', 'dependencia_destino_id', 'activo')
+        fields = '__all__'
         depth = 1
