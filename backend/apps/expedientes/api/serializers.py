@@ -41,9 +41,11 @@ class InstanciaNewUpdateSerializer(serializers.ModelSerializer):
 
 
 class ComentarioSerializer(serializers.ModelSerializer):
+    usuario = serializers.ReadOnlyField(source='usuario_id.username')
+
     class Meta:
         model = Comentario
-        fields = '__all__'
+        fields = ['id', 'usuario', 'descripcion', 'fecha_creacion', 'instancia_id']
         depth = 1
 
 
