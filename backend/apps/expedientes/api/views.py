@@ -1,17 +1,28 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from apps.expedientes.models import Expediente, Instancia, Comentario, Objeto_de_Gasto, Prioridad, Estado
-from .serializers import ExpedienteSerializer, InstanciaSerializer, InstanciaNewUpdateSerializer, \
-    ComentarioSerializer, Objeto_de_GastoSerializer, PrioridadSerializer, EstadoSerializer
+from .serializers import ExpedienteSerializer, ExpedienteNewUpdateSerializer, InstanciaSerializer, \
+    InstanciaNewUpdateSerializer, ComentarioSerializer, ComentarioNewUpdateSerializer, Objeto_de_GastoSerializer, \
+    PrioridadSerializer, EstadoSerializer
 
 
 class ExpedienteListView(ListCreateAPIView):
     queryset = Expediente.objects.all()
-    serializer_class = ExpedienteSerializer
+
+    def get_serializer_class(self):
+        if self.request.method in ['POST']:
+            return ExpedienteNewUpdateSerializer
+        return ExpedienteSerializer
 
 
 class ExpedienteDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Expediente.objects.all()
-    serializer_class = ExpedienteSerializer
+
+    def get_serializer_class(self):
+        if self.request.method in ['PUT']:
+            return ExpedienteNewUpdateSerializer
+        elif self.request.method in ['PATCH']:
+            return ExpedienteNewUpdateSerializer
+        return ExpedienteSerializer
 
 
 class InstanciaListView(ListCreateAPIView):
@@ -36,12 +47,22 @@ class InstanciaDetailView(RetrieveUpdateDestroyAPIView):
 
 class ComentarioListView(ListCreateAPIView):
     queryset = Comentario.objects.all()
-    serializer_class = ComentarioSerializer
+
+    def get_serializer_class(self):
+        if self.request.method in ['POST']:
+            return ComentarioNewUpdateSerializer
+        return ComentarioSerializer
 
 
 class ComentarioDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Comentario.objects.all()
-    serializer_class = ComentarioSerializer
+
+    def get_serializer_class(self):
+        if self.request.method in ['PUT']:
+            return ComentarioNewUpdateSerializer
+        elif self.request.method in ['PATCH']:
+            return ComentarioNewUpdateSerializer
+        return ComentarioSerializer
 
 
 class Objeto_de_GastoListView(ListCreateAPIView):
