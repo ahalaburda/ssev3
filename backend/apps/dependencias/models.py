@@ -1,15 +1,17 @@
 from django.db import models
 from django.conf import settings
 
+
 class Dependencia(models.Model):
     descripcion = models.CharField(max_length=100)
-    activo  = models.BooleanField(default=True)
+    activo = models.BooleanField(default=True)
 
     class Meta:
         verbose_name_plural = "Dependencias"
 
     def __str__(self):
         return str(self.id)+" - "+str(self.descripcion)
+
 
 class Dependencia_por_usuario(models.Model):
     dependencia_id = models.ForeignKey(Dependencia, null=True, blank=True, on_delete=models.CASCADE)

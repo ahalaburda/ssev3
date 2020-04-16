@@ -2,15 +2,17 @@ import os
 from django.db import models
 from apps.dependencias.models import Dependencia
 
+
 class Tipo_de_expediente(models.Model):
     descripcion = models.CharField(max_length=50)
-    activo  = models.BooleanField(default=True)
+    activo = models.BooleanField(default=True)
 
     class Meta:
         verbose_name_plural = "Tipos de Expedientes"
 
     def __str__(self):
         return str(self.descripcion)
+
 
 class Tipo_de_expediente_detalle(models.Model):
     tipo_de_expediente_id = models.ForeignKey(Tipo_de_expediente, null=False, blank=False, on_delete=models.CASCADE)

@@ -44,7 +44,6 @@ class Expediente(models.Model):
     numero_mesa_de_entrada = models.IntegerField(blank=True, null=True)
     anho = models.IntegerField(blank=True, null=True)
     descripcion = models.TextField(blank=False, null=False)
-
     tipo_de_expediente_id = models.ForeignKey(Tipo_de_expediente, null=False, blank=False, on_delete=models.CASCADE)
     dependencia_origen_id = models.ForeignKey(Dependencia, related_name='dependencia_origen', null=False, blank=False,
                                               on_delete=models.CASCADE)
@@ -56,7 +55,6 @@ class Expediente(models.Model):
     prioridad_id = models.ForeignKey(Prioridad, related_name='prioridad', null=False, blank=False,
                                      on_delete=models.CASCADE)
     lote_id = models.ForeignKey(Lote, null=True, blank=True, on_delete=models.CASCADE)
-
     fecha_creacion = models.DateTimeField(auto_now_add=True, blank=True)
     fecha_actualizacion = models.DateTimeField(auto_now=True, blank=True)
 
