@@ -6,7 +6,6 @@ from .views import Objeto_de_GastoListView, Objeto_de_GastoDetailView
 from .views import EstadoListView, EstadoDetailView
 from .views import PrioridadListView, PrioridadDetailView
 
-
 urlpatterns = [
     path('expedientes', ExpedienteListView.as_view()),
     path('expedientes/<pk>', ExpedienteDetailView.as_view()),
