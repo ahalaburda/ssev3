@@ -1,3 +1,4 @@
+from django_filters import rest_framework as filters
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from apps.expedientes.models import Expediente, Instancia, Comentario, Objeto_de_Gasto, Prioridad, Estado
 from .serializers import ExpedienteSerializer, ExpedienteNewUpdateSerializer, InstanciaSerializer, \
@@ -25,8 +26,16 @@ class ExpedienteDetailView(RetrieveUpdateDestroyAPIView):
         return ExpedienteSerializer
 
 
+class InstanciaFilter(filters.FilterSet):
+    class Meta:
+        model = Instancia
+        fields = ('expediente_id', 'estado_id__descripcion')
+
+
 class InstanciaListView(ListCreateAPIView):
     queryset = Instancia.objects.all()
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = InstanciaFilter
 
     def get_serializer_class(self):
         if self.request.method in ['POST']:
