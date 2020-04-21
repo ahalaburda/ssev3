@@ -19,7 +19,7 @@ class Tipo_de_expedienteDetailView(RetrieveUpdateDestroyAPIView):
 class Tipo_de_expediente_detalleFilter(filters.FilterSet):
     class Meta:
         model = Tipo_de_expediente_detalle
-        fields = ('tipo_de_expediente_id', 'orden', 'dependencia_id__descripcion')
+        fields = ('tipo_de_expediente_id', 'dependencia_id', 'orden')
 
 class Tipo_de_expediente_detalleListView(ListCreateAPIView):
     queryset = Tipo_de_expediente_detalle.objects.all()
