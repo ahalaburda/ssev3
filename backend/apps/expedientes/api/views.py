@@ -29,10 +29,11 @@ class ExpedienteDetailView(RetrieveUpdateDestroyAPIView):
 class InstanciaFilter(filters.FilterSet):
     expediente_descripcion = filters.CharFilter(field_name='expediente_id__descripcion', lookup_expr='icontains')
     estado = filters.CharFilter(field_name='estado_id__descripcion', lookup_expr='exact')
+    fecha_creacion = filters.DateFromToRangeFilter(field_name='fecha_creacion')
 
     class Meta:
         model = Instancia
-        fields = ('expediente_id', 'expediente_descripcion', 'estado')
+        fields = ('expediente_id', 'expediente_descripcion', 'estado', 'fecha_creacion')
 
 
 class InstanciaListView(ListCreateAPIView):
