@@ -27,9 +27,12 @@ class ExpedienteDetailView(RetrieveUpdateDestroyAPIView):
 
 
 class InstanciaFilter(filters.FilterSet):
+    expediente_descripcion = filters.CharFilter(field_name='expediente_id__descripcion', lookup_expr='icontains')
+    estado = filters.CharFilter(field_name='estado_id__descripcion', lookup_expr='exact')
+
     class Meta:
         model = Instancia
-        fields = ('expediente_id', 'estado_id__descripcion')
+        fields = ('expediente_id', 'expediente_descripcion', 'estado')
 
 
 class InstanciaListView(ListCreateAPIView):
