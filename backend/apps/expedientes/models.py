@@ -97,6 +97,10 @@ class Instancia(models.Model):
     def getViewCreateDate(self):
         return str(self.fecha_creacion.strftime("%d-%m-%Y - %Hhs"))
 
+    # Descripcion del expediente - Dependencia actual
+    def __str__(self):
+        return str(self.expediente_id) + " - " + str(self.dependencia_actual_id.descripcion)
+
 
 class Comentario(models.Model):
     descripcion = models.TextField(blank=False, null=False)

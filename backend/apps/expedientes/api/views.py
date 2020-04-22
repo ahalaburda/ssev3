@@ -1,3 +1,4 @@
+from django_filters import rest_framework as filters
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from apps.expedientes.models import Expediente, Instancia, Comentario, Objeto_de_Gasto, Prioridad, Estado
 from .serializers import ExpedienteSerializer, ExpedienteNewUpdateSerializer, InstanciaSerializer, \
@@ -5,8 +6,24 @@ from .serializers import ExpedienteSerializer, ExpedienteNewUpdateSerializer, In
     PrioridadSerializer, EstadoSerializer
 
 
+class ExpedienteFilter(filters.FilterSet):
+    prioridad = filters.CharFilter(field_name='prioridad_id__descripcion', lookup_expr='exact')
+    estado = filters.CharFilter(field_name='estado_id__descripcion', lookup_expr='exact')
+    descripcion = filters.CharFilter(field_name='descripcion', lookup_expr='icontains')
+    tipo_expediente = filters.CharFilter(field_name='tipo_de_expediente_id__descripcion', lookup_expr='icontains')
+    fecha_creacion = filters.DateFromToRangeFilter(field_name='fecha_creacion')
+    origen = filters.CharFilter(field_name='dependencia_origen_id__descripcion', lookup_expr='icontains')
+    destino = filters.CharFilter(field_name='dependencia_destino_id__descripcion', lookup_expr='icontains')
+
+    class Meta:
+        model = Expediente
+        fields = ('prioridad', 'estado', 'descripcion', 'tipo_expediente', 'fecha_creacion', 'origen', 'destino')
+
+
 class ExpedienteListView(ListCreateAPIView):
     queryset = Expediente.objects.all()
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = ExpedienteFilter
 
     def get_serializer_class(self):
         if self.request.method in ['POST']:
@@ -25,8 +42,21 @@ class ExpedienteDetailView(RetrieveUpdateDestroyAPIView):
         return ExpedienteSerializer
 
 
+class InstanciaFilter(filters.FilterSet):
+    expediente_descripcion = filters.CharFilter(field_name='expediente_id__descripcion', lookup_expr='icontains')
+    estado = filters.CharFilter(field_name='estado_id__descripcion', lookup_expr='exact')
+    fecha_creacion = filters.DateFromToRangeFilter(field_name='fecha_creacion')
+    actual = filters.CharFilter(field_name='dependencia_actual_id__descripcion', lookup_expr='icontains')
+
+    class Meta:
+        model = Instancia
+        fields = ('expediente_id', 'expediente_descripcion', 'estado', 'fecha_creacion', 'actual')
+
+
 class InstanciaListView(ListCreateAPIView):
     queryset = Instancia.objects.all()
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = InstanciaFilter
 
     def get_serializer_class(self):
         if self.request.method in ['POST']:
