@@ -11,9 +11,14 @@ class Objeto_de_GastoSerializer(serializers.ModelSerializer):
 class ExpedienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Expediente
-        # fields = ('descripcion', 'activo')
         fields = '__all__'
         depth = 2
+
+
+class ExpedienteNewUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Expediente
+        fields = '__all__'
 
 
 class EstadoSerializer(serializers.ModelSerializer):
@@ -36,10 +41,18 @@ class InstanciaNewUpdateSerializer(serializers.ModelSerializer):
 
 
 class ComentarioSerializer(serializers.ModelSerializer):
+    usuario = serializers.ReadOnlyField(source='usuario_id.username')
+
+    class Meta:
+        model = Comentario
+        fields = ['id', 'usuario', 'descripcion', 'fecha_creacion', 'instancia_id']
+        depth = 1
+
+
+class ComentarioNewUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comentario
         fields = '__all__'
-        # depth = 2
 
 
 class PrioridadSerializer(serializers.ModelSerializer):
