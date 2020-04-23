@@ -14,8 +14,8 @@ class Dependencia(models.Model):
 
 
 class Dependencia_por_usuario(models.Model):
-    dependencia_id = models.ForeignKey(Dependencia, null=True, blank=True, on_delete=models.CASCADE)
-    usuario_id = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE)
+    dependencia_id = models.ForeignKey(Dependencia, null=False, blank=True, on_delete=models.CASCADE)
+    usuario_id = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=True, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name_plural = "Dependencias por Usuarios"
