@@ -1,4 +1,3 @@
-import os
 from djmoney.models.fields import MoneyField
 from django.db import models
 from django.conf import settings
@@ -43,7 +42,7 @@ class Objeto_de_Gasto(models.Model):
 class Expediente(models.Model):
     numero_mesa_de_entrada = models.IntegerField(blank=True, null=True)
     anho = models.IntegerField(blank=True, null=True)
-    descripcion = models.TextField(blank=False, null=False)
+    descripcion = models.TextField(blank=False, null=False, max_length=300)
     tipo_de_expediente_id = models.ForeignKey(Tipo_de_expediente, null=False, blank=False, on_delete=models.CASCADE)
     dependencia_origen_id = models.ForeignKey(Dependencia, related_name='dependencia_origen', null=False, blank=False,
                                               on_delete=models.CASCADE)
@@ -103,10 +102,9 @@ class Instancia(models.Model):
 
 
 class Comentario(models.Model):
-    descripcion = models.TextField(blank=False, null=False)
-    instancia_id = models.ForeignKey(Instancia, related_name='instancia', null=False, blank=False,
-                                     on_delete=models.CASCADE)
-    usuario_id = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE)
+    descripcion = models.TextField(blank=False, null=False, max_length=200)
+    instancia_id = models.ForeignKey(Instancia, related_name='instancia', null=False, on_delete=models.CASCADE)
+    usuario_id = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, on_delete=models.CASCADE)
     fecha_creacion = models.DateTimeField(auto_now_add=True, blank=True)
 
     class Meta:
