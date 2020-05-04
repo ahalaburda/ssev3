@@ -5,7 +5,7 @@ from apps.tipos_de_expedientes.models import Tipo_de_expediente, Tipo_de_expedie
 class Tipo_de_expedienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tipo_de_expediente
-        fields = ('descripcion', 'activo')
+        fields = '__all__'
 
 
 class Tipo_de_expediente_detalleSerializer(serializers.ModelSerializer):
