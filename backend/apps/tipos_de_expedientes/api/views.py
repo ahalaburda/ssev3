@@ -3,7 +3,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from ..models import Tipo_de_expediente, Tipo_de_expediente_detalle
 from .serializers import Tipo_de_expedienteSerializer, Tipo_de_expediente_detalleSerializer, \
     Tipo_de_expediente_detalleNewUpdateSerializer
-from django.http import Http404
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
