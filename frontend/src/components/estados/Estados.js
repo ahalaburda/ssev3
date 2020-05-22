@@ -26,6 +26,7 @@ class Estados extends Component  {
   postEstados(estado) {
     axios.post('/api/estados/', {
       "descripcion": estado
+
     })
       .then(response => {
         console.log(response);
@@ -39,6 +40,7 @@ class Estados extends Component  {
   deleteEstados(id) {
     axios.delete('/estados/' + id).then(r => console.log(r.statusText));
   }
+
 
   handleSubmit(e) {
     e.preventDefault();
