@@ -1,4 +1,5 @@
 import React from 'react'
+import './Sidebar.css'
 import Logo from "./components/Logo";
 import Inicio from "./components/Inicio";
 import Graficos from "./components/Graficos";

@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
-
 import Sidebar from './components/Sidebar/index'
 import Header from './components/Header/index'
 import Footer from './components/Footer/index'
 import './App.css';
+import './styles/font.css'
+import 'bootstrap/dist/js/bootstrap.bundle.min'
 
 class App extends Component {
   render () {
