@@ -5,6 +5,7 @@ import Footer from './components/Footer/index'
 import './App.css';
 import './styles/font.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min'
+import TiposDeExpedientes from "./core/TiposDeExpedientes/TiposDeExpedientes";
 
 class App extends Component {
   render () {
@@ -16,7 +17,7 @@ class App extends Component {
             <div id="content">
               <Header />
               <div className="container-fluid">
-                <h1 className="h3 mb-4 text-gray-800">Blank Page</h1>
+                <TiposDeExpedientes/>
               </div>
             </div>
             <Footer />
