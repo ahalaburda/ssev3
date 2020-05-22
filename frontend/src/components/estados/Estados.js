@@ -2,19 +2,42 @@ import React, {Component} from 'react';
 import $ from 'jquery';
 import axios from 'axios';
 
+axios.defaults.baseURL = 'http://localhost:8000/api';
+axios.defaults.headers.post['Content-Type'] = 'application/json';
+
 class Estados extends Component  {
   constructor(props) {
     super(props);
+    this.state ={
+      estados: []
+    };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  getEstados() {
+    axios.get('/estados/?format=json')
+      .then(response => {
+        this.setState({ estados: response.data });
+        console.log(response);
+      })
+      .catch(console.log);
+  }
+
   postEstados(estado) {
-    axios.post('https://localhost:8000/api/estados/', {
-      descripcion: estado
+    axios.post('/api/estados/', {
+      "descripcion": estado
     })
       .then(response => {
         console.log(response);
       });
+  }
+
+  putEstados(id) {
+    axios.put('/estados/' + id).then(r => console.log(r.statusText));
+  }
+
+  deleteEstados(id) {
+    axios.delete('/estados/' + id).then(r => console.log(r.statusText));
   }
 
   handleSubmit(e) {
