@@ -1,0 +1,7 @@
+#sidebar-width {
+    width: 9.5rem !important;
+}
+
+.sidebar .nav-item .nav-link {
+    width: auto !important;
+}
