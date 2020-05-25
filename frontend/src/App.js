@@ -4,10 +4,14 @@ import Sidebar from './components/Sidebar/index'
 import Header from './components/Header/index'
 import Footer from './components/Footer/index'
 
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faSearch, faBell } from '@fortawesome/free-solid-svg-icons';
+
 
 import './App.css';
 
 function App() {
+  library.add(faSearch, faBell);
   return (
     <div className="App">
       <div id="wrapper">
