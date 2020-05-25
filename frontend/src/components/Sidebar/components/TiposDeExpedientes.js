@@ -5,7 +5,7 @@ function TiposDeExpedientes() {
   return (
     <li className="nav-item">
       <a className="nav-link" href="//google.com">{/*TODO url tipo de expediente*/}
-        <FontAwesomeIcon icon="chart-area" size="fw"/>
+        <FontAwesomeIcon icon="chart-area" size="sm"/>
         <span>&nbsp;Tipos de<br/>&emsp;&emsp;Expedientes</span></a>
     </li>
   );

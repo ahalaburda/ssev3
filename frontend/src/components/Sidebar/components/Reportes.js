@@ -5,7 +5,7 @@ function Reportes() {
   return (
     <li className="nav-item">
       <a className="nav-link" href="//google.com">{/*TODO url reportes*/}
-        <FontAwesomeIcon icon="folder" size="fw"/>
+        <FontAwesomeIcon icon="folder" size="sm"/>
         <span>&nbsp;Reportes</span>
       </a>
     </li>

@@ -5,7 +5,7 @@ function Consultas() {
   return (
     <li className="nav-item">
       <a className="nav-link collapsed" href="//google.com">{/*TODO url consultas*/}
-        <FontAwesomeIcon icon="search" size="fw"/>
+        <FontAwesomeIcon icon="search" size="sm"/>
         <span>&nbsp;Consultas</span>
       </a>
     </li>

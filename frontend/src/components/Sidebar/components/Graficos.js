@@ -5,7 +5,7 @@ function Graficos() {
   return (
     <li className="nav-item">
       <a className="nav-link collapsed" href="//google.com" aria-expanded="false">{/*TODO url graficos*/}
-        <FontAwesomeIcon icon="chart-bar" size="fw"/>
+        <FontAwesomeIcon icon="chart-bar" size="sm"/>
         <span>&nbsp;Graficos</span>
       </a>
     </li>

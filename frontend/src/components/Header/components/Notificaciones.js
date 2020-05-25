@@ -6,7 +6,7 @@ function Notificaciones() {
     <li className="nav-item dropdown no-arrow mx-1">
       <a className="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button" data-toggle="dropdown"
          aria-haspopup="true" aria-expanded="false">
-        <FontAwesomeIcon icon="bell" size="fw"/>
+        <FontAwesomeIcon icon="bell" size="sm"/>
         {/* Counter - Messages */}
         <span className="badge badge-danger badge-counter">2</span>
       </a>

@@ -5,7 +5,7 @@ function Inicio() {
   return (
     <li className="nav-item">
       <a className="nav-link" href="//google.com">{/*TODO url inicio*/}
-        <FontAwesomeIcon icon="tachometer-alt" size="fw"/>
+        <FontAwesomeIcon icon="tachometer-alt" size="sm"/>
         <span>&nbsp;Inicio</span></a>
     </li>
   );

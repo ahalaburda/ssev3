@@ -10,17 +10,16 @@ import {
   faUser,
   faSignOutAlt,
   faChartBar,
-  faCommentDollar, faFolder, faChartArea
+  faCommentDollar, faFolder, faChartArea, faTachometerAlt, faBars
 } from '@fortawesome/free-solid-svg-icons';
 import './App.css';
 import './styles/font.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min'
 import TiposDeExpedientes from "./core/TiposDeExpedientes/TiposDeExpedientes";
-import {faTachometerAlt} from "@fortawesome/free-solid-svg-icons/faTachometerAlt";
 
 class App extends Component {
   render() {
-    library.add(faSearch, faBell, faCogs, faUser, faSignOutAlt, faChartBar, faTachometerAlt, faCommentDollar, faFolder, faChartArea);
+    library.add(faSearch, faBell, faCogs, faUser, faSignOutAlt, faChartBar, faTachometerAlt, faCommentDollar, faFolder, faChartArea, faBars);
     return (
       <div className="App">
         <div id="wrapper">
