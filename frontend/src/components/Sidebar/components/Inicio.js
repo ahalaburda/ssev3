@@ -1,12 +1,14 @@
 import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {Link} from "react-router-dom";
 
 function Inicio() {
   return (
     <li className="nav-item">
-      <a className="nav-link" href="//google.com">{/*TODO url inicio*/}
+      <Link to='/' className="nav-link">
         <FontAwesomeIcon icon="tachometer-alt" size="sm"/>
-        <span>&nbsp;Inicio</span></a>
+        <span>&nbsp;Inicio</span>
+      </Link>
     </li>
   );
 }
