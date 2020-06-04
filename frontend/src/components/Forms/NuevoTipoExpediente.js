@@ -16,8 +16,6 @@ class NuevoTipoExpediente extends Component {
         this.setState({
           dependencias: response.data.results
         });
-        console.log('DEPENDENCIAS EN NUEVO');
-        console.log(response.data);
       })
       .catch(e => {
         console.log(e);
