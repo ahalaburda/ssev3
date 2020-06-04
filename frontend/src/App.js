@@ -19,7 +19,8 @@ import {
   faUser,
   faSignOutAlt,
   faChartBar, faPlus, faPencilAlt,
-  faCommentDollar, faFolder, faChartArea, faTachometerAlt, faBars
+  faCommentDollar, faFolder, faChartArea, faTachometerAlt, faBars,
+  faEye, faEdit, faTrashAlt
 } from '@fortawesome/free-solid-svg-icons';
 import {
   BrowserRouter as Router,
@@ -30,7 +31,7 @@ import {
 class App extends Component {
   render() {
     library.add(faSearch, faBell, faCogs, faUser, faSignOutAlt, faChartBar, faPlus, faPencilAlt, faTachometerAlt,
-      faCommentDollar, faFolder, faChartArea, faBars);
+      faCommentDollar, faFolder, faChartArea, faBars, faEye, faEdit, faTrashAlt);
     return (
       <Router>
         <div className="App">
