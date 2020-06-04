@@ -1,10 +1,11 @@
 import React from "react";
+import {Link} from "react-router-dom";
 
 function Logo() {
   return (
-    <a className="sidebar-brand d-flex align-items-center justify-content-center" href="//google.com">{/*TODO url inicio*/}
+    <Link to='/' className="sidebar-brand d-flex align-content-center justify-content-center">
       <div className="sidebar-brand-text mx-3">SSE <sup>3</sup></div>
-    </a>
+    </Link>
   );
 }
 

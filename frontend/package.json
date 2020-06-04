@@ -14,10 +14,12 @@
     "jquery": "^3.5.1",
     "popper.js": "^1.16.1",
     "react": "^16.13.1",
+    "react-data-table-component": "^6.9.3",
     "react-dom": "^16.13.1",
     "react-fontawesome": "^1.7.1",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.0"
+    "react-scripts": "3.4.0",
+    "styled-components": "^5.1.1"
   },
   "scripts": {
     "start": "react-scripts start",
