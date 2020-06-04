@@ -5,8 +5,8 @@ import Inicio from "./components/Inicio";
 import Graficos from "./components/Graficos";
 import Consultas from "./components/Consultas";
 import Reportes from "./components/Reportes";
-import TiposDeExpedientes from "./components/TiposDeExpedientes";
-import ObjetosDeGastos from "./components/ObjetosDeGastos";
+import TipoDeExpedientes from "./components/TipoDeExpedientes";
+import ObjetoDeGastos from "./components/ObjetoDeGastos";
 
 function Sidebar() {
   return (
@@ -23,9 +23,9 @@ function Sidebar() {
       {/* Nav Item - Reportes */}
       <Reportes/>
       {/* Nav Item - Tipos de expedientes */}
-      <TiposDeExpedientes/>
+      <TipoDeExpedientes/>
       {/* Nav Item - Tipos de expedientes */}
-      <ObjetosDeGastos/>
+      <ObjetoDeGastos/>
     </ul>
   );
 }

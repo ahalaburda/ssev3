@@ -5,7 +5,7 @@ function Configuraciones() {
   return (
     <li className="nav-item dropdown no-arrow mx-1">
       <a className="nav-link dropdown-toggle" href="//google.com" role="button">{/*TODO url configuraciones*/}
-        <FontAwesomeIcon icon="cogs" size="fw"/>
+        <FontAwesomeIcon icon="cogs" size="sm"/>
       </a>
     </li>
   );

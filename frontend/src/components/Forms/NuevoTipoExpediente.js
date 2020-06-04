@@ -1,14 +1,37 @@
 import React, {Component} from "react";
+import DependenciasService from '../../services/Dependencias';
 
 class NuevoTipoExpediente extends Component {
   constructor(props) {
     super(props);
     this.state = {
       dependencias: []
-    }
+    };
+    this.retrieveDependencias = this.retrieveDependencias.bind(this);
+  }
+
+  retrieveDependencias() {
+    DependenciasService.getAll()
+      .then(response => {
+        this.setState({
+          dependencias: response.data.results
+        });
+        console.log('DEPENDENCIAS EN NUEVO');
+        console.log(response.data);
+      })
+      .catch(e => {
+        console.log(e);
+      })
+  }
+
+  componentDidMount() {
+    this.retrieveDependencias();
   }
 
   render() {
+    let data = this.state.dependencias && this.state.dependencias.map(d => {
+      return <option key={d.id} className="card-title">{d.descripcion}</option>
+    });
     return (
       <div className="modal fade" id="newModal" tabIndex="-1" role="dialog" aria-hidden="true">
         <div className="modal-dialog modal-dialog-centered" role="document">
@@ -30,9 +53,7 @@ class NuevoTipoExpediente extends Component {
                   <label htmlFor="inputAddress">Dependencias</label>
                   <div className="row">
                     <div className="col">
-                      <select className="form-control form-control-sm">
-
-                      </select>
+                      <select className="form-control form-control-sm">{data}</select>
                     </div>
                     <div className="col-md-4">
                       <a href="#" className="btn btn-sm btn-secondary">
