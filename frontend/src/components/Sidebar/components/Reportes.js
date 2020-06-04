@@ -1,14 +1,14 @@
 import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faFolder} from "@fortawesome/free-solid-svg-icons/faFolder";
+import {Link} from "react-router-dom";
 
 function Reportes() {
   return (
     <li className="nav-item">
-      <a className="nav-link collapsed" href="//google.com">{/*TODO url reportes*/}
-        <FontAwesomeIcon icon={faFolder} size={'fw'}/>
+      <Link to="/reportes/" className="nav-link">
+        <FontAwesomeIcon icon="folder" size="sm"/>
         <span>&nbsp;Reportes</span>
-      </a>
+      </Link>
     </li>
   );
 }

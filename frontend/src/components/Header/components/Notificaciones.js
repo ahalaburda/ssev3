@@ -1,13 +1,12 @@
 import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faBell} from "@fortawesome/free-solid-svg-icons/faBell";
 
 function Notificaciones() {
   return (
     <li className="nav-item dropdown no-arrow mx-1">
       <a className="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button" data-toggle="dropdown"
          aria-haspopup="true" aria-expanded="false">
-        <FontAwesomeIcon icon={faBell} size={'fw'}/>
+        <FontAwesomeIcon icon="bell" size="sm"/>
         {/* Counter - Messages */}
         <span className="badge badge-danger badge-counter">2</span>
       </a>
