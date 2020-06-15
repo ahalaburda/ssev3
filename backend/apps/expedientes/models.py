@@ -43,17 +43,17 @@ class Expediente(models.Model):
     numero_mesa_de_entrada = models.IntegerField(blank=True, null=True)
     anho = models.IntegerField(blank=True, null=True)
     descripcion = models.TextField(blank=False, null=False, max_length=300)
-    tipo_de_expediente_id = models.ForeignKey(Tipo_de_expediente, null=False, blank=False, on_delete=models.CASCADE)
-    dependencia_origen_id = models.ForeignKey(Dependencia, related_name='dependencia_origen', null=False, blank=False,
+    tipo_de_expediente_id = models.ForeignKey(Tipo_de_expediente, db_column='tipo_de_expediente_id',  null=False, blank=False, on_delete=models.CASCADE)
+    dependencia_origen_id = models.ForeignKey(Dependencia, db_column='dependencia_origen_id', related_name='dependencia_origen', null=False, blank=False,
                                               on_delete=models.CASCADE)
-    dependencia_destino_id = models.ForeignKey(Dependencia, related_name='dependencia_destino', null=False, blank=False,
+    dependencia_destino_id = models.ForeignKey(Dependencia, db_column='dependencia_destino_id', related_name='dependencia_destino', null=False, blank=False,
                                                on_delete=models.CASCADE)
     monto = MoneyField(max_digits=15, decimal_places=0, null=True, default_currency='PYG')
-    objeto_de_gasto_id = models.ForeignKey(Objeto_de_Gasto, null=True, blank=True, on_delete=models.CASCADE)
-    estado_id = models.ForeignKey(Estado, related_name='estado_id', null=False, blank=False, on_delete=models.CASCADE)
-    prioridad_id = models.ForeignKey(Prioridad, related_name='prioridad', null=False, blank=False,
+    objeto_de_gasto_id = models.ForeignKey(Objeto_de_Gasto, db_column='objeto_de_gasto_id',  null=True, blank=True, on_delete=models.CASCADE)
+    estado_id = models.ForeignKey(Estado, db_column='estado_id',  related_name='estado_id', null=False, blank=False, on_delete=models.CASCADE)
+    prioridad_id = models.ForeignKey(Prioridad, db_column='prioridad_id',  related_name='prioridad', null=False, blank=False,
                                      on_delete=models.CASCADE)
-    lote_id = models.ForeignKey(Lote, null=True, blank=True, on_delete=models.CASCADE)
+    lote_id = models.ForeignKey(Lote, db_column='lote_id', null=True, blank=True, on_delete=models.CASCADE)
     fecha_creacion = models.DateTimeField(auto_now_add=True, blank=True)
     fecha_actualizacion = models.DateTimeField(auto_now=True, blank=True)
 
@@ -71,15 +71,15 @@ class Expediente(models.Model):
 
 
 class Instancia(models.Model):
-    expediente_id = models.ForeignKey(Expediente, related_name='expediente', null=False, blank=False,
+    expediente_id = models.ForeignKey(Expediente, db_column='expediente_id', related_name='expediente', null=False, blank=False,
                                       on_delete=models.CASCADE)
-    dependencia_anterior_id = models.ForeignKey(Dependencia, related_name='instancia_anterior', null=True, blank=True,
+    dependencia_anterior_id = models.ForeignKey(Dependencia, db_column='dependencia_anterior_id', related_name='instancia_anterior', null=True, blank=True,
                                                 on_delete=models.CASCADE)
-    dependencia_actual_id = models.ForeignKey(Dependencia, related_name='instancia_actual', null=False, blank=False,
+    dependencia_actual_id = models.ForeignKey(Dependencia, db_column='dependencia_actual_id', related_name='instancia_actual', null=False, blank=False,
                                               on_delete=models.CASCADE)
-    dependencia_siguiente_id = models.ForeignKey(Dependencia, related_name='instancia_siguiente', null=False,
+    dependencia_siguiente_id = models.ForeignKey(Dependencia, db_column='dependencia_siguiente_id', related_name='instancia_siguiente', null=False,
                                                  blank=False, on_delete=models.CASCADE)
-    estado_id = models.ForeignKey(Estado, related_name='estado', null=False, blank=False, on_delete=models.CASCADE)
+    estado_id = models.ForeignKey(Estado, db_column='estado_id', related_name='estado', null=False, blank=False, on_delete=models.CASCADE)
     fecha_creacion = models.DateTimeField(auto_now_add=True, blank=True)
     fecha_recepcion = models.DateTimeField()
     fecha_final = models.DateTimeField()
@@ -103,8 +103,8 @@ class Instancia(models.Model):
 
 class Comentario(models.Model):
     descripcion = models.TextField(blank=False, null=False, max_length=200)
-    instancia_id = models.ForeignKey(Instancia, related_name='instancia', null=False, on_delete=models.CASCADE)
-    usuario_id = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, on_delete=models.CASCADE)
+    instancia_id = models.ForeignKey(Instancia, db_column='instancia_id',  related_name='instancia', null=False, on_delete=models.CASCADE)
+    usuario_id = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='usuario_id', null=False, on_delete=models.CASCADE)
     fecha_creacion = models.DateTimeField(auto_now_add=True, blank=True)
 
     class Meta:
