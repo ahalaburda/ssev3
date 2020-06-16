@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import $ from "jquery";
 import ObjetosDeGastosService from '../../services/ObjetosDeGastos';
 
 class NuevoObjetoDeGasto extends Component{
@@ -7,7 +6,7 @@ class NuevoObjetoDeGasto extends Component{
         super(props);
         this.state = {
             id: null,
-            descripcion: ""
+            descripcion: ''
         };
 
         this.onChangeDescripcion = this.onChangeDescripcion.bind(this);
@@ -19,8 +18,8 @@ class NuevoObjetoDeGasto extends Component{
             descripcion: e.target.value
         });
     }
+
     handleSubmit = (e) => {
-        console.log("anda");
         e.preventDefault();
         var data = {
             descripcion: this.state.descripcion
@@ -32,11 +31,11 @@ class NuevoObjetoDeGasto extends Component{
                     id: response.data.id,
                     descripcion: response.data.descripcion
                 });
-                console.log(response.data);
             })
             .catch(e => {
                 console.log(e);
             });
+        window.location.reload(false);
     }
 
     render() {

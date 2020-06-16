@@ -2,16 +2,32 @@ import React, {Component} from "react";
 import ObjetosDeGastosService from "../../services/ObjetosDeGastos"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import DataTable from "react-data-table-component";
-
+import EditarObjetoDeGasto from "../Forms/EditarObjetoDeGasto";
 
 class ObjetoDeGasto extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            objetosDeGastos: []
+            objetosDeGastos: [],
+            objetoDeGasto: {
+                id: null,
+                descripcion: '',
+                activo: true
+            }
         };
+
         this.retrieveObjetosDeGastos = this.retrieveObjetosDeGastos.bind(this);
+        this.getObjectRow = this.getObjectRow.bind(this);
     }
+
+    getObjectRow = row => {
+        ObjetosDeGastosService.getById(row.id).then(response => {
+            this.setState({
+                objetoDeGasto: response.data
+            })
+        });
+    }
+
 
     retrieveObjetosDeGastos() {
         ObjetosDeGastosService.getAll()
@@ -29,11 +45,13 @@ class ObjetoDeGasto extends Component{
             .catch(e => {
                 console.log(e);
             })
+
     }
 
     componentDidMount() {
         this.retrieveObjetosDeGastos();
     }
+
 
     render() {
         const columns = [
@@ -56,7 +74,8 @@ class ObjetoDeGasto extends Component{
                             <FontAwesomeIcon icon="eye"/>
                         </button>
                         <button
-                            className="btn btn-sm btn-link text-primary">
+                            className="btn btn-sm btn-link text-primary" data-toggle="modal" data-target="#editModal"
+                            onClick={() => this.getObjectRow(row)}>
                             <FontAwesomeIcon icon="edit"/>
                         </button>
                         <button
@@ -86,6 +105,9 @@ class ObjetoDeGasto extends Component{
                     noHeader={true}
                     dense={true}
                     className="table table-sm table-bordered"
+                />
+                <EditarObjetoDeGasto
+                    objetoDeGasto={this.state.objetoDeGasto}
                 />
             </div>
         );
