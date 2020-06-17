@@ -36,24 +36,18 @@ class NuevoObjetoDeGasto extends Component {
     }
 
     handleUpdate() {
-        var data = {
+        let data = {
             id: this.state.id,
             descripcion: this.state.descripcion,
             activo: this.state.activo
         };
         ObjetosDeGastosService.update(data.id, data)
             .then(response => {
-                this.setState({
-                    id: response.data.id,
-                    descripcion: response.data.descripcion,
-                    activo: response.data.activo
-                });
-                console.log(response.data);
+                this.props.saveModalEdit(response.data);
             })
             .catch(e => {
                 console.log(e);
             });
-        window.location.reload(false);
     }
 
 

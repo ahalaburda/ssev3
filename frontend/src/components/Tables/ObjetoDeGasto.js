@@ -3,8 +3,9 @@ import ObjetosDeGastosService from "../../services/ObjetosDeGastos"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import DataTable from "react-data-table-component";
 import EditarObjetoDeGasto from "../Forms/EditarObjetoDeGasto";
+import NuevoObjetoDeGasto from "../Forms/NuevoObjetoDeGasto";
 
-class ObjetoDeGasto extends Component{
+class ObjetoDeGasto extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -18,6 +19,8 @@ class ObjetoDeGasto extends Component{
 
         this.retrieveObjetosDeGastos = this.retrieveObjetosDeGastos.bind(this);
         this.getObjectRow = this.getObjectRow.bind(this);
+        this.saveModalEdit = this.saveModalEdit.bind(this);
+        this.saveModalNew = this.saveModalNew.bind(this);
     }
 
     getObjectRow = row => {
@@ -28,6 +31,30 @@ class ObjetoDeGasto extends Component{
         });
     }
 
+    saveModalNew(data){
+        let tempObjetosDeGastos = this.state.objetosDeGastos;
+        let objDeGasto = {
+            id: data.id,
+            descripcion: data.descripcion,
+            activo: data.activo ? "Activo" : "Inactivo"
+        };
+        tempObjetosDeGastos.push(objDeGasto);
+        this.setState({objetosDeGastos: tempObjetosDeGastos});
+    }
+
+    saveModalEdit(data) {
+        let tempObjetosDeGastos = this.state.objetosDeGastos;
+        for (let i = 0; i < tempObjetosDeGastos.length; i++) {
+            if (tempObjetosDeGastos[i].id === data.id) {
+                tempObjetosDeGastos[i] = {
+                    id: data.id,
+                    descripcion: data.descripcion,
+                    activo: data.activo ? "Activo" : "Inactivo"
+                };
+            }
+        }
+        this.setState({objetosDeGastos: tempObjetosDeGastos});
+    }
 
     retrieveObjetosDeGastos() {
         ObjetosDeGastosService.getAll()
@@ -54,7 +81,7 @@ class ObjetoDeGasto extends Component{
 
 
     render() {
-        const columns = [
+        let columns = [
             {
                 name: 'Descripción',
                 selector: 'descripcion',
@@ -95,20 +122,37 @@ class ObjetoDeGasto extends Component{
 
         return (
             <div>
-                <DataTable
-                    columns={columns}
-                    data={this.state.objetosDeGastos}
-                    defaultSortField="descripcion"
-                    pagination
-                    paginationComponentOptions={paginationOptions}
-                    highlightOnHover={true}
-                    noHeader={true}
-                    dense={true}
-                    className="table table-sm table-bordered"
-                />
-                <EditarObjetoDeGasto
-                    objetoDeGasto={this.state.objetoDeGasto}
-                />
+                <div className="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 className="h3 mb-0 text-gray-800">Objetos de Gastos</h1>
+                    <button className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal"
+                            data-target="#newModal"><FontAwesomeIcon icon="plus" size="sm"
+                                                                     className="text-white-50"/>&nbsp;Nuevo
+                    </button>
+                </div>
+                <div>
+                    <DataTable
+                        columns={columns}
+                        data={this.state.objetosDeGastos}
+                        defaultSortField="descripcion"
+                        pagination
+                        paginationComponentOptions={paginationOptions}
+                        highlightOnHover={true}
+                        noHeader={true}
+                        dense={true}
+                        className="table table-sm table-bordered"
+                    />
+
+                    {/*Modal de nuevo objeto de gasto*/}
+                    <NuevoObjetoDeGasto
+                        saveModalNew={this.saveModalNew}
+                    />
+
+                    {/*Modal de nuevo objeto de gasto*/}
+                    <EditarObjetoDeGasto
+                        objetoDeGasto={this.state.objetoDeGasto}
+                        saveModalEdit={this.saveModalEdit}
+                    />
+                </div>
             </div>
         );
     }
