@@ -21,6 +21,7 @@ class ObjetoDeGasto extends Component {
         this.getObjectRow = this.getObjectRow.bind(this);
         this.saveModalEdit = this.saveModalEdit.bind(this);
         this.saveModalNew = this.saveModalNew.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
     }
 
     getObjectRow = row => {
@@ -31,7 +32,17 @@ class ObjetoDeGasto extends Component {
         });
     }
 
-    saveModalNew(data){
+    handleDelete(data) {
+        let tempObjetosDeGastos = this.state.objetosDeGastos;
+        let indexOfId = tempObjetosDeGastos.findIndex(e => e.id === data.id);
+        if (indexOfId > -1) {
+            ObjetosDeGastosService.delete(data.id);
+            tempObjetosDeGastos.splice(indexOfId, 1);
+        }
+        this.setState({objetosDeGastos: tempObjetosDeGastos});
+    }
+
+    saveModalNew(data) {
         let tempObjetosDeGastos = this.state.objetosDeGastos;
         let objDeGasto = {
             id: data.id,
@@ -44,14 +55,13 @@ class ObjetoDeGasto extends Component {
 
     saveModalEdit(data) {
         let tempObjetosDeGastos = this.state.objetosDeGastos;
-        for (let i = 0; i < tempObjetosDeGastos.length; i++) {
-            if (tempObjetosDeGastos[i].id === data.id) {
-                tempObjetosDeGastos[i] = {
-                    id: data.id,
-                    descripcion: data.descripcion,
-                    activo: data.activo ? "Activo" : "Inactivo"
-                };
-            }
+        let indexOfId = tempObjetosDeGastos.findIndex(e => e.id === data.id);
+        if(indexOfId !== -1){
+            tempObjetosDeGastos[indexOfId] = {
+                id: data.id,
+                descripcion: data.descripcion,
+                activo: data.activo ? "Activo" : "Inactivo"
+            };
         }
         this.setState({objetosDeGastos: tempObjetosDeGastos});
     }
@@ -97,16 +107,12 @@ class ObjetoDeGasto extends Component {
                 cell: row =>
                     <div>
                         <button
-                            className="btn btn-sm btn-link text-primary">
-                            <FontAwesomeIcon icon="eye"/>
-                        </button>
-                        <button
                             className="btn btn-sm btn-link text-primary" data-toggle="modal" data-target="#editModal"
                             onClick={() => this.getObjectRow(row)}>
                             <FontAwesomeIcon icon="edit"/>
                         </button>
                         <button
-                            className="btn btn-sm btn-link text-danger">
+                            className="btn btn-sm btn-link text-danger" onClick={() => {if(window.confirm('Estás seguro de eliminar?')){this.handleDelete(row)};}}>
                             <FontAwesomeIcon icon="trash-alt"/>
                         </button>
                     </div>,

@@ -5,11 +5,10 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 function ObjetosDeGastos() {
   return (
-      <div>
-
+      <>
           {/*Tabla de lista de objetos de gastos*/}
           <ObjetosDeGastosTable/>
-      </div>
+      </>
   );
 }
 
