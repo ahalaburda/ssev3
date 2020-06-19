@@ -11,16 +11,14 @@ import ObjetosDeGastos from "./core/ObjetosDeGastos/ObjetosDeGastos";
 import './App.css';
 import './styles/font.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min'
+import ReactNotification from "react-notifications-component";
 import {library} from '@fortawesome/fontawesome-svg-core';
 import {
-  faSearch,
-  faBell,
-  faCogs,
-  faUser,
-  faSignOutAlt,
-  faChartBar, faPlus, faPencilAlt,
-  faCommentDollar, faFolder, faChartArea, faTachometerAlt, faBars,
-  faEye, faEdit, faTrashAlt
+  faSearch, faBell, faCogs, faUser,
+  faSignOutAlt, faChartBar, faPlus, faPencilAlt,
+  faCommentDollar, faFolder, faChartArea, faTachometerAlt,
+  faBars, faEye, faEdit, faTrashAlt,
+  faCheck
 } from '@fortawesome/free-solid-svg-icons';
 import {
   BrowserRouter as Router,
@@ -30,10 +28,15 @@ import {
 
 class App extends Component {
   render() {
-    library.add(faSearch, faBell, faCogs, faUser, faSignOutAlt, faChartBar, faPlus, faPencilAlt, faTachometerAlt,
-      faCommentDollar, faFolder, faChartArea, faBars, faEye, faEdit, faTrashAlt);
+    library.add(faSearch, faBell, faCogs, faUser,
+      faSignOutAlt, faChartBar, faPlus, faPencilAlt,
+      faTachometerAlt, faCommentDollar, faFolder, faChartArea,
+      faBars, faEye, faEdit, faTrashAlt,
+      faCheck);
     return (
-      <Router>
+      <>
+        <ReactNotification/>
+        <Router>
         <div className="App">
           <div id="wrapper">
             <Sidebar/>
@@ -56,6 +59,7 @@ class App extends Component {
           </div>
         </div>
       </Router>
+      </>
     );
   }
 }
