@@ -9,7 +9,8 @@ class TipoDeExpediente extends Component {
     super(props);
     this.state = {
       tiposDeExpedientes: [],
-      titulo: ''
+      titulo: '',
+      dependencias: []
     };
     this.retrieveTiposDeExpedientes = this.retrieveTiposDeExpedientes.bind(this);
     this.handleViewClick = this.handleViewClick.bind(this);
@@ -34,7 +35,7 @@ class TipoDeExpediente extends Component {
       })
       .catch(e => {
         console.log(e);
-      })
+      });
   }
 
   componentDidMount() {
@@ -42,9 +43,15 @@ class TipoDeExpediente extends Component {
   }
 
   handleViewClick = row => {
-    this.setState({
-      titulo: row.descripcion
-    });
+    TiposDeExpedientesService.getDetails(row.id)
+      .then(response => {
+        this.setState({
+          titulo: row.descripcion,
+          dependencias: response.data.results.map(d => {
+            return d.dependencia_id.descripcion
+          })
+        })
+      });
   }
 
   handleEditClick = row => {
@@ -91,6 +98,7 @@ class TipoDeExpediente extends Component {
           button: true,
         }
       ];
+
     const paginationOptions = {
       rowsPerPageText: 'Filas por página',
       rangeSeparatorText: 'de',
@@ -99,7 +107,7 @@ class TipoDeExpediente extends Component {
     };
 
     return (
-      <div>
+      <>
         <DataTable
           columns={columns}
           data={this.state.tiposDeExpedientes}
@@ -111,8 +119,8 @@ class TipoDeExpediente extends Component {
           dense={true}
           className="table table-sm table-bordered"
         />
-        <VerTipoExpediente descripcion={this.state.titulo}/>
-      </div>
+        <VerTipoExpediente titulo={this.state.titulo} dependencias={this.state.dependencias}/>
+      </>
     );
   }
 }
