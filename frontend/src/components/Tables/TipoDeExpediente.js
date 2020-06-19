@@ -3,28 +3,28 @@ import DataTable from "react-data-table-component";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import TiposDeExpedientesService from "../../services/TiposDeExpedientes";
 import VerTipoExpediente from "../Forms/VerTipoExpediente";
+import NuevoTipoExpediente from "../Forms/NuevoTipoExpediente";
 
 class TipoDeExpediente extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      tiposDeExpedientes: [],
-      titulo: '',
+      list: [],
+      title: '',
       dependencias: []
     };
     this.retrieveTiposDeExpedientes = this.retrieveTiposDeExpedientes.bind(this);
     this.handleViewClick = this.handleViewClick.bind(this);
     this.handleEditClick = this.handleEditClick.bind(this);
     this.handleDeleteClick = this.handleDeleteClick.bind(this);
+    this.addItem = this.addItem.bind(this);
   }
 
   retrieveTiposDeExpedientes() {
     TiposDeExpedientesService.getAll()
       .then(response => {
-        {/*TODO revisar para paginacion*/
-        }
         this.setState({
-          tiposDeExpedientes: response.data.map(tde => {
+          list: response.data.map(tde => {
             return {
               id: tde.id,
               descripcion: tde.descripcion,
@@ -46,8 +46,8 @@ class TipoDeExpediente extends Component {
     TiposDeExpedientesService.getDetails(row.id)
       .then(response => {
         this.setState({
-          titulo: row.descripcion,
-          dependencias: response.data.results.map(d => {
+          title: row.descripcion,
+          dependencias: response.data.results.sort((a, b) => a.orden - b.orden).map(d => {
             return d.dependencia_id.descripcion
           })
         })
@@ -60,6 +60,12 @@ class TipoDeExpediente extends Component {
 
   handleDeleteClick = row => {
     console.log(`borrar: ${row.descripcion}`);
+  }
+
+  addItem = newItem => {
+    this.setState({
+      list: [...this.state.list, newItem]
+    });
   }
 
   render() {
@@ -108,9 +114,16 @@ class TipoDeExpediente extends Component {
 
     return (
       <>
+        <div className="d-sm-flex align-items-center justify-content-between mb-4">
+          <h1 className="h3 mb-0 text-gray-800">Tipos de expedientes</h1>
+          <button className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal"
+                  data-target="#newModal"><FontAwesomeIcon icon="plus" size="sm" className="text-white-50"/>&nbsp;Nuevo</button>
+        </div>
+
+        {/*Tabla de lista de tipos de expedientes*/}
         <DataTable
           columns={columns}
-          data={this.state.tiposDeExpedientes}
+          data={this.state.list}
           defaultSortField="descripcion"
           pagination
           paginationComponentOptions={paginationOptions}
@@ -119,7 +132,12 @@ class TipoDeExpediente extends Component {
           dense={true}
           className="table table-sm table-bordered"
         />
-        <VerTipoExpediente titulo={this.state.titulo} dependencias={this.state.dependencias}/>
+
+        {/*Modal de nuevo expediente*/}
+        <NuevoTipoExpediente newItem={this.addItem}/>
+
+        {/*Modal para ver tipo de expediente con sus rutas*/}
+        <VerTipoExpediente titulo={this.state.title} dependencias={this.state.dependencias}/>
       </>
     );
   }
