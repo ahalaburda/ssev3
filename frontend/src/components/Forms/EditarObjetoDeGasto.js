@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import ObjetosDeGastosService from '../../services/ObjetosDeGastos';
+import Popups from "../Popups";
 
 class NuevoObjetoDeGasto extends Component {
     constructor(props) {
@@ -43,7 +44,12 @@ class NuevoObjetoDeGasto extends Component {
         };
         ObjetosDeGastosService.update(data.id, data)
             .then(response => {
-                this.props.saveModalEdit(response.data);
+                if(response.status === 200) {
+                    this.props.saveModalEdit(response.data);
+                    Popups.success("Actualizado con éxito");
+                }else{
+                    Popups.error("Ocurrió un error, no se pudo guardar");
+                }
             })
             .catch(e => {
                 console.log(e);

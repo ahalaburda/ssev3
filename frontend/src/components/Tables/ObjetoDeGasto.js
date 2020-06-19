@@ -4,6 +4,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import DataTable from "react-data-table-component";
 import EditarObjetoDeGasto from "../Forms/EditarObjetoDeGasto";
 import NuevoObjetoDeGasto from "../Forms/NuevoObjetoDeGasto";
+import Popups from "../Popups";
 
 class ObjetoDeGasto extends Component {
     constructor(props) {
@@ -21,7 +22,7 @@ class ObjetoDeGasto extends Component {
         this.getObjectRow = this.getObjectRow.bind(this);
         this.saveModalEdit = this.saveModalEdit.bind(this);
         this.saveModalNew = this.saveModalNew.bind(this);
-        this.handleDelete = this.handleDelete.bind(this);
+        this.handleOnclickDelete = this.handleOnclickDelete.bind(this);
     }
 
     getObjectRow = row => {
@@ -32,14 +33,26 @@ class ObjetoDeGasto extends Component {
         });
     }
 
-    handleDelete(data) {
+    handleOnclickDelete = row => {
         let tempObjetosDeGastos = this.state.objetosDeGastos;
-        let indexOfId = tempObjetosDeGastos.findIndex(e => e.id === data.id);
+        let indexOfId = tempObjetosDeGastos.findIndex(e => e.id === row.id);
         if (indexOfId > -1) {
-            ObjetosDeGastosService.delete(data.id);
-            tempObjetosDeGastos.splice(indexOfId, 1);
+            ObjetosDeGastosService.delete(row.id)
+                .then(response => {
+                    if(response.status === 204){
+                        tempObjetosDeGastos.splice(indexOfId, 1);
+                        this.setState({objetosDeGastos: tempObjetosDeGastos});
+                        Popups.success("Eliminado con éxito");
+                    }else{
+                        Popups.error("Ocurrió un error, no se pudo eliminar");
+                    }
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+        }else{
+            Popups.error("No se encontró el objeto de gasto");
         }
-        this.setState({objetosDeGastos: tempObjetosDeGastos});
     }
 
     saveModalNew(data) {
@@ -56,14 +69,15 @@ class ObjetoDeGasto extends Component {
     saveModalEdit(data) {
         let tempObjetosDeGastos = this.state.objetosDeGastos;
         let indexOfId = tempObjetosDeGastos.findIndex(e => e.id === data.id);
-        if(indexOfId !== -1){
+        if(indexOfId > -1){
             tempObjetosDeGastos[indexOfId] = {
                 id: data.id,
                 descripcion: data.descripcion,
                 activo: data.activo ? "Activo" : "Inactivo"
             };
+            this.setState({objetosDeGastos: tempObjetosDeGastos});
         }
-        this.setState({objetosDeGastos: tempObjetosDeGastos});
+
     }
 
     retrieveObjetosDeGastos() {
@@ -82,7 +96,6 @@ class ObjetoDeGasto extends Component {
             .catch(e => {
                 console.log(e);
             })
-
     }
 
     componentDidMount() {
@@ -112,7 +125,7 @@ class ObjetoDeGasto extends Component {
                             <FontAwesomeIcon icon="edit"/>
                         </button>
                         <button
-                            className="btn btn-sm btn-link text-danger" onClick={() => {if(window.confirm('Estás seguro de eliminar?')){this.handleDelete(row)};}}>
+                            className="btn btn-sm btn-link text-danger" onClick={() => {if(window.confirm('Estás seguro de eliminar?')){this.handleOnclickDelete(row)};}}>
                             <FontAwesomeIcon icon="trash-alt"/>
                         </button>
                     </div>,
