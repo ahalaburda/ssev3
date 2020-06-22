@@ -1,9 +1,11 @@
 import React, {Component} from "react";
 import DataTable from "react-data-table-component";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import Popups from "../Popups";
 import TiposDeExpedientesService from "../../services/TiposDeExpedientes";
 import VerTipoExpediente from "../Forms/VerTipoExpediente";
 import NuevoTipoExpediente from "../Forms/NuevoTipoExpediente";
+import SimpleEdit from "../Forms/SimpleEdit";
 
 class TipoDeExpediente extends Component {
   constructor(props) {
@@ -11,13 +13,19 @@ class TipoDeExpediente extends Component {
     this.state = {
       list: [],
       title: '',
-      dependencias: []
+      dependencias: [],
+      tipoExpediente: {
+        id: null,
+        descripcion: '',
+        activo: true
+      }
     };
     this.retrieveTiposDeExpedientes = this.retrieveTiposDeExpedientes.bind(this);
     this.handleViewClick = this.handleViewClick.bind(this);
     this.handleEditClick = this.handleEditClick.bind(this);
     this.handleDeleteClick = this.handleDeleteClick.bind(this);
     this.addItem = this.addItem.bind(this);
+    this.updateItem = this.updateItem.bind(this);
   }
 
   retrieveTiposDeExpedientes() {
@@ -55,17 +63,57 @@ class TipoDeExpediente extends Component {
   }
 
   handleEditClick = row => {
-    console.log(`editar: ${row.descripcion}`);
+    TiposDeExpedientesService.getById(row.id)
+      .then(response => {
+        this.setState({
+          tipoExpediente: response.data
+        })
+      })
   }
 
   handleDeleteClick = row => {
-    console.log(`borrar: ${row.descripcion}`);
+    let newList = this.state.list;
+    let index = newList.findIndex(i => i.id === row.id);
+    if (index > -1) {
+      TiposDeExpedientesService.delete(row.id)
+        .then(response => {
+          if (response.status === 204) {
+            newList.splice(index, 1);
+            this.setState({
+              list: newList
+            })
+            Popups.success("Eliminado con exito.");
+          } else {
+            Popups.error("Ocurrio un error, no se pudo eliminar.");
+          }
+        })
+        .catch(e => {
+          console.log(e);
+        })
+    } else {
+      Popups.error("No se encontró el tipo de expediente.");
+    }
   }
 
   addItem = newItem => {
     this.setState({
       list: [...this.state.list, newItem]
     });
+  }
+
+  updateItem = newItem => {
+    let newList = this.state.list;
+    let index = newList.findIndex(i => i.id === newItem.id);
+    if (index > -1) {
+      newList.splice(index, 1, {
+        id: newItem.id,
+        descripcion: newItem.descripcion,
+        activo: newItem.activo ? "Activo" : "Inactivo"
+      });
+      this.setState({
+        list: newList
+      });
+    }
   }
 
   render() {
@@ -91,13 +139,15 @@ class TipoDeExpediente extends Component {
                 <FontAwesomeIcon icon="eye"/>
               </button>
               <button
-                className="btn btn-sm btn-link text-primary"
+                className="btn btn-sm btn-link text-primary" data-toggle="modal" data-target="#editModal"
                 onClick={() => this.handleEditClick(row)}>
                 <FontAwesomeIcon icon="edit"/>
               </button>
               <button
                 className="btn btn-sm btn-link text-danger"
-                onClick={() => this.handleDeleteClick(row)}>
+                onClick={() => {
+                  if (window.confirm("Estás seguro de eliminar?")) {this.handleDeleteClick(row)}}
+                }>
                 <FontAwesomeIcon icon="trash-alt"/>
               </button>
             </div>,
@@ -138,6 +188,13 @@ class TipoDeExpediente extends Component {
 
         {/*Modal para ver tipo de expediente con sus rutas*/}
         <VerTipoExpediente titulo={this.state.title} dependencias={this.state.dependencias}/>
+
+        {/*Modal para editar tipo de expediente*/}
+        <SimpleEdit
+          title="Tipo de Expediente"
+          item={this.state.tipoExpediente}
+          saveModalEdit={this.updateItem}
+          service={TiposDeExpedientesService}/>
       </>
     );
   }
