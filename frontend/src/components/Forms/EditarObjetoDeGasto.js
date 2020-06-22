@@ -92,8 +92,7 @@ class NuevoObjetoDeGasto extends Component {
                                                 type="checkbox"
                                                 id="switch2"
                                                 checked={this.state.activo}
-                                                onChange={this.onChangeActivo}
-                                                switch="default"/>
+                                                onChange={this.onChangeActivo}/>
                                         </div>
                                     </div>
                                 </div>
