@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import ObjetosDeGastosService from '../../services/ObjetosDeGastos';
+import Popups from '../Popups';
 
 class NuevoObjetoDeGasto extends Component {
     constructor(props) {
@@ -25,7 +26,13 @@ class NuevoObjetoDeGasto extends Component {
 
         ObjetosDeGastosService.create(data)
             .then(response => {
-                this.props.saveModalNew(response.data);
+                if(response.status === 201){
+                    this.props.saveModalNew(response.data);
+                    Popups.success("Nuevo objeto de gasto creado con éxito");
+                }
+                else {
+                    Popups.error("Ocurrió un error, no se pudo crear");
+                }
             })
             .catch(e => {
                 console.log(e);

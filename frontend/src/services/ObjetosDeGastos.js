@@ -16,6 +16,10 @@ class ObjetosDeGastos{
     getById(id){
         return http.get('/objetos_de_gastos/' + id + '?format=json');
     }
+
+    delete(id) {
+        return http.delete(`/objetos_de_gastos/${id}`);
+    }
 }
 
 export default new ObjetosDeGastos();
