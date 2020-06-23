@@ -10,14 +10,15 @@ class ObjetoDeGasto extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading: false,
+      totalRows: 0,
       objetosDeGastos: [],
       objetoDeGasto: {
-        id: null,
+        id: 0,
         descripcion: '',
         activo: true
       }
     };
-
     this.retrieveObjetosDeGastos = this.retrieveObjetosDeGastos.bind(this);
     this.getObjectRow = this.getObjectRow.bind(this);
     this.saveModalEdit = this.saveModalEdit.bind(this);
@@ -80,8 +81,9 @@ class ObjetoDeGasto extends Component {
 
   }
 
-  retrieveObjetosDeGastos() {
-    ObjetosDeGastosService.getAll()
+  retrieveObjetosDeGastos(page) {
+    this.setState({loading: true});
+    ObjetosDeGastosService.getAll(page)
       .then(response => {
         this.setState({
           objetosDeGastos: response.data.results.map(odg => {
@@ -90,7 +92,8 @@ class ObjetoDeGasto extends Component {
               descripcion: odg.descripcion,
               activo: odg.activo ? "Activo" : "Inactivo"
             }
-          })
+          }),
+          loading: false
         });
       })
       .catch(e => {
@@ -98,10 +101,13 @@ class ObjetoDeGasto extends Component {
       })
   }
 
-  componentDidMount() {
-    this.retrieveObjetosDeGastos();
+  handlePageChange = async page => {
+    this.retrieveObjetosDeGastos(page);
   }
 
+  componentDidMount() {
+    this.retrieveObjetosDeGastos("1");
+  }
 
   render() {
     let columns = [
@@ -109,6 +115,7 @@ class ObjetoDeGasto extends Component {
         name: 'Descripción',
         selector: 'descripcion',
         sortable: true,
+        
       },
       {
         name: 'Activo',
@@ -157,7 +164,10 @@ class ObjetoDeGasto extends Component {
             columns={columns}
             data={this.state.objetosDeGastos}
             defaultSortField="descripcion"
+            progressPending={this.state.loading}
             pagination
+            paginationServer
+            onChangePage={this.handlePageChange}
             paginationComponentOptions={paginationOptions}
             highlightOnHover={true}
             noHeader={true}
