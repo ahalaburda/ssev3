@@ -1,46 +1,64 @@
 import React, {Component} from 'react';
 import Popups from "../Popups";
 
+/**
+ * Modal generico para actualizar campo 'descripcion' y 'activo'
+ * @property title Titulo para el modal
+ * @property item Registro a modificar
+ * @property saveModalEdit Funcion que actualiza la tabla con el registro modificado
+ * @property service El servicio que guarda las modificaciones
+ */
 class SimpleEdit extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: null,
-      descripcion: '',
-      activo: true
+      id: 0,
+      description: '',
+      active: true
     };
 
     this.handleUpdate = this.handleUpdate.bind(this);
-    this.onChangeDescripcion = this.onChangeDescripcion.bind(this);
-    this.onChangeActivo = this.onChangeActivo.bind(this);
+    this.onChangeDescription = this.onChangeDescription.bind(this);
+    this.onChangeActive = this.onChangeActive.bind(this);
   }
 
   componentWillReceiveProps(nextProps, nextContext) {
     this.setState({
       id: nextProps.item.id,
-      descripcion: nextProps.item.descripcion,
-      activo: nextProps.item.activo
+      description: nextProps.item.descripcion,
+      active: nextProps.item.activo
     });
   }
 
-  onChangeDescripcion(e) {
+  /**
+   * Setea el estado description
+   * @param e Evento del input description
+   */
+  onChangeDescription(e) {
     this.setState({
-      descripcion: e.target.value
+      description: e.target.value
     });
   }
 
-  onChangeActivo() {
+  /**
+   * Setea el estado active
+   */
+  onChangeActive() {
     this.setState({
-      activo: !this.state.activo
+      active: !this.state.active
     });
   }
 
+  /**
+   * Actualiza el registro con los nuevos valores y utiliza el servicio recibido para actualizar la base de datos
+   */
   handleUpdate() {
     let data = {
       id: this.state.id,
-      descripcion: this.state.descripcion,
-      activo: this.state.activo
+      descripcion: this.state.description,
+      activo: this.state.active
     };
+    //servicio recibido
     this.props.service.update(data.id, data)
       .then(response => {
         if (response.status === 200) {
@@ -54,7 +72,6 @@ class SimpleEdit extends Component {
         console.log(e);
       });
   }
-
 
   render() {
     return (
@@ -98,10 +115,20 @@ class SimpleEdit extends Component {
 
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-sm btn-secondary" data-dismiss="modal">Cerrar
+                <button
+                  type="button"
+                  className="btn btn-sm btn-secondary"
+                  data-dismiss="modal"
+                >
+                  Cerrar
                 </button>
-                <button type="submit" className="btn btn-sm btn-primary" data-dismiss="modal"
-                        onClick={() => this.handleUpdate()}>Guardar
+                <button
+                  type="submit"
+                  className="btn btn-sm btn-primary"
+                  data-dismiss="modal"
+                  onClick={() => this.handleUpdate()}
+                >
+                  Guardar
                 </button>
               </div>
             </form>

@@ -6,21 +6,27 @@ import TiposDeExpedientesService from "../../services/TiposDeExpedientes";
 import VerTipoExpediente from "../Forms/VerTipoExpediente";
 import NuevoTipoExpediente from "../Forms/NuevoTipoExpediente";
 import SimpleEdit from "../Forms/SimpleEdit";
+import {PaginationOptions} from "../PaginationOptions";
 
+/**
+ * Tabla para tipo de expediente
+ */
 class TipoDeExpediente extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      show: false,
       list: [],
       title: '',
       dependencias: [],
       tipoExpediente: {
-        id: null,
+        id: 0,
         descripcion: '',
         activo: true
       }
     };
     this.retrieveTiposDeExpedientes = this.retrieveTiposDeExpedientes.bind(this);
+    this.setShow = this.setShow.bind(this);
     this.handleViewClick = this.handleViewClick.bind(this);
     this.handleEditClick = this.handleEditClick.bind(this);
     this.handleDeleteClick = this.handleDeleteClick.bind(this);
@@ -28,6 +34,9 @@ class TipoDeExpediente extends Component {
     this.updateItem = this.updateItem.bind(this);
   }
 
+  /**
+   * Obtener los tipos de expedientes de la base de datos y cargarlos en la tabla
+   */
   retrieveTiposDeExpedientes() {
     TiposDeExpedientesService.getAll()
       .then(response => {
@@ -50,6 +59,17 @@ class TipoDeExpediente extends Component {
     this.retrieveTiposDeExpedientes();
   }
 
+  /**
+   * Setear el estado para mostrar u ocultar el modal
+   */
+  setShow = show => {
+    this.setState({show: show});
+  }
+
+  /**
+   * Mostrar los detalles del tipo de expediente ordenando sus dependencias de acuerdo al campop 'orden'
+   * @param row La fila seleccionada
+   */
   handleViewClick = row => {
     TiposDeExpedientesService.getDetails(row.id)
       .then(response => {
@@ -62,6 +82,10 @@ class TipoDeExpediente extends Component {
       });
   }
 
+  /**
+   * Setea el estado 'tipoExpediente' para pasarlo al SimpleEdit
+   * @param row La fila a editarse
+   */
   handleEditClick = row => {
     TiposDeExpedientesService.getById(row.id)
       .then(response => {
@@ -71,6 +95,10 @@ class TipoDeExpediente extends Component {
       })
   }
 
+  /**
+   * Elimina el registro seleccionado y actualiza la tabla
+   * @param row El registro a eliminarse
+   */
   handleDeleteClick = row => {
     let newList = this.state.list;
     let index = newList.findIndex(i => i.id === row.id);
@@ -95,12 +123,20 @@ class TipoDeExpediente extends Component {
     }
   }
 
+  /**
+   * Agrega el nuevo tipo de expediente a la tabla
+   * @param newItem Nuevo tipo de expediente
+   */
   addItem = newItem => {
     this.setState({
       list: [...this.state.list, newItem]
     });
   }
 
+  /**
+   * Actualiza la tabla con el tipo de expediente modificado
+   * @param newItem Tipo de expediente modificado
+   */
   updateItem = newItem => {
     let newList = this.state.list;
     let index = newList.findIndex(i => i.id === newItem.id);
@@ -117,6 +153,7 @@ class TipoDeExpediente extends Component {
   }
 
   render() {
+    //columnas para la tabla
     const columns = [
         {
           name: 'Descripcion',
@@ -155,19 +192,13 @@ class TipoDeExpediente extends Component {
         }
       ];
 
-    const paginationOptions = {
-      rowsPerPageText: 'Filas por página',
-      rangeSeparatorText: 'de',
-      selectAllRowsItem: true,
-      selectAllRowsItemText: 'Todos'
-    };
-
     return (
       <>
         <div className="d-sm-flex align-items-center justify-content-between mb-4">
           <h1 className="h3 mb-0 text-gray-800">Tipos de expedientes</h1>
-          <button className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal"
-                  data-target="#newModal"><FontAwesomeIcon icon="plus" size="sm" className="text-white-50"/>&nbsp;Nuevo</button>
+          <button className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" onClick={() => this.setShow(true)}>
+            <FontAwesomeIcon icon="plus" size="sm" className="text-white-50"/>&nbsp;Nuevo
+          </button>
         </div>
 
         {/*Tabla de lista de tipos de expedientes*/}
@@ -176,7 +207,7 @@ class TipoDeExpediente extends Component {
           data={this.state.list}
           defaultSortField="descripcion"
           pagination
-          paginationComponentOptions={paginationOptions}
+          paginationComponentOptions={PaginationOptions}
           highlightOnHover={true}
           noHeader={true}
           dense={true}
@@ -184,7 +215,7 @@ class TipoDeExpediente extends Component {
         />
 
         {/*Modal de nuevo expediente*/}
-        <NuevoTipoExpediente newItem={this.addItem}/>
+        <NuevoTipoExpediente setShow={this.setShow} showModal={this.state.show} newItem={this.addItem}/>
 
         {/*Modal para ver tipo de expediente con sus rutas*/}
         <VerTipoExpediente titulo={this.state.title} dependencias={this.state.dependencias}/>
