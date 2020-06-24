@@ -1,8 +1,8 @@
 import http from './http-common';
 
 class ObjetosDeGastos{
-    getAll(){
-        return http.get('/objetos_de_gastos/?format=json');
+    getAll(page){
+        return http.get(`/objetos_de_gastos/?format=json&page=${page}`);
     }
 
     create(objetoDeGasto){
