@@ -55,7 +55,8 @@ class SimpleEdit extends Component {
    * Si hay errores en los inputs, muestra los mensajes de error
    */
   checkValid = () => {
-    !this.validator.allValid() && this.validator.showMessages();
+    if (this.validator.allValid()) return true;
+    this.validator.showMessages();
   }
 
   /**
@@ -104,7 +105,7 @@ class SimpleEdit extends Component {
   handleUpdate = () => {
     if (this.checkValid()) {
       this.update();
-      this.handleclose();
+      this.handleClose();
     }
   }
 
