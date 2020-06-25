@@ -6,7 +6,7 @@ import TiposDeExpedientesService from "../../services/TiposDeExpedientes";
 import VerTipoExpediente from "../Forms/VerTipoExpediente";
 import NuevoTipoExpediente from "../Forms/NuevoTipoExpediente";
 import SimpleEdit from "../Forms/SimpleEdit";
-import {PaginationOptions} from "../PaginationOptions";
+
 
 /**
  * Tabla para tipo de expediente
@@ -163,6 +163,13 @@ class TipoDeExpediente extends Component {
   }
 
   render() {
+    const paginationOptions = {
+      rowsPerPageText: 'Filas por página',
+      rangeSeparatorText: 'de',
+      selectAllRowsItem: true,
+      selectAllRowsItemText: 'Todos'
+    }
+
     //columnas para la tabla
     const columns = [
         {
@@ -216,7 +223,7 @@ class TipoDeExpediente extends Component {
           data={this.state.list}
           defaultSortField="descripcion"
           pagination
-          paginationComponentOptions={PaginationOptions}
+          paginationComponentOptions={paginationOptions}
           highlightOnHover={true}
           noHeader={true}
           dense={true}
