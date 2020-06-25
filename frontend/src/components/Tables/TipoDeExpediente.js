@@ -15,7 +15,8 @@ class TipoDeExpediente extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      show: false,
+      showNew: false,
+      showEdit: false,
       list: [],
       title: '',
       dependencias: [],
@@ -26,7 +27,8 @@ class TipoDeExpediente extends Component {
       }
     };
     this.retrieveTiposDeExpedientes = this.retrieveTiposDeExpedientes.bind(this);
-    this.setShow = this.setShow.bind(this);
+    this.setShowNew = this.setShowNew.bind(this);
+    this.setShowEdit = this.setShowEdit.bind(this);
     this.handleViewClick = this.handleViewClick.bind(this);
     this.handleEditClick = this.handleEditClick.bind(this);
     this.handleDeleteClick = this.handleDeleteClick.bind(this);
@@ -60,10 +62,17 @@ class TipoDeExpediente extends Component {
   }
 
   /**
-   * Setear el estado para mostrar u ocultar el modal
+   * Setear el estado 'showNew' para mostrar u ocultar el modal
    */
-  setShow = show => {
-    this.setState({show: show});
+  setShowNew = show => {
+    this.setState({showNew: show});
+  }
+
+  /**
+   * Setear el estado 'showEdit' para mostrar u ocultar el modal
+   */
+  setShowEdit = show => {
+    this.setState({showEdit: show})
   }
 
   /**
@@ -93,6 +102,7 @@ class TipoDeExpediente extends Component {
           tipoExpediente: response.data
         })
       })
+    this.setShowEdit(true);
   }
 
   /**
@@ -176,8 +186,7 @@ class TipoDeExpediente extends Component {
                 <FontAwesomeIcon icon="eye"/>
               </button>
               <button
-                className="btn btn-sm btn-link text-primary" data-toggle="modal" data-target="#editModal"
-                onClick={() => this.handleEditClick(row)}>
+                className="btn btn-sm btn-link text-primary" onClick={() => this.handleEditClick(row)}>
                 <FontAwesomeIcon icon="edit"/>
               </button>
               <button
@@ -196,7 +205,7 @@ class TipoDeExpediente extends Component {
       <>
         <div className="d-sm-flex align-items-center justify-content-between mb-4">
           <h1 className="h3 mb-0 text-gray-800">Tipos de expedientes</h1>
-          <button className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" onClick={() => this.setShow(true)}>
+          <button className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" onClick={() => this.setShowNew(true)}>
             <FontAwesomeIcon icon="plus" size="sm" className="text-white-50"/>&nbsp;Nuevo
           </button>
         </div>
@@ -215,17 +224,25 @@ class TipoDeExpediente extends Component {
         />
 
         {/*Modal de nuevo expediente*/}
-        <NuevoTipoExpediente setShow={this.setShow} showModal={this.state.show} newItem={this.addItem}/>
+        <NuevoTipoExpediente
+          setShow={this.setShowNew}
+          showModal={this.state.showNew}
+          newItem={this.addItem}/>
 
         {/*Modal para ver tipo de expediente con sus rutas*/}
-        <VerTipoExpediente titulo={this.state.title} dependencias={this.state.dependencias}/>
+        <VerTipoExpediente
+          titulo={this.state.title}
+          dependencias={this.state.dependencias}/>
 
         {/*Modal para editar tipo de expediente*/}
         <SimpleEdit
           title="Tipo de Expediente"
           item={this.state.tipoExpediente}
           saveModalEdit={this.updateItem}
-          service={TiposDeExpedientesService}/>
+          service={TiposDeExpedientesService}
+          setShow={this.setShowEdit}
+          showModal={this.state.showEdit}
+        />
       </>
     );
   }

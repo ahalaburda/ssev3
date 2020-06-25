@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import Popups from "../Popups";
+import SimpleReactValidator from "simple-react-validator";
+import {Modal} from "react-bootstrap";
 
 /**
  * Modal generico para actualizar campo 'descripcion' y 'activo'
@@ -20,6 +22,14 @@ class SimpleEdit extends Component {
     this.handleUpdate = this.handleUpdate.bind(this);
     this.onChangeDescription = this.onChangeDescription.bind(this);
     this.onChangeActive = this.onChangeActive.bind(this);
+    this.handleClose = this.handleClose.bind(this);
+    //opciones para la validacion
+    this.validator = new SimpleReactValidator({
+      className: 'text-danger',
+      messages: {
+        required: 'Este campo no puede estar vacío.'
+      }
+    })
   }
 
   componentWillReceiveProps(nextProps, nextContext) {
@@ -34,25 +44,43 @@ class SimpleEdit extends Component {
    * Setea el estado description
    * @param e Evento del input description
    */
-  onChangeDescription(e) {
+  onChangeDescription = e => {
     this.setState({
       description: e.target.value
     });
+    this.checkValid();
+  }
+
+  /**
+   * Si hay errores en los inputs, muestra los mensajes de error
+   */
+  checkValid = () => {
+    !this.validator.allValid() && this.validator.showMessages();
   }
 
   /**
    * Setea el estado active
    */
-  onChangeActive() {
+  onChangeActive = () => {
     this.setState({
       active: !this.state.active
     });
   }
 
+  handleClose = () => {
+    this.setState({
+      id: 0,
+      description: '',
+      active: true
+    });
+    this.validator.hideMessages();
+    this.props.setShow(false);
+  }
+
   /**
    * Actualiza el registro con los nuevos valores y utiliza el servicio recibido para actualizar la base de datos
    */
-  handleUpdate() {
+  update = () => {
     let data = {
       id: this.state.id,
       descripcion: this.state.description,
@@ -73,68 +101,70 @@ class SimpleEdit extends Component {
       });
   }
 
+  handleUpdate = () => {
+    if (this.checkValid()) {
+      this.update();
+      this.handleclose();
+    }
+  }
+
   render() {
     return (
-      <div className="modal fade" id="editModal" tabIndex="-1" role="dialog" aria-hidden="true">
-        <div className="modal-dialog modal-dialog-centered" role="document">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title">Editar {this.props.title}</h5>
-              <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
+      <Modal
+        show={this.props.showModal}
+        onHide={this.handleclose}
+        backdrop="static"
+        centered
+      >
+        <Modal.Header>
+          <Modal.Title>Editar {this.props.title}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <form>
+            <div className="form-group">
+              <label>Descripci&oacute;n</label>
+              <input
+                type="text"
+                className="form-control form-control-sm"
+                name="description"
+                value={this.state.description}
+                onChange={e => this.onChangeDescription(e)}
+                onBlur={e => this.onChangeDescription(e)}
+                placeholder="Agrega una descripción"
+              />
+              {this.validator.message('description', this.state.description, 'required')}
             </div>
-            <form>
-              <div className="modal-body">
-
-                <div className="form-group">
-                  <label htmlFor="inputDescription">Descripción</label>
+            <div className="form-group">
+              <div className="row">
+                <div className="col-2">
+                  <label>Activo</label>
+                </div>
+                <div className="col-2">
                   <input
-                    type="text"
-                    className="form-control form-control-sm"
-                    id="inputDescription"
-                    value={this.state.descripcion}
-                    onChange={(e) => this.onChangeDescripcion(e)}
-                    placeholder="Agrega una descripcion"/>
+                    type="checkbox"
+                    id="switch2"
+                    checked={this.state.active}
+                    onChange={this.onChangeActive}/>
                 </div>
-                <div className="form-group">
-                  <div className="row">
-                    <div className="col-2">
-                      <label htmlFor="inputAddress">Activo</label>
-                    </div>
-                    <div className="col-2">
-                      <input
-                        type="checkbox"
-                        id="switch2"
-                        checked={this.state.activo}
-                        onChange={this.onChangeActivo}
-                        switch="default"/>
-                    </div>
-                  </div>
-                </div>
-
               </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-sm btn-secondary"
-                  data-dismiss="modal"
-                >
-                  Cerrar
-                </button>
-                <button
-                  type="submit"
-                  className="btn btn-sm btn-primary"
-                  data-dismiss="modal"
-                  onClick={() => this.handleUpdate()}
-                >
-                  Guardar
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
+            </div>
+          </form>
+        </Modal.Body>
+        <Modal.Footer>
+          <button
+            type="button"
+            className="btn btn-sm btn-secondary"
+            onClick={this.handleClose}>
+            Cerrar
+          </button>
+          <button
+            type="submit"
+            className="btn btn-sm btn-primary"
+            onClick={() => this.handleUpdate()}>
+            Guardar
+          </button>
+        </Modal.Footer>
+      </Modal>
     );
   }
 }
