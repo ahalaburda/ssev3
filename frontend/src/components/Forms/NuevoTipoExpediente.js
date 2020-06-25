@@ -81,7 +81,7 @@ class NuevoTipoExpediente extends Component {
    * Si hay errores en los inputs, muestra los mensajes de error
    */
   checkValid = () => {
-    if (!this.validator.allValid()) this.validator.showMessages();
+    !this.validator.allValid() && this.validator.showMessages();
   }
 
   /**
@@ -157,7 +157,10 @@ class NuevoTipoExpediente extends Component {
    * Si todas las validaciones son validas, entonces guarda, si no muestran los mensajes de errores
    */
   handleSaveClick = () => {
-    this.checkValid() & this.saveHead() && this.props.setShow(false);
+    if (this.checkValid()) {
+      this.saveHead();
+      this.handleClose();
+    }
   }
 
   render() {
@@ -215,8 +218,7 @@ class NuevoTipoExpediente extends Component {
           <button
             onClick={this.handleSaveClick}
             type="button"
-            className="btn btn-sm btn-primary"
-          >
+            className="btn btn-sm btn-primary">
             Guardar
           </button>
         </Modal.Footer>
