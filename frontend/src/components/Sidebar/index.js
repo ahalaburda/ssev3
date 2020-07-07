@@ -1,12 +1,7 @@
 import React, {Component} from 'react'
 import './Sidebar.css'
 import Logo from "./components/Logo";
-import Inicio from "./components/Inicio";
-import Graficos from "./components/Graficos";
-import Consultas from "./components/Consultas";
-import Reportes from "./components/Reportes";
-import TipoDeExpedientes from "./components/TipoDeExpedientes";
-import ObjetoDeGastos from "./components/ObjetoDeGastos";
+import Item from "./components/Item";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import $ from "jquery";
 
@@ -31,18 +26,25 @@ class Sidebar extends Component {
           <Logo toggleIcon={this.state.toggle}/>
           {/* Divider */}
           <hr className="sidebar-divider my-0"/>
+
           {/* Nav Item - Inicio */}
-          <Inicio/>
+          <Item link="/" icon="tachometer-alt" text="Inicio"/>
+
           {/* Nav Item - Graficos */}
-          <Graficos/>
+          <Item link="/graficos/" icon="chart-bar" text="Gráficos"/>
+
           {/* Nav Item - Consultas */}
-          <Consultas/>
+          <Item link="/consultas/" icon="search" text="Consultas"/>
+
           {/* Nav Item - Reportes */}
-          <Reportes/>
+          <Item link="/reportes/" icon="folder" text="Reportes"/>
+
           {/* Nav Item - Tipos de expedientes */}
-          <TipoDeExpedientes/>
-          {/* Nav Item - Tipos de expedientes */}
-          <ObjetoDeGastos/>
+          <Item link="/tipos_de_expedientes/" icon="chart-area" text="Tipos de Expedientes"/>
+
+          {/* Nav Item - Objetos de tastos */}
+          <Item link="/objetos_de_gastos/" icon="comment-dollar" text="Objetos de Gastos"/>
+
           <hr className="sidebar-divider d-none d-md-block"/>
           {/* Sidebar Toggler */}
           <div className="text-center">

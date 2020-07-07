@@ -2,15 +2,15 @@ import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Link} from "react-router-dom";
 
-function Graficos() {
+function Item(props) {
   return (
     <li className="nav-item">
-      <Link to='/graficos/' className='nav-link'>
-        <FontAwesomeIcon icon="chart-bar" size="sm"/>
-        <span>&nbsp;Graficos</span>
+      <Link to={props.link} className='nav-link'>
+        <FontAwesomeIcon icon={props.icon} size="sm"/>
+        <span>&nbsp;{props.text}</span>
       </Link>
     </li>
   );
 }
 
-export default Graficos;
+export default Item;
