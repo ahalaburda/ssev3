@@ -7,7 +7,7 @@ function TipoDeExpedientes() {
     <li className="nav-item">
       <Link to='/tipos_de_expedientes/' className="nav-link">
         <FontAwesomeIcon icon="chart-area" size="sm"/>
-        <span>&nbsp;Tipos de<br/>&emsp;&emsp;Expedientes</span>
+        <span>&nbsp;Tipos de Expedientes</span>
       </Link>
     </li>
   );

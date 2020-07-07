@@ -1,10 +1,12 @@
 import React from "react";
 import {Link} from "react-router-dom";
+import logo from "../../../sse_logo.svg";
+import minLogo from "../../../sse_logo_min.svg";
 
-function Logo() {
+function Logo(props) {
   return (
     <Link to='/' className="sidebar-brand d-flex align-content-center justify-content-center">
-      <div className="sidebar-brand-text mx-3">SSE <sup>3</sup></div>
+      {props.toggleIcon ? <img src={minLogo} alt="sse-min-logo"/> : <img src={logo} alt="sse-logo"/>}
     </Link>
   );
 }

@@ -7,7 +7,7 @@ function ObjetoDeGastos() {
     <li className="nav-item">
       <Link to="/objetos_de_gastos/" className="nav-link">
         <FontAwesomeIcon icon="comment-dollar" size="sm"/>
-        <span>&nbsp;Objetos de<br/>&emsp;&emsp;Gastos</span>
+        <span>&nbsp;Objetos de Gastos</span>
       </Link>
     </li>
   );
