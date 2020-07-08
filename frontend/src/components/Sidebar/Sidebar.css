@@ -1,7 +1,36 @@
-#sidebar-width {
+#sidebar {
+    width: 6.5rem !important;
+    transition: all 500ms;
+}
+
+.sidebar .sidebar-brand {
+    height: 6rem !important;
+}
+
+#sidebar .nav-item .nav-link span {
+    display: none;
+}
+
+#sidebar .nav-item .nav-link {
+    display: flex;
+    justify-content: center;
+}
+
+#sidebar.active {
     width: 9.5rem !important;
+}
+
+#sidebar.active .nav-item .nav-link {
+    display: flex;
+    justify-content: start;
+}
+
+#sidebar.active .nav-item .nav-link span {
+    display: inline;
+    animation: fadeIn ease 2s;
 }
 
 .sidebar .nav-item .nav-link {
     width: auto !important;
 }
+
