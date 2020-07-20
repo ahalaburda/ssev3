@@ -5,7 +5,7 @@ import Configuraciones from "./components/Configuraciones";
 import Notificaciones from "./components/Notificaciones";
 import UserInfo from "./components/UserInfo";
 
-function Header() {
+function Header(props) {
 	return (
 		<nav className="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 			{/* Sidebar Toggle (Topbar) */}
@@ -21,7 +21,7 @@ function Header() {
 				{/* Nav Divider */}
 				<div className="topbar-divider d-none d-sm-block"/>
 				{/* Nav Item - User Information */}
-				<UserInfo/>
+				<UserInfo username={props.username} logout={props.handleLogout}/>
 			</ul>
 		</nav>
 	);

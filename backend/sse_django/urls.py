@@ -23,6 +23,7 @@ urlpatterns = [
     path('api/', include('apps.expedientes.api.urls')),
     path('api/', include('apps.lotes.api.urls')),
     path('api/', include('apps.tipos_de_expedientes.api.urls')),
+    path('api/', include('apps.authentication.urls'))
 ]
 
 # from django.conf.urls import url, include
