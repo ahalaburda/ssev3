@@ -1,11 +1,10 @@
+# sobreescritura del serializer para que envie los datos del ususario (username y si es admin)
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
-class CustomTokenPairSerializer(TokenObtainPairSerializer):
-
-    @classmethod
-    def get_token(cls, user):
-        token = super(CustomTokenPairSerializer, cls).get_token(user)
-
-        token['username'] = user.username
-        return token
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super(CustomTokenObtainPairSerializer, self).validate(attrs)
+        data.update({'username': self.user.username})
+        data.update({'admin': self.user.is_superuser})
+        return data
