@@ -79,6 +79,7 @@ class NuevoTipoExpediente extends Component {
 
   /**
    * Si hay errores en los inputs, muestra los mensajes de error
+   * @returns {boolean} true si todos estan correctos, si no false
    */
   checkValid = () => {
     if (this.validator.allValid()) return true;
