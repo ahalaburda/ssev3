@@ -49,7 +49,7 @@ class Login extends Component {
 
   render() {
     return (
-      <div className="bg-gradient-primary">
+      <div className="bg-white">
         <div className="container">
           <div className="row justify-content-center">
             <div className="col-xl-5 col-lg-6 col-md-6">
