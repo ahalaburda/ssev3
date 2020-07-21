@@ -35,7 +35,7 @@ class App extends Component {
     super(props);
     this.state = {
       loggedIn: !!localStorage.getItem('access_token'),
-      username: localStorage.getItem('username')
+      username: localStorage.getItem('username') === null ? '' : localStorage.getItem('username')
     }
     this.handleLogin = this.handleLogin.bind(this);
     this.handleUserChange = this.handleUserChange.bind(this);
@@ -57,18 +57,19 @@ class App extends Component {
       password: data.password
     }).then(response => {
       if (response.status === 200 && response.statusText === 'OK') {
-        this.setState({
-          loggedIn: true,
-          username: data.username
-        });
         axiosBase.defaults.headers['Authorization'] = 'JWT ' + response.data.access;
         localStorage.setItem('access_token', response.data.access);
         localStorage.setItem('refresh_token', response.data.refresh);
         localStorage.setItem('username', data.username);
         Popups.success('Sesión iniciada correctamente.');
+        this.setState({
+          loggedIn: true,
+          username: data.username
+        });
       }
     }).catch(e => {
       Popups.error('Usuario o contraseña incorrectas.');
+
       console.log(e);
     })
   }
@@ -94,8 +95,12 @@ class App extends Component {
       if (response.status === 205) {
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
+        localStorage.removeItem('username');
         axiosBase.defaults.headers['Authorization'] = null;
-        this.setState({loggedIn: false});
+        this.setState({
+          loggedIn: false,
+          username: ''
+        });
         Popups.success('Sesion cerrada.')
       }
     }).catch(e => {
@@ -109,49 +114,35 @@ class App extends Component {
       faTachometerAlt, faCommentDollar, faFolder, faChartArea,
       faBars, faEye, faEdit, faTrashAlt,
       faCheck, faLessThan, faGreaterThan);
-
-    let page;
-    const homePage = (
-      <div id="wrapper">
-        <Sidebar/>
-        <div id="content-wrapper" className="d-flex flex-column">
-          <div id="content">
-            <Header username={this.state.username} handleLogout={this.handleLogout}/>
-            <div className="container-fluid">
-              <Route exact path='/' component={Expedientes}/>
-              <Route exact path='/graficos/' component={Graficos}/>
-              <Route exact path='/consultas/' component={Consultas}/>
-              <Route exact path='/reportes/' component={Reportes}/>
-              <Route exact path='/tipos_de_expedientes/' component={TiposDeExpedientes}/>
-              <Route exact path='/objetos_de_gastos/' component={ObjetosDeGastos}/>
-            </div>
-          </div>
-          <Footer/>
-        </div>
-      </div>);
-    const loginPage = <Login handleLogin={this.handleLogin} username={this.state.username} handleUserChange={this.handleUserChange}/>
-
-    //De acuerdo al estado redirige a la pagina de login o al homepage
-    switch (this.state.loggedIn) {
-      case true:
-        page =  homePage;
-        break;
-      case false:
-        page = loginPage;
-        break;
-      default:
-        page = loginPage;
-    }
-
+    //TODO error de computedMatch por tener el Redirect fuera del Switch
     return (
       <>
         <ReactNotification/>
         <Router>
-          <div className="App">
-            <Switch>
-              {page}
-            </Switch>
-          </div>
+          {this.state.loggedIn ? <Redirect to='/'/> : <Redirect to='/login'/>}
+          <Switch>
+            <div id="wrapper">
+              {this.state.loggedIn && <Sidebar/>}
+              <div id="content-wrapper" className="d-flex flex-column">
+                <div id="content">
+                  {this.state.loggedIn && <Header username={this.state.username} handleLogout={this.handleLogout}/>}
+                  <div className="container-fluid">
+                    <Route exact path='/' component={Expedientes}/>
+                    <Route exact path='/graficos/' component={Graficos}/>
+                    <Route exact path='/consultas/' component={Consultas}/>
+                    <Route exact path='/reportes/' component={Reportes}/>
+                    <Route exact path='/tipos_de_expedientes/' component={TiposDeExpedientes}/>
+                    <Route exact path='/objetos_de_gastos/' component={ObjetosDeGastos}/>
+                    <Route exact path='/login'>
+                      <Login handleLogin={this.handleLogin} username={this.state.username}
+                             handleUserChange={this.handleUserChange}/>
+                    </Route>
+                  </div>
+                </div>
+                <Footer/>
+              </div>
+            </div>
+          </Switch>
         </Router>
       </>
     );
