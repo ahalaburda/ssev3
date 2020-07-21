@@ -108,13 +108,13 @@ class ObjetoDeGasto extends Component {
                     console.log(e);
                 })
         } else {
-            Popups.error("No se encontró el tipo de expediente.");
+            Popups.error("No se encontró el objeto de gasto.");
         }
     }
 
     /**
      * Agrega el nuevo objeto de gasto a la tabla
-     * @param newItem Nuevo tipo de expediente
+     * @param newItem Nuevo objeto de gasto
      */
     addItem = newItem => {
         this.setState({
@@ -123,8 +123,8 @@ class ObjetoDeGasto extends Component {
     }
 
     /**
-     * Actualiza la tabla con el tipo de expediente modificado
-     * @param newItem Tipo de expediente modificado
+     * Actualiza la tabla con el objeto de gasto modificado
+     * @param newItem Objeto de gasto modificado
      */
     updateItem = newItem => {
         let newList = this.state.list;

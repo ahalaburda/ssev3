@@ -1,4 +1,3 @@
-import os
 from django.db import models
 from apps.dependencias.models import Dependencia
 
