@@ -114,11 +114,11 @@ class App extends Component {
       faTachometerAlt, faCommentDollar, faFolder, faChartArea,
       faBars, faEye, faEdit, faTrashAlt,
       faCheck, faLessThan, faGreaterThan);
+    //TODO error de computedMatch por tener el Redirect fuera del Switch
     return (
       <>
         <ReactNotification/>
         <Router>
-          //TODO error de computedMatch por tener el <Redirect/> fuera del <Switch/>
           {this.state.loggedIn ? <Redirect to='/'/> : <Redirect to='/login'/>}
           <Switch>
             <div id="wrapper">
