@@ -10,7 +10,7 @@ class Dependencia(models.Model):
         verbose_name_plural = "Dependencias"
 
     def __str__(self):
-        return str(self.id)+" - "+str(self.descripcion)
+        return str(self.descripcion)
 
 
 class Dependencia_por_usuario(models.Model):

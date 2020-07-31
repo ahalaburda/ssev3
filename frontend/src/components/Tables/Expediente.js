@@ -2,43 +2,86 @@ import React, {Component} from "react";
 import ExpedientesService from "../../services/Expedientes";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import DataTable from "react-data-table-component";
+import NuevoExpediente from "../Forms/NuevoExpediente";
 
+/**
+ * Tabla para expedientes
+ */
 class Expediente extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            expedientes: []
+            loading: false,
+            showNew: false,
+            showEdit: false,
+            list: []
         };
 
         this.retrieveExpedientes = this.retrieveExpedientes.bind(this);
+        this.setShowNew = this.setShowNew.bind(this);
     }
+    
     componentDidMount() {
         this.retrieveExpedientes();
     }
 
+    /**
+     * Obtener expedientes de la base de datos y cargarlos en la tabla
+     */
     retrieveExpedientes() {
-        ExpedientesService.getAll()
+        this.setState({loading: true});
+        ExpedientesService.getList()
             .then(response => {
-                console.log(response.data.results);
+                console.log(response.data)
                 this.setState({
-                    expedientes: response.data.results.map(exp => {
+                    list: response.data.map(exp => {
                         return {
                             id: exp.id,
                             numero: exp.numero_mesa_de_entrada + "/" + exp.anho,
                             fecha_me: "",
-                            origen: exp.dependencia_origen_id.descripcion,
-                            tipo: exp.tipo_de_expediente_id.descripcion,
+                            origen: exp.dependencia_origen_id,
+                            tipo: exp.tipo_de_expediente_id,
                             descripcion: exp.descripcion,
-                            estado: exp.estado_id.descripcion,
-                            dependencia: ""
+                            estado: this.getEstado(exp.estado_instancia),
+                            dependencia: exp.dependencia_actual_id
                         }
-                    })
+                    }),
+                    loading: false
                 });
             })
             .catch(e => {
                 console.log(e);
             });
 
+    }
+
+    /**
+     * Agrega el nuevo expediente a la tabla
+     * @param newItem Nuevo expediente
+     */
+    addItem = newItem => {
+        this.setState({
+            list: [...this.state.list, newItem]
+        });
+    }
+
+    /**
+     * Setear el estado 'showNew' para mostrar u ocultar el modal
+     */
+    setShowNew = show => {
+        this.setState({showNew: show});
+    }
+
+    getEstado(key){
+        let estados = new Map();
+        estados.set(1, "No Recibido");
+        estados.set(2, "Recibido");
+        estados.set(3, "Derivado");
+        estados.set(4, "Rechazado");
+        estados.set(5, "Finalizado");
+        estados.set(6, "Anulado");
+        estados.set(7, "Pausado");
+        return estados.get(key);
     }
 
     render() {
@@ -115,26 +158,32 @@ class Expediente extends Component {
         };
         return (
             <div>
-                <div className="d-sm-flex align-items-center mb-4">
-                    <h1 className="h3 mb-0 text-gray-800 mr-auto">Expedientes</h1>
-                    <div className="button-group">
-                        <a href="#" className="btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#newModal">
-                            <FontAwesomeIcon icon="plus" size="sm" className="text-white-50"/>&nbsp;Nuevo</a>
-                        <a href="#" className="btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#processModal">
-                            <FontAwesomeIcon icon="pencil-alt" size='sm' className="text-white-50"/>&nbsp;Procesar</a>
-                    </div>
+                <div className="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 className="h3 mb-0 text-gray-800">Expedientes</h1>
+                    <button className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
+                            onClick={() => this.setShowNew(true)}><FontAwesomeIcon icon="plus" size="sm"
+                                                                                   className="text-white-50"/>&nbsp;Nuevo
+                    </button>
                 </div>
                 <div>
+
+                    {/*Tabla de lista de expediente*/}
                     <DataTable
                         columns={columns}
-                        data={this.state.expedientes}
-                        defaultSortField="descripcion"
+                        data={this.state.list}
+                        defaultSortField="fecha me"
+                        progressPending={this.state.loading}
                         pagination
                         paginationComponentOptions={paginationOptions}
                         highlightOnHover={true}
                         noHeader={true}
                         dense={true}
                         className="table-responsive table-sm table-bordered"
+                    />
+                    <NuevoExpediente
+                        setShow={this.setShowNew}
+                        showModal={this.state.showNew}
+                        newItem={this.addItem}
                     />
                 </div>
             </div>
