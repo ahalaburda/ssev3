@@ -1,12 +1,11 @@
 from django_filters import rest_framework as filters
+from rest_framework.decorators import api_view
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from rest_framework.response import Response
 from rest_framework import viewsets
 
 from apps.expedientes.models import Expediente, Instancia, Comentario, Objeto_de_Gasto, Prioridad, Estado
-from .serializers import ExpedienteSerializer, ExpedienteNewUpdateSerializer, ExpedienteListSerializer, InstanciaSerializer, \
-    InstanciaNewUpdateSerializer, ComentarioSerializer, ComentarioNewUpdateSerializer, Objeto_de_GastoSerializer, \
-    PrioridadSerializer, EstadoSerializer
+from .serializers import *
 
 
 class ExpedienteFilter(filters.FilterSet):
@@ -17,7 +16,6 @@ class ExpedienteFilter(filters.FilterSet):
     fecha_creacion = filters.DateFromToRangeFilter(field_name='fecha_creacion')
     origen = filters.CharFilter(field_name='dependencia_origen_id__descripcion', lookup_expr='icontains')
     destino = filters.CharFilter(field_name='dependencia_destino_id__descripcion', lookup_expr='icontains')
-    
 
     class Meta:
         model = Expediente
@@ -35,6 +33,18 @@ class ExpedienteListView(ListCreateAPIView):
         return ExpedienteSerializer
 
 
+@api_view(['GET'])
+def expedienteDetail(request, pk):
+    expediente = Expediente.objects.raw(
+        'SELECT ee.*, ei.estado_id, ei.dependencia_actual_id  ' 
+        'from expedientes_expediente ee '
+        'inner join expedientes_instancia ei on ? = ei.expediente_id', pk
+    )
+    serializer = ExpedienteWithInstanciaSerializer(expediente, many=False)
+    return Response(serializer.data)
+
+
+# sin utilizar por ahora (no se puede editar ni eliminar el expediente)
 class ExpedienteDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Expediente.objects.all()
 
@@ -45,17 +55,23 @@ class ExpedienteDetailView(RetrieveUpdateDestroyAPIView):
             return ExpedienteNewUpdateSerializer
         return ExpedienteSerializer
 
+
+# traer todos los expedientes de acuerdo al usuario y a la dependencia en la que esta
 class ExpedienteDetail(ListCreateAPIView):
-    queryset = Expediente.objects.raw('SELECT expedientes_expediente.id, tipo_de_expediente_id, MAX(expedientes_instancia.id) as instancia_id, '
-                                      'expedientes_instancia.estado_id as estado_instancia, expedientes_expediente.descripcion,'
-                                      'numero_mesa_de_entrada, anho, monto_currency, monto, expedientes_expediente.fecha_creacion, fecha_actualizacion, '
-                                      'dependencia_destino_id, dependencia_origen_id, dependencia_actual_id, lote_id, objeto_de_gasto_id, prioridad_id '
-                                      'FROM expedientes_expediente '
-                                      'INNER JOIN expedientes_instancia on expedientes_expediente.id = expedientes_instancia.expediente_id '
-                                      'INNER JOIN expedientes_estado on expedientes_estado.id = expedientes_instancia.estado_id '
-                                      'INNER JOIN (SELECT dependencia_id FROM `dependencias_dependencia_por_usuario` as dpu INNER JOIN auth_user on dpu.usuario_id = auth_user.id WHERE auth_user.id = 3) as dpu on dpu.dependencia_id = expedientes_instancia.dependencia_actual_id '
-                                      'WHERE expedientes_instancia.estado_id = 1 or expedientes_instancia.estado_id = 2 '
-                                      'GROUP BY expedientes_expediente.id, expedientes_instancia.id')
+    queryset = Expediente.objects.raw(
+        'SELECT expedientes_expediente.id, tipo_de_expediente_id, MAX(expedientes_instancia.id) as instancia_id, '
+        'expedientes_instancia.estado_id as estado_instancia, expedientes_expediente.descripcion,'
+        'numero_mesa_de_entrada, anho, monto_currency, monto, expedientes_expediente.fecha_creacion, '
+        'fecha_actualizacion, dependencia_destino_id, dependencia_origen_id, dependencia_actual_id, lote_id, '
+        'objeto_de_gasto_id, prioridad_id '
+        'FROM expedientes_expediente '
+        'INNER JOIN expedientes_instancia on expedientes_expediente.id = expedientes_instancia.expediente_id '
+        'INNER JOIN expedientes_estado on expedientes_estado.id = expedientes_instancia.estado_id '
+        'INNER JOIN (SELECT dependencia_id FROM `dependencias_dependencia_por_usuario` as dpu INNER JOIN auth_user on '
+        'dpu.usuario_id = auth_user.id WHERE auth_user.id = 1) as dpu on dpu.dependencia_id = '
+        'expedientes_instancia.dependencia_actual_id '
+        'WHERE expedientes_instancia.estado_id = 1 or expedientes_instancia.estado_id = 2 '
+        'GROUP BY expedientes_expediente.id, expedientes_instancia.id')
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = ExpedienteFilter
 
@@ -70,6 +86,7 @@ class ExpedienteDetail(ListCreateAPIView):
         if self.request.method in ['POST']:
             return ExpedienteNewUpdateSerializer
         return ExpedienteSerializer
+
 
 class InstanciaFilter(filters.FilterSet):
     expediente_descripcion = filters.CharFilter(field_name='expediente_id__descripcion', lookup_expr='icontains')
