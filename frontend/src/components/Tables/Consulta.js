@@ -1,6 +1,8 @@
 import React, {Component} from "react";
 import DataTable from "react-data-table-component";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import Badge from "react-bootstrap";
+import useWrappedRefWithWarning from "react-bootstrap/cjs/useWrappedRefWithWarning";
 
 class Consulta extends Component {
   constructor(props) {
@@ -15,8 +17,7 @@ class Consulta extends Component {
   }
 
   render() {
-    //fila temporal
-    const temp_data = [
+    const tempData = [
       {
         id: '12343',
         numero: '3324',
@@ -63,7 +64,23 @@ class Consulta extends Component {
       {
         name: 'Estado',
         selector: 'estado',
-        grow: -1
+        grow: -1,
+        cell: row => {
+          switch (row.estado) {
+            case "Recibido":
+              return <div className="badge badge-success">{row.estado}</div>
+            case "No Recibido":
+              return <div className="badge badge-warning">{row.estado}</div>
+            case "Derivado":
+              return <div className="badge badge-primary">{row.estado}</div>
+            case "Rechazado":
+              return <div className="badge badge-danger">{row.estado}</div>
+            case "Finalizado":
+              return <div className="badge badge-secondary">{row.estado}</div>
+            default:
+              return <div className="badge badge-primary">{row.estado}</div>
+          }
+        }
       },
       {
         name: 'Dependencia Actual',
