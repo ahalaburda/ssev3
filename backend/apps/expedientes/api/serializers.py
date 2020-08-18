@@ -22,13 +22,13 @@ class ExpedienteSerializer(serializers.ModelSerializer):
         depth = 2
 
 
-class ExpedienteWithInstanciaSerializer(serializers.ModelSerializer):
-    dependencia_actual_id = serializers.SerializerMethodField()
-    estado_id = serializers.SerializerMethodField()
+class ExpedienteByIdSerializer(serializers.ModelSerializer):
+    dependencia_actual = serializers.SerializerMethodField()
+    estado_instancia = serializers.SerializerMethodField()
 
     class Meta:
         model = Expediente
-        fields = ('dependencia_actual_id', 'estado_id')
+        fields = ('dependencia_actual', 'estado_instancia')
 
 
 # expedientes por dependencia y usuario

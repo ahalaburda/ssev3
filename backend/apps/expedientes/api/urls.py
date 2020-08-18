@@ -3,7 +3,7 @@ from .views import *
 
 urlpatterns = [
     path('expedientes/', ExpedienteListView.as_view()),
-    path('expedientes/<pk>', expedienteDetail, name='expediente-detail'),
+    path('expedientes/<pk>', expedienteById, name='expediente_by_id'),
     path('expedientes_detalle/', ExpedienteDetail.as_view()),
     path('instancias/', InstanciaListView.as_view()),
     path('instancias/<pk>', InstanciaDetailView.as_view()),

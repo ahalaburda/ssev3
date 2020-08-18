@@ -1,7 +1,8 @@
 from django_filters import rest_framework as filters
 from rest_framework.decorators import api_view
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
+from rest_framework import status
 from rest_framework import viewsets
 
 from apps.expedientes.models import Expediente, Instancia, Comentario, Objeto_de_Gasto, Prioridad, Estado
@@ -34,14 +35,21 @@ class ExpedienteListView(ListCreateAPIView):
 
 
 @api_view(['GET'])
-def expedienteDetail(request, pk):
-    expediente = Expediente.objects.raw(
-        'SELECT ee.*, ei.estado_id, ei.dependencia_actual_id  ' 
-        'from expedientes_expediente ee '
-        'inner join expedientes_instancia ei on ? = ei.expediente_id', pk
-    )
-    serializer = ExpedienteWithInstanciaSerializer(expediente, many=False)
-    return Response(serializer.data)
+def expedienteById(request, pk):
+    try:
+        expediente = Expediente.objects.raw(
+            'SELECT ee.id, ee.numero_mesa_de_entrada, ee.fecha_actualizacion, ee.dependencia_origen_id, '
+            'ee.dependencia_destino_id, ee.descripcion, ei.estado_id as estado_instancia, '
+            'ei.dependencia_actual_id as dependencia_actual '
+            'from expedientes_expediente ee '
+            'inner join expedientes_instancia ei on ee.id = ei.expediente_id '
+            'where ee.id = %i '
+            'order by ei.id desc limit 1 ', pk
+        )
+    except Expediente.DoesNotExist:
+        return Response({'Expediente no existe.'}, status=status.HTTP_204_NO_CONTENT)
+    expediente_serializer = ExpedienteByIdSerializer(expediente)
+    return Response(expediente_serializer.data)
 
 
 # sin utilizar por ahora (no se puede editar ni eliminar el expediente)
