@@ -39,16 +39,15 @@ def expedienteById(request, pk):
     try:
         expediente = Expediente.objects.raw(
             'SELECT ee.id, ee.numero_mesa_de_entrada, ee.fecha_actualizacion, ee.dependencia_origen_id, '
-            'ee.dependencia_destino_id, ee.descripcion, ei.estado_id as estado_instancia, '
-            'ei.dependencia_actual_id as dependencia_actual '
+            'ee.dependencia_destino_id, ee.descripcion, ei.estado_id, ei.dependencia_actual_id '
             'from expedientes_expediente ee '
             'inner join expedientes_instancia ei on ee.id = ei.expediente_id '
-            'where ee.id = %i '
-            'order by ei.id desc limit 1 ', pk
+            'where ee.id = %s '
+            'order by ei.id desc limit 1 ', [pk]
         )
     except Expediente.DoesNotExist:
         return Response({'Expediente no existe.'}, status=status.HTTP_204_NO_CONTENT)
-    expediente_serializer = ExpedienteByIdSerializer(expediente)
+    expediente_serializer = ExpedienteByIdSerializer(expediente[0])  # sacar el primero
     return Response(expediente_serializer.data)
 
 
