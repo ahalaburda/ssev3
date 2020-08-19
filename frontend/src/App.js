@@ -19,7 +19,7 @@ import {
   faSignOutAlt, faChartBar, faPlus, faPencilAlt,
   faCommentDollar, faFolder, faChartArea, faTachometerAlt,
   faBars, faEye, faEdit, faTrashAlt,
-  faCheck, faLessThan, faGreaterThan
+  faCheck, faLessThan, faGreaterThan, faPrint
 } from '@fortawesome/free-solid-svg-icons';
 import {
   BrowserRouter as Router,
@@ -113,7 +113,7 @@ class App extends Component {
       faSignOutAlt, faChartBar, faPlus, faPencilAlt,
       faTachometerAlt, faCommentDollar, faFolder, faChartArea,
       faBars, faEye, faEdit, faTrashAlt,
-      faCheck, faLessThan, faGreaterThan);
+      faCheck, faLessThan, faGreaterThan, faPrint);
     //TODO error de computedMatch por tener el Redirect fuera del Switch
     return (
       <>

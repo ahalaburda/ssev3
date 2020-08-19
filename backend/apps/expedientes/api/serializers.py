@@ -7,6 +7,7 @@ class Objeto_de_GastoSerializer(serializers.ModelSerializer):
         model = Objeto_de_Gasto
         fields = '__all__'
 
+
 class InstanciaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Instancia
@@ -21,8 +22,19 @@ class ExpedienteSerializer(serializers.ModelSerializer):
         depth = 2
 
 
-class ExpedienteListSerializer(serializers.Serializer):
+class ExpedienteByIdSerializer(serializers.ModelSerializer):
+    dependencia_actual_id = serializers.IntegerField(required=True)
+    estado_id = serializers.CharField(required=True)
 
+    class Meta:
+        model = Expediente
+        fields = ['id', 'numero_mesa_de_entrada', 'fecha_actualizacion', 'dependencia_origen_id',
+                  'dependencia_destino_id', 'descripcion', 'estado_id', 'dependencia_actual_id']
+        depth = 1
+
+
+# expedientes por dependencia y usuario
+class ExpedienteListSerializer(serializers.Serializer):
     id = serializers.IntegerField(required=True)
     instancia_id = serializers.IntegerField(required=True)
     estado_instancia = serializers.IntegerField(required=True)
@@ -41,13 +53,12 @@ class ExpedienteListSerializer(serializers.Serializer):
     prioridad_id = serializers.CharField(required=True)
     dependencia_actual_id = serializers.CharField(required=True)
 
-
     class Meta:
         fields = ('id', 'instancia_id', 'estado_instancia')
-        #fields = (
-        #'id', 'numero_mesa_de_entrada', 'anho', 'descripcion', 'monto_currency', 'monto', 'fecha_creacion',
-        #'fecha_actualizacion', 'tipo_de_expediente_id', 'dependencia_origen_id', 'dependencia_destino_id',
-        #'objeto_de_gasto_id', 'estado_id', 'prioridad_id', 'instancias')
+        # fields = (
+        # 'id', 'numero_mesa_de_entrada', 'anho', 'descripcion', 'monto_currency', 'monto', 'fecha_creacion',
+        # 'fecha_actualizacion', 'tipo_de_expediente_id', 'dependencia_origen_id', 'dependencia_destino_id',
+        # 'objeto_de_gasto_id', 'estado_id', 'prioridad_id', 'instancias')
 
 
 class ExpedienteNewUpdateSerializer(serializers.ModelSerializer):
@@ -56,14 +67,10 @@ class ExpedienteNewUpdateSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-
 class EstadoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Estado
         fields = '__all__'
-
-
-
 
 
 class InstanciaNewUpdateSerializer(serializers.ModelSerializer):
