@@ -4,7 +4,7 @@ import ExpedienteService from "../../services/Expedientes";
 import DependenciaService from "../../services/Dependencias";
 import Popups from "../../components/Popups";
 import {Tabs, Tab} from "react-bootstrap";
-import warnAboutDeprecatedESMImport from "react-router-dom/es/warnAboutDeprecatedESMImport";
+import moment from "moment";
 
 class Consultas extends Component {
   constructor(props) {
@@ -56,7 +56,7 @@ class Consultas extends Component {
                   data: [{
                     id: expediente.id,
                     numero: expediente.numero_mesa_de_entrada,
-                    fechaMe: expediente.fecha_actualizacion,
+                    fechaMe: moment(expediente.fecha_actualizacion).format('DD-MM-YYYY kk:mm:ss'),
                     descripcion: expediente.descripcion,
                     origen: expediente.dependencia_origen_id.descripcion,
                     destino: expediente.dependencia_destino_id.descripcion,

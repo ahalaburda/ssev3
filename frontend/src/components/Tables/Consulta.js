@@ -42,7 +42,8 @@ class Consulta extends Component {
       },
       {
         name: 'Fecha Me',
-        selector: 'fechaMe'
+        selector: 'fechaMe',
+        wrap: true
       },
       {
         name: 'Origen',
@@ -90,9 +91,6 @@ class Consulta extends Component {
         name: 'Acciones',
         cell: () =>
           <div>
-            <button className="btn btn-sm btn-link text-primary">
-              <FontAwesomeIcon icon="eye"/>
-            </button>
             <button className="btn btn-sm btn-link text-primary">
               <FontAwesomeIcon icon="print"/>
             </button>
