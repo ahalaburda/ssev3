@@ -8,6 +8,10 @@ class Expedientes {
   getList() {
     return http.get('/expedientes_detalle/?format=json');
   }
+
+  getById(id) {
+    return http.get(`/expedientes/${id}?format=json`);
+  }
 }
 
 export default new Expedientes;

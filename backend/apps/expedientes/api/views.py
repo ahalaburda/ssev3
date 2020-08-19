@@ -1,11 +1,9 @@
 from django_filters import rest_framework as filters
 from rest_framework.decorators import api_view
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView, RetrieveAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework import viewsets
 
-from apps.expedientes.models import Expediente, Instancia, Comentario, Objeto_de_Gasto, Prioridad, Estado
 from .serializers import *
 
 
@@ -36,6 +34,12 @@ class ExpedienteListView(ListCreateAPIView):
 
 @api_view(['GET'])
 def expedienteById(request, pk):
+    """
+    Traer un expediente con su dependencia actual de acuerdo a un ID
+    :param request
+    :param pk: ID
+    :return: Expediente
+    """
     try:
         expediente = Expediente.objects.raw(
             'SELECT ee.id, ee.numero_mesa_de_entrada, ee.fecha_actualizacion, ee.dependencia_origen_id, '

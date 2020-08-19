@@ -1,8 +1,6 @@
 import React, {Component} from "react";
 import DataTable from "react-data-table-component";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import Badge from "react-bootstrap";
-import useWrappedRefWithWarning from "react-bootstrap/cjs/useWrappedRefWithWarning";
 
 class Consulta extends Component {
   constructor(props) {
@@ -29,6 +27,7 @@ class Consulta extends Component {
         estado: 'No recibido'
       }
     ]
+    //TODO formatear la fecha
     const columns = [
       {
         name: 'ID',
@@ -43,7 +42,7 @@ class Consulta extends Component {
       },
       {
         name: 'Fecha Me',
-        selector: 'fechaMe',
+        selector: 'fechaMe'
       },
       {
         name: 'Origen',

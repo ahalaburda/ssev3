@@ -1,7 +1,10 @@
 import React, {Component} from "react";
 import Consulta from "../../components/Tables/Consulta";
-import ConsultaService from "../../services/Consultas";
+import ExpedienteService from "../../services/Expedientes";
+import DependenciaService from "../../services/Dependencias";
+import Popups from "../../components/Popups";
 import {Tabs, Tab} from "react-bootstrap";
+import warnAboutDeprecatedESMImport from "react-router-dom/es/warnAboutDeprecatedESMImport";
 
 class Consultas extends Component {
   constructor(props) {
@@ -38,29 +41,49 @@ class Consultas extends Component {
   }
 
   findById = id => {
-    //TODO verificar fechaMe y dependencia actual
-    ConsultaService.getById(id)
+    //TODO verificar fechaMe
+    let expediente;
+    ExpedienteService.getById(id)
       .then(response => {
-        this.setState({
-          data: [{
-            id: response.data.id,
-            numero: response.data.numero_mesa_de_entrada,
-            fechaMe: response.data.fecha_actualizacion,
-            origen: response.data.dependencia_origen_id.descripcion,
-            destino: response.data.dependencia_destino_id.descripcion,
-            descripcion: response.data.descripcion,
-            estado: response.data.estado_id.descripcion,
-            dependenciaActual: ''
-          }]
-        })
+        if (response.status === 200 && response.statusText === 'OK') {
+          expediente = response.data;
+          DependenciaService.getById(expediente.dependencia_actual_id)
+            .then(response => {
+              if (response.status === 200 && response.statusText === 'OK') {
+                // se reemplaza el ID de la dependencia actual por la descripcion de esa dependencia
+                expediente.dependencia_actual_id = response.data.descripcion;
+                this.setState({
+                  data: [{
+                    id: expediente.id,
+                    numero: expediente.numero_mesa_de_entrada,
+                    fechaMe: expediente.fecha_actualizacion,
+                    descripcion: expediente.descripcion,
+                    origen: expediente.dependencia_origen_id.descripcion,
+                    destino: expediente.dependencia_destino_id.descripcion,
+                    dependenciaActual: expediente.dependencia_actual_id,
+                    estado: expediente.estado_id
+                  }]
+                });
+                Popups.success('Expediente encontrado.');
+              } else {
+                Popups.error('Ocurrio un error durante la busqueda.');
+              }
+            })
+            .catch(e => {
+              console.log(`Error findById: DependenciaService\n${e}`);
+            })
+        } else if (response.status === 404) {
+          Popups.error('Expediente no encontrado.');
+        } else {
+          Popups.error('Ocurrio un error durante la busqueda.');
+        }
       })
       .catch(e => {
-        console.log(e);
-      })
+        console.log(`Error findById: ExpedienteService\n${e}`);
+      });
   }
 
   handleIdSearch = () => {
-    //check valid
     this.findById(this.state.id);
   }
 
@@ -87,7 +110,8 @@ class Consultas extends Component {
                   <button
                     className="btn btn-sm btn-primary"
                     onClick={this.handleIdSearch}
-                  > Buscar</button>
+                  > Buscar
+                  </button>
                 </div>
               </div>
             </div>
