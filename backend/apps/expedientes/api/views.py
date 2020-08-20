@@ -43,9 +43,10 @@ def expedienteById(request, pk):
     try:
         expediente = Expediente.objects.raw(
             'SELECT ee.id, ee.numero_mesa_de_entrada, ee.fecha_actualizacion, ee.dependencia_origen_id, '
-            'ee.dependencia_destino_id, ee.descripcion, ei.estado_id, ei.dependencia_actual_id '
+            'ee.dependencia_destino_id, ee.descripcion, ei.estado_id, dd.descripcion as dependencia_actual '
             'from expedientes_expediente ee '
             'inner join expedientes_instancia ei on ee.id = ei.expediente_id '
+            'inner join dependencias_dependencia dd on ei.dependencia_actual_id = dd.id '
             'where ee.id = %s '
             'order by ei.id desc limit 1 ', [pk]
         )

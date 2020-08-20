@@ -1,7 +1,6 @@
 import React, {Component} from "react";
 import Consulta from "../../components/Tables/Consulta";
 import ExpedienteService from "../../services/Expedientes";
-import DependenciaService from "../../services/Dependencias";
 import Popups from "../../components/Popups";
 import {Tabs, Tab} from "react-bootstrap";
 import moment from "moment";
@@ -42,36 +41,21 @@ class Consultas extends Component {
 
   findById = id => {
     //TODO verificar fechaMe
-    let expediente;
     ExpedienteService.getById(id)
       .then(response => {
         if (response.status === 200 && response.statusText === 'OK') {
-          expediente = response.data;
-          DependenciaService.getById(expediente.dependencia_actual_id)
-            .then(response => {
-              if (response.status === 200 && response.statusText === 'OK') {
-                // se reemplaza el ID de la dependencia actual por la descripcion de esa dependencia
-                expediente.dependencia_actual_id = response.data.descripcion;
-                this.setState({
-                  data: [{
-                    id: expediente.id,
-                    numero: expediente.numero_mesa_de_entrada,
-                    fechaMe: moment(expediente.fecha_actualizacion).format('DD-MM-YYYY kk:mm:ss'),
-                    descripcion: expediente.descripcion,
-                    origen: expediente.dependencia_origen_id.descripcion,
-                    destino: expediente.dependencia_destino_id.descripcion,
-                    dependenciaActual: expediente.dependencia_actual_id,
-                    estado: expediente.estado_id
-                  }]
-                });
-                Popups.success('Expediente encontrado.');
-              } else {
-                Popups.error('Ocurrio un error durante la busqueda.');
-              }
-            })
-            .catch(e => {
-              console.log(`Error findById: DependenciaService\n${e}`);
-            })
+          this.setState({
+            data: [{
+              id: response.data.id,
+              numero: response.data.numero_mesa_de_entrada,
+              fechaMe: moment(response.data.fecha_actualizacion).format('DD-MM-YYYY kk:mm:ss'),
+              descripcion: response.data.descripcion,
+              origen: response.data.dependencia_origen_id.descripcion,
+              destino: response.data.dependencia_destino_id.descripcion,
+              dependenciaActual: response.data.dependencia_actual,
+              estado: response.data.estado_id
+            }]
+          });
         } else if (response.status === 404) {
           Popups.error('Expediente no encontrado.');
         } else {
