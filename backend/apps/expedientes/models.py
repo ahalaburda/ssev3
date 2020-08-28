@@ -43,16 +43,24 @@ class Expediente(models.Model):
     numero_mesa_de_entrada = models.IntegerField(blank=True, null=True)
     anho = models.IntegerField(blank=True, null=True)
     descripcion = models.TextField(blank=False, null=False, max_length=300)
-    tipo_de_expediente_id = models.ForeignKey(Tipo_de_expediente, db_column='tipo_de_expediente_id',  null=False, blank=False, on_delete=models.CASCADE)
-    dependencia_origen_id = models.ForeignKey(Dependencia, db_column='dependencia_origen_id', related_name='dependencia_origen', null=False, blank=False,
+    tipo_de_expediente_id = models.ForeignKey(Tipo_de_expediente, db_column='tipo_de_expediente_id',  null=False,
+                                              blank=False, on_delete=models.CASCADE)
+    dependencia_origen_id = models.ForeignKey(Dependencia, db_column='dependencia_origen_id',
+                                              related_name='dependencia_origen', null=False, blank=False,
                                               on_delete=models.CASCADE)
-    dependencia_destino_id = models.ForeignKey(Dependencia, db_column='dependencia_destino_id', related_name='dependencia_destino', null=False, blank=False,
+    dependencia_actual_id = models.ForeignKey(Dependencia, db_column='dependencia_actual_id',
+                                              related_name='dependencia_actual', null=False, blank=False,
+                                              on_delete=models.CASCADE)
+    dependencia_destino_id = models.ForeignKey(Dependencia, db_column='dependencia_destino_id',
+                                               related_name='dependencia_destino', null=False, blank=False,
                                                on_delete=models.CASCADE)
     monto = MoneyField(max_digits=15, decimal_places=0, null=True, default_currency='PYG')
-    objeto_de_gasto_id = models.ForeignKey(Objeto_de_Gasto, db_column='objeto_de_gasto_id',  null=True, blank=True, on_delete=models.CASCADE)
-    estado_id = models.ForeignKey(Estado, db_column='estado_id',  related_name='estado_id', null=False, blank=False, on_delete=models.CASCADE)
-    prioridad_id = models.ForeignKey(Prioridad, db_column='prioridad_id',  related_name='prioridad', null=False, blank=False,
-                                     on_delete=models.CASCADE)
+    objeto_de_gasto_id = models.ForeignKey(Objeto_de_Gasto, db_column='objeto_de_gasto_id',  null=True, blank=True,
+                                           on_delete=models.CASCADE)
+    estado_id = models.ForeignKey(Estado, db_column='estado_id',  related_name='estado_id', null=False, blank=False,
+                                  on_delete=models.CASCADE)
+    prioridad_id = models.ForeignKey(Prioridad, db_column='prioridad_id',  related_name='prioridad', null=False,
+                                     blank=False, on_delete=models.CASCADE)
     lote_id = models.ForeignKey(Lote, db_column='lote_id', null=True, blank=True, on_delete=models.CASCADE)
     fecha_creacion = models.DateTimeField(auto_now_add=True, blank=True)
     fecha_actualizacion = models.DateTimeField(auto_now=True, blank=True)
