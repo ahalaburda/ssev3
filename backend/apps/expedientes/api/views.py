@@ -26,6 +26,21 @@ class ExpedienteListView(ListCreateAPIView):
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = ExpedienteFilter
 
+    # def get_queryset(self):
+    #     inst_max = Instancia.objects.filter(
+    #         id__in=RawSQL('select max(id) from expedientes_instancia group by expediente_id ', ()))
+    #     exp_with_dep_actual = Expediente.objects.filter(expediente__instancia=inst_max)
+    # return Expediente.objects.filter(id__in=RawSQL(
+    #     'select ee.id, ee.numero_mesa_de_entrada, ee.fecha_actualizacion, ee.dependencia_origen_id, '
+    #     'ee.dependencia_destino_id, ee.descripcion, e.estado_id, dd.descripcion as dependencia_actual '
+    #     'from expedientes_expediente ee '
+    #     'inner join ('
+    #     'select MAX(id) as id, expediente_id from expedientes_instancia group by expediente_id'
+    #     ') as i on i.expediente_id = ee.id '
+    #     'inner join expedientes_instancia ei on ei.id = i.id '
+    #     'inner join dependencias_dependencia dd on ei.dependencia_actual = dd.id ', ()
+    # ))
+
     def get_serializer_class(self):
         if self.request.method in ['POST']:
             return ExpedienteNewUpdateSerializer
