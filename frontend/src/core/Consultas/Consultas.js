@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import Consulta from "../../components/Tables/Consulta";
-import ExpedienteService from "../../services/Expedientes";
+import InstanciaService from "../../services/Instancias";
 import Popups from "../../components/Popups";
 import {Tabs, Tab} from "react-bootstrap";
 import moment from "moment";
@@ -21,8 +21,13 @@ class Consultas extends Component {
     this.handleYearChange = this.handleYearChange.bind(this);
     this.findById = this.findById.bind(this);
     this.handleIdSearch = this.handleIdSearch.bind(this);
+    this.setStateFromResponse = this.setStateFromResponse.bind(this);
+    this.findByDescription = this.findByDescription.bind(this);
+    this.handleDescriptionSearch = this.handleDescriptionSearch.bind(this);
+    this.findByYearNum = this.findByYearNum.bind(this);
+    this.handleYearNumSearch = this.handleYearNumSearch.bind(this);
   }
-
+  //TODO unificar la forma en que se setea el estado y controlar el tamanho del arreglo que devuelve response.data.result
   handleIdChange = e => {
     this.setState({id: e.target.value});
   }
@@ -40,20 +45,20 @@ class Consultas extends Component {
   }
 
   findById = id => {
-    //TODO verificar fechaMe
-    ExpedienteService.getById(id)
+    //TODO verificar fechaMe y si al tomar el primer elemento, asegurarse de que si haya algo en ese arreglo
+    InstanciaService.getByExpedienteId(id)
       .then(response => {
         if (response.status === 200 && response.statusText === 'OK') {
           this.setState({
             data: [{
-              id: response.data.id,
-              numero: response.data.numero_mesa_de_entrada,
-              fechaMe: moment(response.data.fecha_actualizacion).format('DD-MM-YYYY kk:mm:ss'),
-              descripcion: response.data.descripcion,
-              origen: response.data.dependencia_origen_id.descripcion,
-              destino: response.data.dependencia_destino_id.descripcion,
-              dependenciaActual: response.data.dependencia_actual,
-              estado: response.data.estado_id
+              id: response.data.results[0].expediente_id.id,
+              numero: response.data.results[0].expediente_id.numero_mesa_de_entrada,
+              fechaMe: moment(response.data.results[0].expediente_id.fecha_actualizacion).format('DD-MM-YYYY kk:mm:ss'),
+              descripcion: response.data.results[0].expediente_id.descripcion,
+              origen: response.data.results[0].expediente_id.dependencia_origen_id.descripcion,
+              destino: response.data.results[0].expediente_id.dependencia_destino_id.descripcion,
+              dependenciaActual: response.data.results[0].dependencia_actual_id.descripcion,
+              estado: response.data.results[0].estado_id.descripcion
             }]
           });
         } else if (response.status === 404) {
@@ -63,12 +68,69 @@ class Consultas extends Component {
         }
       })
       .catch(e => {
-        console.log(`Error findById: ExpedienteService\n${e}`);
+        console.log(`Error findByExpedienteId: InstanciaService\n${e}`);
       });
   }
 
   handleIdSearch = () => {
     this.findById(this.state.id);
+  }
+
+  setStateFromResponse = response => {
+    this.setState({
+      data: response.data.results.map(ie => {
+        return {
+          id: ie.expediente_id.id,
+          numero: ie.expediente_id.numero_mesa_de_entrada,
+          fechaMe: moment(ie.expediente_id.fecha_actualizacion).format('DD-MM-YYYY kk:mm:ss'),
+          descripcion: ie.expediente_id.descripcion,
+          origen: ie.expediente_id.dependencia_origen_id.descripcion,
+          destino: ie.expediente_id.dependencia_destino_id.descripcion,
+          dependenciaActual: ie.dependencia_actual_id.descripcion,
+          estado: ie.estado_id.descripcion
+        }
+      })
+    });
+  }
+
+  findByDescription = description => {
+    InstanciaService.getByExpDescription(description)
+      .then(response => {
+        if (response.status === 200 && response.statusText === 'OK') {
+          this.setStateFromResponse(response);
+        } else if (response.status === 404) {
+          Popups.error('Descripción no encontrada.');
+        } else {
+          Popups.error('Ocurrio un error durante la busqueda.');
+        }
+      })
+      .catch(e => {
+        console.log(`Error findByExpDescription: InstanciaService\n${e}`);
+      });
+  }
+
+  handleDescriptionSearch = () => {
+    this.findByDescription(this.state.description);
+  }
+
+  findByYearNum = (year, num) => {
+    InstanciaService.getByExpYearNum(year, num)
+      .then(response => {
+        if (response.status === 200 && response.statusText === 'OK') {
+          this.setStateFromResponse(response);
+        } else if (response.status === 404) {
+          Popups.error('Año o número de mesa no encontrados.');
+        } else {
+          Popups.error('Ocurrio un error durante la busqueda.');
+        }
+      })
+      .catch(e => {
+        console.log(`Error findByExpYearNum: InstanciaService\n${e}`);
+      })
+  }
+
+  handleYearNumSearch = () => {
+    this.findByYearNum(this.state.year, this.state.num);
   }
 
   render() {
@@ -112,7 +174,10 @@ class Consultas extends Component {
                   />
                 </div>
                 <div className="col text-center">
-                  <button className="btn btn-sm btn-primary"> Buscar</button>
+                  <button
+                    className="btn btn-sm btn-primary"
+                    onClick={this.handleDescriptionSearch}
+                  > Buscar</button>
                 </div>
               </div>
             </div>
@@ -130,7 +195,10 @@ class Consultas extends Component {
                   />
                 </div>
                 <div className="col text-center">
-                  <button className="btn btn-sm btn-primary"> Buscar</button>
+                  <button
+                    className="btn btn-sm btn-primary"
+                    onClick={this.handleYearNumSearch}
+                  > Buscar</button>
                 </div>
               </div>
               <div className="form-group row">

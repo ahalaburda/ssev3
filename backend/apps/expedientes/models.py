@@ -48,9 +48,6 @@ class Expediente(models.Model):
     dependencia_origen_id = models.ForeignKey(Dependencia, db_column='dependencia_origen_id',
                                               related_name='dependencia_origen', null=False, blank=False,
                                               on_delete=models.CASCADE)
-    dependencia_actual_id = models.ForeignKey(Dependencia, db_column='dependencia_actual_id',
-                                              related_name='dependencia_actual', null=False, blank=False,
-                                              on_delete=models.CASCADE)
     dependencia_destino_id = models.ForeignKey(Dependencia, db_column='dependencia_destino_id',
                                                related_name='dependencia_destino', null=False, blank=False,
                                                on_delete=models.CASCADE)
@@ -79,15 +76,19 @@ class Expediente(models.Model):
 
 
 class Instancia(models.Model):
-    expediente_id = models.ForeignKey(Expediente, db_column='expediente_id', related_name='expediente', null=False, blank=False,
-                                      on_delete=models.CASCADE)
-    dependencia_anterior_id = models.ForeignKey(Dependencia, db_column='dependencia_anterior_id', related_name='instancia_anterior', null=True, blank=True,
+    expediente_id = models.ForeignKey(Expediente, db_column='expediente_id', related_name='expediente', null=False,
+                                      blank=False, on_delete=models.CASCADE)
+    dependencia_anterior_id = models.ForeignKey(Dependencia, db_column='dependencia_anterior_id',
+                                                related_name='instancia_anterior', null=True, blank=True,
                                                 on_delete=models.CASCADE)
-    dependencia_actual_id = models.ForeignKey(Dependencia, db_column='dependencia_actual_id', related_name='instancia_actual', null=False, blank=False,
+    dependencia_actual_id = models.ForeignKey(Dependencia, db_column='dependencia_actual_id',
+                                              related_name='instancia_actual', null=False, blank=False,
                                               on_delete=models.CASCADE)
-    dependencia_siguiente_id = models.ForeignKey(Dependencia, db_column='dependencia_siguiente_id', related_name='instancia_siguiente', null=False,
-                                                 blank=False, on_delete=models.CASCADE)
-    estado_id = models.ForeignKey(Estado, db_column='estado_id', related_name='estado', null=False, blank=False, on_delete=models.CASCADE)
+    dependencia_siguiente_id = models.ForeignKey(Dependencia, db_column='dependencia_siguiente_id',
+                                                 related_name='instancia_siguiente', null=False, blank=False,
+                                                 on_delete=models.CASCADE)
+    estado_id = models.ForeignKey(Estado, db_column='estado_id', related_name='estado', null=False, blank=False,
+                                  on_delete=models.CASCADE)
     fecha_creacion = models.DateTimeField(auto_now_add=True, blank=True)
     fecha_recepcion = models.DateTimeField()
     fecha_final = models.DateTimeField()
@@ -111,8 +112,10 @@ class Instancia(models.Model):
 
 class Comentario(models.Model):
     descripcion = models.TextField(blank=False, null=False, max_length=200)
-    instancia_id = models.ForeignKey(Instancia, db_column='instancia_id',  related_name='instancia', null=False, on_delete=models.CASCADE)
-    usuario_id = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='usuario_id', null=False, on_delete=models.CASCADE)
+    instancia_id = models.ForeignKey(Instancia, db_column='instancia_id',  related_name='instancia', null=False,
+                                     on_delete=models.CASCADE)
+    usuario_id = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='usuario_id', null=False,
+                                   on_delete=models.CASCADE)
     fecha_creacion = models.DateTimeField(auto_now_add=True, blank=True)
 
     class Meta:
