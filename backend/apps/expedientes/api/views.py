@@ -1,9 +1,6 @@
 from django_filters import rest_framework as filters
-from rest_framework.decorators import api_view
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
-from rest_framework import status
-
 from .serializers import *
 
 
@@ -32,30 +29,6 @@ class ExpedienteListView(ListCreateAPIView):
         return ExpedienteSerializer
 
 
-@api_view(['GET'])
-def expedienteById(request, pk):
-    """
-    Traer un expediente con su dependencia actual de acuerdo a un ID
-    :param request
-    :param pk: ID
-    :return: Expediente
-    """
-    try:
-        expediente = Expediente.objects.raw(
-            'SELECT ee.id, ee.numero_mesa_de_entrada, ee.fecha_actualizacion, ee.dependencia_origen_id, '
-            'ee.dependencia_destino_id, ee.descripcion, ei.estado_id, ei.dependencia_actual_id '
-            'from expedientes_expediente ee '
-            'inner join expedientes_instancia ei on ee.id = ei.expediente_id '
-            'where ee.id = %s '
-            'order by ei.id desc limit 1 ', [pk]
-        )
-    except Expediente.DoesNotExist:
-        return Response({'Expediente no existe.'}, status=status.HTTP_204_NO_CONTENT)
-    expediente_serializer = ExpedienteByIdSerializer(expediente[0])  # sacar el primero
-    return Response(expediente_serializer.data)
-
-
-# sin utilizar por ahora (no se puede editar ni eliminar el expediente)
 class ExpedienteDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Expediente.objects.all()
 
@@ -88,7 +61,7 @@ class ExpedienteDetail(ListCreateAPIView):
 
     serializer_class = ExpedienteListSerializer
 
-    def list(self, request):
+    def list(self):
         queryset = self.get_queryset()
         serializer = ExpedienteListSerializer(list(queryset), many=True)
         return Response(serializer.data)
@@ -104,14 +77,22 @@ class InstanciaFilter(filters.FilterSet):
     estado = filters.CharFilter(field_name='estado_id__descripcion', lookup_expr='exact')
     fecha_creacion = filters.DateFromToRangeFilter(field_name='fecha_creacion')
     actual = filters.CharFilter(field_name='dependencia_actual_id__descripcion', lookup_expr='icontains')
+    expediente_anho = filters.CharFilter(field_name='expediente_id__anho', lookup_expr='exact')
+    expediente_nro_mesa = filters.CharFilter(field_name='expediente_id__numero_mesa_de_entrada', lookup_expr='exact')
 
     class Meta:
         model = Instancia
-        fields = ('expediente_id', 'expediente_descripcion', 'estado', 'fecha_creacion', 'actual')
+        fields = ('expediente_id', 'expediente_descripcion', 'expediente_anho', 'expediente_nro_mesa', 'estado',
+                  'fecha_creacion', 'actual')
 
 
 class InstanciaListView(ListCreateAPIView):
-    queryset = Instancia.objects.all()
+    """
+    Retornar al queryset las ultimas instancias para cada expediente.
+    """
+    queryset = Instancia.objects.filter(id__in=[i.id for i in Instancia.objects.raw(
+        'select max(id) as id from expedientes_instancia group by expediente_id '
+    )])
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = InstanciaFilter
 
