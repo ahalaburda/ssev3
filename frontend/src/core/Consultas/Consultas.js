@@ -19,15 +19,11 @@ class Consultas extends Component {
     this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
     this.handleNumChange = this.handleNumChange.bind(this);
     this.handleYearChange = this.handleYearChange.bind(this);
-    this.findById = this.findById.bind(this);
-    this.handleIdSearch = this.handleIdSearch.bind(this);
     this.setStateFromResponse = this.setStateFromResponse.bind(this);
-    this.findByDescription = this.findByDescription.bind(this);
+    this.handleIdSearch = this.handleIdSearch.bind(this);
     this.handleDescriptionSearch = this.handleDescriptionSearch.bind(this);
-    this.findByYearNum = this.findByYearNum.bind(this);
     this.handleYearNumSearch = this.handleYearNumSearch.bind(this);
   }
-  //TODO unificar la forma en que se setea el estado y controlar el tamanho del arreglo que devuelve response.data.result
   handleIdChange = e => {
     this.setState({id: e.target.value});
   }
@@ -44,38 +40,7 @@ class Consultas extends Component {
     this.setState({year: e.target.value});
   }
 
-  findById = id => {
-    //TODO verificar fechaMe y si al tomar el primer elemento, asegurarse de que si haya algo en ese arreglo
-    InstanciaService.getByExpedienteId(id)
-      .then(response => {
-        if (response.status === 200 && response.statusText === 'OK') {
-          this.setState({
-            data: [{
-              id: response.data.results[0].expediente_id.id,
-              numero: response.data.results[0].expediente_id.numero_mesa_de_entrada,
-              fechaMe: moment(response.data.results[0].expediente_id.fecha_actualizacion).format('DD-MM-YYYY kk:mm:ss'),
-              descripcion: response.data.results[0].expediente_id.descripcion,
-              origen: response.data.results[0].expediente_id.dependencia_origen_id.descripcion,
-              destino: response.data.results[0].expediente_id.dependencia_destino_id.descripcion,
-              dependenciaActual: response.data.results[0].dependencia_actual_id.descripcion,
-              estado: response.data.results[0].estado_id.descripcion
-            }]
-          });
-        } else if (response.status === 404) {
-          Popups.error('Expediente no encontrado.');
-        } else {
-          Popups.error('Ocurrio un error durante la busqueda.');
-        }
-      })
-      .catch(e => {
-        console.log(`Error findByExpedienteId: InstanciaService\n${e}`);
-      });
-  }
-
-  handleIdSearch = () => {
-    this.findById(this.state.id);
-  }
-
+  //TODO verificar fechaMe
   setStateFromResponse = response => {
     this.setState({
       data: response.data.results.map(ie => {
@@ -93,44 +58,52 @@ class Consultas extends Component {
     });
   }
 
-  findByDescription = description => {
-    InstanciaService.getByExpDescription(description)
+  handleIdSearch = () => {
+    InstanciaService.getByExpedienteId(this.state.id)
       .then(response => {
-        if (response.status === 200 && response.statusText === 'OK') {
-          this.setStateFromResponse(response);
-        } else if (response.status === 404) {
-          Popups.error('Descripción no encontrada.');
-        } else {
-          Popups.error('Ocurrio un error durante la busqueda.');
-        }
+        this.setStateFromResponse(response);
+        Popups.success('Expediente encontrado.');
       })
       .catch(e => {
-        console.log(`Error findByExpDescription: InstanciaService\n${e}`);
+        if (e.response.status === 400) {
+          Popups.error(e.response.statusText);
+        } else {
+          Popups.error('Ocurrió un error durante la búsqueda.');
+        }
+        console.log(`Error findByExpedienteId: InstanciaService\n${e}`);
       });
   }
 
   handleDescriptionSearch = () => {
-    this.findByDescription(this.state.description);
-  }
-
-  findByYearNum = (year, num) => {
-    InstanciaService.getByExpYearNum(year, num)
+    InstanciaService.getByExpDescription(this.state.description)
       .then(response => {
-        if (response.status === 200 && response.statusText === 'OK') {
-          this.setStateFromResponse(response);
-        } else if (response.status === 404) {
-          Popups.error('Año o número de mesa no encontrados.');
-        } else {
-          Popups.error('Ocurrio un error durante la busqueda.');
-        }
+        this.setStateFromResponse(response);
+        Popups.success('Descripción encontrada.');
       })
       .catch(e => {
-        console.log(`Error findByExpYearNum: InstanciaService\n${e}`);
-      })
+        if (e.response.status === 404) {
+          Popups.error('Descripción no encontrada.');
+        } else {
+          Popups.error('Ocurrió un error durante la búsqueda.');
+        }
+        console.log(`Error findByExpDescription: InstanciaService\n${e}`);
+      });
   }
 
   handleYearNumSearch = () => {
-    this.findByYearNum(this.state.year, this.state.num);
+    InstanciaService.getByExpYearNum(this.state.year, this.state.num)
+      .then(response => {
+        this.setStateFromResponse(response);
+        Popups.success('Año-Descripción encontrada.');
+      })
+      .catch(e => {
+        if (e.response.status === 404) {
+          Popups.error('Año o número de mesa no encontrados.');
+        } else {
+          Popups.error('Ocurrio un error durante la búsqueda.');
+        }
+        console.log(`Error findByExpYearNum: InstanciaService\n${e}`);
+      });
   }
 
   render() {
@@ -189,16 +162,10 @@ class Consultas extends Component {
                 <div className="col-5 input-group">
                   <input
                     type="text"
-                    className="form-control form-control-sm"
+                    className="form2-control form-control-sm"
                     onChange={e => this.handleNumChange(e)}
                     value={this.state.num}
                   />
-                </div>
-                <div className="col text-center">
-                  <button
-                    className="btn btn-sm btn-primary"
-                    onClick={this.handleYearNumSearch}
-                  > Buscar</button>
                 </div>
               </div>
               <div className="form-group row">
@@ -210,6 +177,12 @@ class Consultas extends Component {
                     onChange={e => this.handleYearChange(e)}
                     value={this.state.year}
                   />
+                </div>
+                <div className="col text-center">
+                  <button
+                    className="btn btn-sm btn-primary"
+                    onClick={this.handleYearNumSearch}
+                  > Buscar</button>
                 </div>
               </div>
             </div>
