@@ -4,7 +4,6 @@ const baseURL = 'http://localhost:8000/api';
 const axiosInstance = axios.create({
   baseURL: baseURL,
   headers: {
-    //TODO agregar operador ternario? (para setear el header o asignarlo a null)
     'Authorization': 'JWT ' + localStorage.getItem('access_token'),
     'Content-type': 'application/json',
     'accept': 'application/json'
@@ -46,8 +45,6 @@ axiosInstance.interceptors.response.use(
             .catch(err => {
               console.log(err)
             });
-        } else {
-          console.log("Refresh token is expired", tokenParts.exp, now);
         }
       } else {
         console.log("no refresh token");
