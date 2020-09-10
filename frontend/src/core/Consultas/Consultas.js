@@ -20,12 +20,9 @@ class Consultas extends Component {
     this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
     this.handleNumChange = this.handleNumChange.bind(this);
     this.handleYearChange = this.handleYearChange.bind(this);
-    this.findById = this.findById.bind(this);
-    this.handleIdSearch = this.handleIdSearch.bind(this);
     this.setStateFromResponse = this.setStateFromResponse.bind(this);
-    this.findByDescription = this.findByDescription.bind(this);
+    this.handleIdSearch = this.handleIdSearch.bind(this);
     this.handleDescriptionSearch = this.handleDescriptionSearch.bind(this);
-    this.findByYearNum = this.findByYearNum.bind(this);
     this.handleYearNumSearch = this.handleYearNumSearch.bind(this);
     //opciones y mensajes para la validacion
     this.validator = new SimpleReactValidator({
@@ -38,8 +35,6 @@ class Consultas extends Component {
     });
   }
 
-
-  //TODO unificar la forma en que se setea el estado y controlar el tamanho del arreglo que devuelve response.data.result
   handleIdChange = e => {
     this.setState({id: e.target.value});
     this.validator.showMessageFor('id');
@@ -87,17 +82,15 @@ class Consultas extends Component {
       .catch(e => {
         console.log(`Error findByExpedienteId: InstanciaService\n${e}`);
       });
-
-    
   }
 
   handleIdSearch = () => {
     if (this.validator.fieldValid('id')) {
       this.findById(this.state.id);  
     }
-    
   }
 
+  //TODO verificar fechaMe
   setStateFromResponse = response => {
     this.setState({
       data: response.data.results.map(ie => {
@@ -116,22 +109,14 @@ class Consultas extends Component {
   }
 
   findByDescription = description => {
-   
       InstanciaService.getByExpDescription(description)
       .then(response => {
-        if (response.status === 200 && response.statusText === 'OK') {
-          this.setStateFromResponse(response);
-        } else if (response.status === 404) {
-          Popups.error('Descripción no encontrada.');
-        } else {
-          Popups.error('Ocurrio un error durante la busqueda.');
-        }
+        this.setStateFromResponse(response);
+        Popups.success('Expediente encontrado.');
       })
       .catch(e => {
         console.log(`Error findByExpDescription: InstanciaService\n${e}`);
       });  
-    
-    
   }
 
   handleDescriptionSearch = () => {
@@ -239,6 +224,7 @@ class Consultas extends Component {
                     onBlur={e => this.handleYearNumSearch(e)}
                   > Buscar</button>
                 </div>
+
               </div>
               <div className="form-group row">
                 <label className="col-form-label col-sm-4">Año: </label>
@@ -252,6 +238,12 @@ class Consultas extends Component {
                     value={this.state.year}
                   />
                   {this.validator.message('year', this.state.year, 'required|numeric|min:0,num')}
+                </div>
+                <div className="col text-center">
+                  <button
+                    className="btn btn-sm btn-primary"
+                    onClick={this.handleYearNumSearch}
+                  > Buscar</button>
                 </div>
               </div>
             </div>

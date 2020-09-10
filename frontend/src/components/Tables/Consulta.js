@@ -15,18 +15,6 @@ class Consulta extends Component {
   }
 
   render() {
-    const tempData = [
-      {
-        id: '12343',
-        numero: '3324',
-        fechaMe: '31-12-2020 11:26',
-        descripcion: 'Pago y remuneracion Pago y remuneracion de hogar, bienestar y salud Pago y remuneracion',
-        origen: 'Direccion Gral de Administracion y Finanzas',
-        destino: 'Direccion Gral de Administracion y Finanzas',
-        dependenciaActual: 'Direccion Gral de Administracion y Finanzas',
-        estado: 'No recibido'
-      }
-    ]
     //TODO formatear la fecha
     const columns = [
       {
@@ -107,7 +95,6 @@ class Consulta extends Component {
     };
 
     return (
-      //remplazar temp_data por this.state.list
       <DataTable
         columns={columns}
         data={this.state.list}

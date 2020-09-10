@@ -39,8 +39,29 @@ class App extends Component {
     }
     this.handleLogin = this.handleLogin.bind(this);
     this.handleUserChange = this.handleUserChange.bind(this);
+    // interceptor para que al momento de que el refresh token expire, borre los datos de la sesion y sea necesario
+    // iniciar de nuevo sesion y asi actualizar los tokens de acceso
+    axiosBase.interceptors.response.use(
+      response => response,
+      error => {
+        if (error.response.status === 401 && error.response.statusText === "Unauthorized"
+          && error.response.data.code === "token_not_valid") {
+          const refreshToken = localStorage.getItem('refresh_token');
+          if (refreshToken) {
+            const tokenParts = JSON.parse(atob(refreshToken.split('.')[1]));
+            const now = Math.ceil(Date.now() / 1000);
+            if (tokenParts.exp < now) {
+              this.setState({loggedIn: false});
+              localStorage.removeItem('access_token');
+              localStorage.removeItem('refresh_token');
+              localStorage.removeItem('username');
+              Popups.error('Debes iniciar sesión.');
+            }
+          }
+        }
+      }
+    );
   }
-
 
   /**
    * Solicitar al api el par de tokens de acuerdo a las credenciales.
@@ -56,22 +77,19 @@ class App extends Component {
       username: data.username,
       password: data.password
     }).then(response => {
-      if (response.status === 200 && response.statusText === 'OK') {
-        axiosBase.defaults.headers['Authorization'] = 'JWT ' + response.data.access;
-        localStorage.setItem('access_token', response.data.access);
-        localStorage.setItem('refresh_token', response.data.refresh);
-        localStorage.setItem('username', data.username);
-        Popups.success('Sesión iniciada correctamente.');
-        this.setState({
-          loggedIn: true,
-          username: data.username
-        });
-      }
+      axiosBase.defaults.headers['Authorization'] = 'JWT ' + response.data.access;
+      localStorage.setItem('access_token', response.data.access);
+      localStorage.setItem('refresh_token', response.data.refresh);
+      localStorage.setItem('username', data.username);
+      Popups.success('Sesión iniciada correctamente.');
+      this.setState({
+        loggedIn: true,
+        username: data.username
+      });
     }).catch(e => {
       Popups.error('Usuario o contraseña incorrectas.');
-
       console.log(e);
-    })
+    });
   }
 
 
