@@ -22,7 +22,7 @@ class Expediente extends Component {
     }
     
     componentDidMount() {
-        this.retrieveExpedientes();
+        // this.retrieveExpedientes();
     }
 
     /**

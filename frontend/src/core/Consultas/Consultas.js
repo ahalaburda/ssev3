@@ -56,95 +56,74 @@ class Consultas extends Component {
   }
 
   findById = id => {
-   
-      //TODO verificar fechaMe y si al tomar el primer elemento, asegurarse de que si haya algo en ese arreglo
-      InstanciaService.getByExpedienteId(id)
+    InstanciaService.getByExpedienteId(id)
       .then(response => {
-        if (response.status === 200 && response.statusText === 'OK') {
-          this.setState({
-            data: [{
-              id: response.data.results[0].expediente_id.id,
-              numero: response.data.results[0].expediente_id.numero_mesa_de_entrada,
-              fechaMe: moment(response.data.results[0].expediente_id.fecha_actualizacion).format('DD-MM-YYYY kk:mm:ss'),
-              descripcion: response.data.results[0].expediente_id.descripcion,
-              origen: response.data.results[0].expediente_id.dependencia_origen_id.descripcion,
-              destino: response.data.results[0].expediente_id.dependencia_destino_id.descripcion,
-              dependenciaActual: response.data.results[0].dependencia_actual_id.descripcion,
-              estado: response.data.results[0].estado_id.descripcion
-            }]
-          });
-        } else if (response.status === 404) {
-          Popups.error('Expediente no encontrado.');
-        } else {
-          Popups.error('Ocurrio un error durante la busqueda.');
-        }
+        this.setStateFromResponse(response);
       })
       .catch(e => {
+        if (e.response.status === 404) {
+          Popups.error('Expediente no encontrado.')
+        }
         console.log(`Error findByExpedienteId: InstanciaService\n${e}`);
       });
   }
 
   handleIdSearch = () => {
     if (this.validator.fieldValid('id')) {
-      this.findById(this.state.id);  
+      this.findById(this.state.id);
     }
   }
 
   //TODO verificar fechaMe
   setStateFromResponse = response => {
-    this.setState({
-      data: response.data.results.map(ie => {
-        return {
-          id: ie.expediente_id.id,
-          numero: ie.expediente_id.numero_mesa_de_entrada,
-          fechaMe: moment(ie.expediente_id.fecha_actualizacion).format('DD-MM-YYYY kk:mm:ss'),
-          descripcion: ie.expediente_id.descripcion,
-          origen: ie.expediente_id.dependencia_origen_id.descripcion,
-          destino: ie.expediente_id.dependencia_destino_id.descripcion,
-          dependenciaActual: ie.dependencia_actual_id.descripcion,
-          estado: ie.estado_id.descripcion
-        }
-      })
-    });
+    //se controla el contador del response porque da codigo 200 aunque no encuentre ningun expediente
+    if (response.data.count > 0) {
+      this.setState({
+        data: response.data.results.map(ie => {
+          return {
+            id: ie.expediente_id.id,
+            numero: ie.expediente_id.numero_mesa_de_entrada,
+            fechaMe: moment(ie.expediente_id.fecha_actualizacion).format('DD-MM-YYYY kk:mm:ss'),
+            descripcion: ie.expediente_id.descripcion,
+            origen: ie.expediente_id.dependencia_origen_id.descripcion,
+            destino: ie.expediente_id.dependencia_destino_id.descripcion,
+            dependenciaActual: ie.dependencia_actual_id.descripcion,
+            estado: ie.estado_id.descripcion
+          }
+        })
+      });
+      Popups.success('Expediente encontrado.');
+    } else {
+      Popups.error('No se encontro el expediente');
+    }
   }
 
   findByDescription = description => {
-      InstanciaService.getByExpDescription(description)
+    InstanciaService.getByExpDescription(description)
       .then(response => {
         this.setStateFromResponse(response);
-        Popups.success('Expediente encontrado.');
       })
       .catch(e => {
-        console.log(`Error findByExpDescription: InstanciaService\n${e}`);
-      });  
+        Popups.error('Ocurrió un error durante la búsqueda.');
+        console.log(`Error findByExpedienteId: InstanciaService\n${e}`);
+      });
   }
 
   handleDescriptionSearch = () => {
     if (this.validator.fieldValid('description')) {
-      this.findByDescription(this.state.description);    
+      this.findByDescription(this.state.description);
     }
-  }
-
-  findByYearNum = (year, num) => {
-    InstanciaService.getByExpYearNum(year, num)
-    .then(response => {
-      if (response.status === 200 && response.statusText === 'OK') {
-        this.setStateFromResponse(response);
-      } else if (response.status === 404) {
-        Popups.error('Año o número de mesa no encontrados.');
-      } else {
-        Popups.error('Ocurrio un error durante la busqueda.');
-      }
-    })
-    .catch(e => {
-      console.log(`Error findByExpYearNum: InstanciaService\n${e}`);
-    })  
   }
 
   handleYearNumSearch = () => {
-    if (this.validator.fieldValid('numExp') && this.validator.fieldValid('year')) {
-      this.findByYearNum(this.state.year, this.state.num); 
-    }
+    InstanciaService.getByExpYearNum(this.state.year, this.state.num)
+      .then(response => {
+        this.setStateFromResponse(response);
+      })
+      .catch(e => {
+        Popups.error('Ocurrio un error durante la búsqueda.');
+        console.log(`Error findByExpYearNum: InstanciaService\n${e}`);
+      });
   }
 
   render() {
@@ -197,7 +176,8 @@ class Consultas extends Component {
                   <button
                     className="btn btn-sm btn-primary"
                     onClick={this.handleDescriptionSearch}
-                  > Buscar</button>
+                  > Buscar
+                  </button>
                 </div>
               </div>
             </div>
@@ -208,9 +188,8 @@ class Consultas extends Component {
                 <label className="col-form-label col-sm-4">Número de Expediente: </label>
                 <div className="col-5 input-group">
                   <input
-                    type="number"
-                    className="form-control form-control-sm"
-                    name='numExp'
+                    type="text"
+                    className="form2-control form-control-sm"
                     onChange={e => this.handleNumChange(e)}
                     onBlur={e => this.handleNumChange(e)}
                     value={this.state.num}
@@ -222,7 +201,8 @@ class Consultas extends Component {
                     className="btn btn-sm btn-primary"
                     onClick={this.handleYearNumSearch}
                     onBlur={e => this.handleYearNumSearch(e)}
-                  > Buscar</button>
+                  > Buscar
+                  </button>
                 </div>
 
               </div>
@@ -243,7 +223,8 @@ class Consultas extends Component {
                   <button
                     className="btn btn-sm btn-primary"
                     onClick={this.handleYearNumSearch}
-                  > Buscar</button>
+                  > Buscar
+                  </button>
                 </div>
               </div>
             </div>
