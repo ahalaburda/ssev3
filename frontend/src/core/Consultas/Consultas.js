@@ -38,21 +38,31 @@ class Consultas extends Component {
   handleIdChange = e => {
     this.setState({id: e.target.value});
     this.validator.showMessageFor('id');
+    this.validator.hideMessageFor('description');
+    this.validator.hideMessageFor('numExp');
+    this.validator.hideMessageFor('year');
   }
 
   handleDescriptionChange = e => {
     this.setState({description: e.target.value});
     this.validator.showMessageFor('description');
+    this.validator.hideMessageFor('id');
+    this.validator.hideMessageFor('numExp');
+    this.validator.hideMessageFor('year');
   }
-
+  
   handleNumChange = e => {
     this.setState({num: e.target.value});
     this.validator.showMessageFor('numExp');
+    this.validator.hideMessageFor('id');
+    this.validator.hideMessageFor('description');
   }
-
+  
   handleYearChange = e => {
     this.setState({year: e.target.value});
     this.validator.showMessageFor('year');
+    this.validator.hideMessageFor('id');
+    this.validator.hideMessageFor('description');
   }
 
   findById = id => {   
