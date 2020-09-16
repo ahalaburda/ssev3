@@ -14,4 +14,4 @@ class Instancias {
   }
 }
 
-export default new Instancias;
+export default new Instancias();

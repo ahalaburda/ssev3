@@ -30,4 +30,4 @@ class TiposDeExpedientes {
   }
 }
 
-export default new TiposDeExpedientes;
+export default new TiposDeExpedientes();

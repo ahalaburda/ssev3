@@ -10,8 +10,13 @@ class Consulta extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps, nextContext) {
-    this.setState({list: nextProps.data})
+  // componentWillReceiveProps(nextProps, nextContext) {
+  //   this.setState({list: nextProps.data})
+  // }
+
+  //reemplazo de funcion componentWillReceiveProps
+  static getDerivedStateFromProps(nextProps) {
+    return {list: nextProps.data}
   }
 
   render() {
