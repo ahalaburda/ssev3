@@ -114,3 +114,6 @@ db.sqlite3
 .DS_STORE
 
 package-lock.json
+
+# visual code folder
+.vscode
