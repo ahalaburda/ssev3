@@ -29,7 +29,8 @@ class Consultas extends Component {
       className: 'text-danger',
       messages: {
         numeric: 'Debe ingresar un número.',
-        min: 'El número debe ser positivo.',
+        min: 'ID no valido.',
+        max: 'Máximo 50 caracteres.',
         required: 'Este campo no puede estar vacío.'
       }
     });
@@ -179,7 +180,7 @@ class Consultas extends Component {
                     onBlur={e => this.handleIdChange(e)}
                     value={this.state.id}
                   />
-                  {this.validator.message('id', this.state.id, 'required|numeric|min:0,num')}
+                  {this.validator.message('id', this.state.id, 'required|numeric|min:1,num')}
                 </div>
                 <div className="col text-center">
                   <button
@@ -203,7 +204,7 @@ class Consultas extends Component {
                     onBlur={e => this.handleDescriptionChange(e)}
                     value={this.state.description}
                   />
-                  {this.validator.message('description', this.state.description, 'required')}
+                  {this.validator.message('description', this.state.description, 'required|max:50')}
                 </div>
                 <div className="col text-center">
                   <button

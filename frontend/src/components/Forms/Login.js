@@ -12,7 +12,9 @@ class Login extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.validator = new SimpleReactValidator({
       className: 'text-danger',
-      messages: {required: 'Este campo no puede estar vacío.'}
+      messages: {
+        alpha_num_dash: 'Caracter no permitido.',
+        required: 'Este campo no puede estar vacío.'}
     })
   }
 
@@ -70,7 +72,7 @@ class Login extends Component {
                             value={this.props.username}
                             onChange={this.props.handleUserChange}
                           />
-                          {this.validator.message('userInput', this.props.username, 'required')}
+                          {this.validator.message('userInput', this.props.username, 'required|alpha_num_dash')}
                         </div>
                         <div className="form-group">
                           <input

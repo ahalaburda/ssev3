@@ -98,6 +98,7 @@ class SimpleEdit extends Component {
         }
       })
       .catch(e => {
+        Popups.error('Ocurrió un error al procesar la información');
         console.log(e);
       });
   }
