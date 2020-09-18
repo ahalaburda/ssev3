@@ -10,7 +10,13 @@ class Instancias {
   }
 
   getByExpYearNum(year, num) {
-    return http.get(`/instancias/?expediente_anho=${year}&expediente_nro_mesa=${num}&format=json`)
+    return http.get(`/instancias/?expediente_anho=${year}&expediente_nro_mesa=${num}&format=json`);
+  }
+
+  getInstanciaExpedienteEachUser() {
+    const token_parts = JSON.parse(atob(localStorage.getItem('access_token').split('.')[1]));
+    const user_id = token_parts.user_id;
+    return http.get(`/instancias/expedientes/${user_id}?format=json`);
   }
 }
 
