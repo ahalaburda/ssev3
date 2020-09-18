@@ -27,7 +27,9 @@ class SimpleEdit extends Component {
     this.validator = new SimpleReactValidator({
       className: 'text-danger',
       messages: {
-        required: 'Este campo no puede estar vacío.'
+        required: 'Este campo no puede estar vacío.',
+        max:'Máximo 100 caracteres.',
+        regex:'Caracter no admitido.'
       }
     })
   }
@@ -134,7 +136,7 @@ class SimpleEdit extends Component {
                 onBlur={e => this.onChangeDescription(e)}
                 placeholder="Agrega una descripción"
               />
-              {this.validator.message('description', this.state.description, 'required')}
+              {this.validator.message('description', this.state.description, 'required|max:100')}
             </div>
             <div className="form-group">
               <div className="row">
