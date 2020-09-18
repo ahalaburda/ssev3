@@ -29,7 +29,8 @@ class Consultas extends Component {
       className: 'text-danger',
       messages: {
         numeric: 'Debe ingresar un número.',
-        min: 'El número debe ser positivo.',
+        min: 'ID no valido.',
+        max: 'Máximo 50 caracteres.',
         required: 'Este campo no puede estar vacío.'
       }
     });
@@ -38,50 +39,59 @@ class Consultas extends Component {
   handleIdChange = e => {
     this.setState({id: e.target.value});
     this.validator.showMessageFor('id');
+    this.validator.hideMessageFor('description');
+    this.validator.hideMessageFor('numExp');
+    this.validator.hideMessageFor('year');
   }
 
   handleDescriptionChange = e => {
     this.setState({description: e.target.value});
     this.validator.showMessageFor('description');
+    this.validator.hideMessageFor('id');
+    this.validator.hideMessageFor('numExp');
+    this.validator.hideMessageFor('year');
   }
-
+  
   handleNumChange = e => {
     this.setState({num: e.target.value});
     this.validator.showMessageFor('numExp');
+    this.validator.hideMessageFor('id');
+    this.validator.hideMessageFor('description');
   }
-
+  
   handleYearChange = e => {
     this.setState({year: e.target.value});
     this.validator.showMessageFor('year');
+    this.validator.hideMessageFor('id');
+    this.validator.hideMessageFor('description');
   }
 
-  findById = id => {
-   
-      //TODO verificar fechaMe y si al tomar el primer elemento, asegurarse de que si haya algo en ese arreglo
-      InstanciaService.getByExpedienteId(id)
-      .then(response => {
-        if (response.status === 200 && response.statusText === 'OK') {
-          this.setState({
-            data: [{
-              id: response.data.results[0].expediente_id.id,
-              numero: response.data.results[0].expediente_id.numero_mesa_de_entrada,
-              fechaMe: moment(response.data.results[0].expediente_id.fecha_actualizacion).format('DD-MM-YYYY kk:mm:ss'),
-              descripcion: response.data.results[0].expediente_id.descripcion,
-              origen: response.data.results[0].expediente_id.dependencia_origen_id.descripcion,
-              destino: response.data.results[0].expediente_id.dependencia_destino_id.descripcion,
-              dependenciaActual: response.data.results[0].dependencia_actual_id.descripcion,
-              estado: response.data.results[0].estado_id.descripcion
-            }]
-          });
-        } else if (response.status === 404) {
-          Popups.error('Expediente no encontrado.');
-        } else {
-          Popups.error('Ocurrio un error durante la busqueda.');
-        }
-      })
-      .catch(e => {
-        console.log(`Error findByExpedienteId: InstanciaService\n${e}`);
-      });
+  findById = id => {   
+    //TODO verificar fechaMe y si al tomar el primer elemento, asegurarse de que si haya algo en ese arreglo
+    InstanciaService.getByExpedienteId(id)
+    .then((response) => {
+      if (response.status === 200) {
+        this.setState({
+          data: [{
+            id: response.data.results[0].expediente_id.id,
+            numero: response.data.results[0].expediente_id.numero_mesa_de_entrada,
+            fechaMe: moment(response.data.results[0].expediente_id.fecha_actualizacion).format('DD-MM-YYYY kk:mm:ss'),
+            descripcion: response.data.results[0].expediente_id.descripcion,
+            origen: response.data.results[0].expediente_id.dependencia_origen_id.descripcion,
+            destino: response.data.results[0].expediente_id.dependencia_destino_id.descripcion,
+            dependenciaActual: response.data.results[0].dependencia_actual_id.descripcion,
+            estado: response.data.results[0].estado_id.descripcion
+          }]
+        });  
+      }  
+    })
+    .catch(e => {
+      if (e.status === undefined) {
+        Popups.error('Expediente no encontrado.');  
+      }else{
+        Popups.error('Ocurrio un error durante la busqueda.');
+      }
+    });
   }
 
   handleIdSearch = () => {
@@ -106,16 +116,20 @@ class Consultas extends Component {
         }
       })
     });
+    
   }
 
   findByDescription = description => {
-      InstanciaService.getByExpDescription(description)
+     InstanciaService.getByExpDescription(description)
       .then(response => {
-        this.setStateFromResponse(response);
-        Popups.success('Expediente encontrado.');
+        if (response.data.count === 0) {
+          Popups.error('Expediente(s) no encontrado(s).');
+        }  else{
+          this.setStateFromResponse(response);
+        }  
       })
-      .catch(e => {
-        console.log(`Error findByExpDescription: InstanciaService\n${e}`);
+      .catch((e) => {
+        Popups.error('Ocurrio un error durante la busqueda.');    
       });  
   }
 
@@ -128,16 +142,15 @@ class Consultas extends Component {
   findByYearNum = (year, num) => {
     InstanciaService.getByExpYearNum(year, num)
     .then(response => {
-      if (response.status === 200 && response.statusText === 'OK') {
+      if (response.data.count === 0) {
+        Popups.error('Expediente no encontrado.');
+      }  else{
         this.setStateFromResponse(response);
-      } else if (response.status === 404) {
-        Popups.error('Año o número de mesa no encontrados.');
-      } else {
-        Popups.error('Ocurrio un error durante la busqueda.');
       }
     })
     .catch(e => {
-      console.log(`Error findByExpYearNum: InstanciaService\n${e}`);
+      Popups.error('Ocurrio un error durante la busqueda.');  
+      console.log(e);
     })  
   }
 
@@ -167,7 +180,7 @@ class Consultas extends Component {
                     onBlur={e => this.handleIdChange(e)}
                     value={this.state.id}
                   />
-                  {this.validator.message('id', this.state.id, 'required|numeric|min:0,num')}
+                  {this.validator.message('id', this.state.id, 'required|numeric|min:1,num')}
                 </div>
                 <div className="col text-center">
                   <button
@@ -191,7 +204,7 @@ class Consultas extends Component {
                     onBlur={e => this.handleDescriptionChange(e)}
                     value={this.state.description}
                   />
-                  {this.validator.message('description', this.state.description, 'required')}
+                  {this.validator.message('description', this.state.description, 'required|max:50')}
                 </div>
                 <div className="col text-center">
                   <button
@@ -216,13 +229,6 @@ class Consultas extends Component {
                     value={this.state.num}
                   />
                   {this.validator.message('numExp', this.state.num, 'required|numeric|min:0,num')}
-                </div>
-                <div className="col text-center">
-                  <button
-                    className="btn btn-sm btn-primary"
-                    onClick={this.handleYearNumSearch}
-                    onBlur={e => this.handleYearNumSearch(e)}
-                  > Buscar</button>
                 </div>
 
               </div>
