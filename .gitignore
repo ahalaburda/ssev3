@@ -117,3 +117,6 @@ package-lock.json
 
 # visual code folder
 .vscode
+
+# file backups
+*.bak
