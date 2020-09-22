@@ -3,6 +3,8 @@ import InstanciaService from "../../services/Instancias";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import DataTable from "react-data-table-component";
 import NuevoExpediente from "../Forms/NuevoExpediente";
+import moment from "moment";
+import Popups from "../Popups";
 
 /**
  * Tabla para expedientes
@@ -14,15 +16,35 @@ class Expediente extends Component {
       loading: false,
       showNew: false,
       showEdit: false,
-      list: []
+      list: [],
+      totalRows: 0
     };
 
     this.retrieveExpedientes = this.retrieveExpedientes.bind(this);
     this.setShowNew = this.setShowNew.bind(this);
   }
 
+  // Para la primera carga siempre trae la pagina 1 (uno)
   componentDidMount() {
-    this.retrieveExpedientes();
+    this.retrieveExpedientes(1);
+  }
+
+  setListFromResponse = response => {
+    this.setState({
+      list: response.data.results.map(inst => {
+        return {
+          id: inst.expediente_id.id,
+          numero: inst.expediente_id.numero_mesa_de_entrada + "/" + inst.expediente_id.anho,
+          fecha_me: moment(inst.expediente_id.fecha_mesa_entrada).format('DD/MM/YYYY - kk:mm:ss'),
+          origen: inst.expediente_id.dependencia_origen_id.descripcion,
+          tipo: inst.expediente_id.tipo_de_expediente_id.descripcion,
+          descripcion: inst.expediente_id.descripcion,
+          estado: inst.estado_id.descripcion,
+          dependencia: inst.dependencia_actual_id.descripcion
+        }
+      }),
+      loading: false
+    });
   }
 
   /**
@@ -30,28 +52,24 @@ class Expediente extends Component {
    */
   retrieveExpedientes() {
     this.setState({loading: true});
-    InstanciaService.getInstanciaExpedienteEachUser()
+    InstanciaService.getInstanciaExpedienteEachUser(1)
       .then(response => {
-        this.setState({
-          list: response.data.map(inst => {
-            return {
-              id: inst.expediente_id.id,
-              numero: inst.expediente_id.numero_mesa_de_entrada + "/" + inst.expediente_id.anho,
-              fecha_me: "",
-              origen: inst.expediente_id.dependencia_origen_id.descripcion,
-              tipo: inst.expediente_id.tipo_de_expediente_id.descripcion,
-              descripcion: inst.expediente_id.descripcion,
-              estado: inst.estado_id.descripcion,
-              dependencia: inst.dependencia_actual_id.descripcion
-            }
-          }),
-          loading: false
-        });
+        if (response.data.count > 0) {
+          this.setListFromResponse(response);
+          this.setState({totalRows: response.data.count});
+        } else {
+          this.setState({loading: false});
+          Popups.error('No existen expedientes en su dependencia.');
+        }
       })
       .catch(e => {
-        console.log(e);
+        Popups.error('Ocurrio un error al obtener los expedientes.');
+        console.log(`Error retrieveExpedientes:\n${e}`);
       });
+  }
 
+  handlePageChange = page => {
+    this.retrieveExpedientes(page);
   }
 
   /**
@@ -83,10 +101,11 @@ class Expediente extends Component {
         name: 'Número',
         selector: 'numero',
         sortable: true,
+        grow: -1
       },
       {
         name: 'Fecha Me',
-        selector: 'fecha me',
+        selector: 'fecha_me',
         sortable: true,
       },
       {
@@ -134,6 +153,7 @@ class Expediente extends Component {
         name: 'Dependencia',
         selector: 'dependencia',
         sortable: true,
+        wrap: true
       },
       {
         name: 'Acciones',
@@ -155,7 +175,7 @@ class Expediente extends Component {
       }
     ];
     const paginationOptions = {
-      rowsPerPageText: 'Filas por página',
+      noRowsPerPage: true,
       rangeSeparatorText: 'de',
       selectAllRowsItem: true,
       selectAllRowsItemText: 'Todos'
@@ -178,7 +198,11 @@ class Expediente extends Component {
             defaultSortField="fecha me"
             progressPending={this.state.loading}
             pagination
+            paginationServer
+            paginationPerPage={20}
+            paginationTotalRows={this.state.totalRows}
             paginationComponentOptions={paginationOptions}
+            onChangePage={this.handlePageChange}
             highlightOnHover={true}
             noHeader={true}
             dense={true}
