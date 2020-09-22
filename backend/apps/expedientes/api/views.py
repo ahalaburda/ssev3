@@ -95,7 +95,12 @@ class InstanciaExpedienteList(ListAPIView):
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()\
             .filter(dependencia_actual_id__dependencia_por_usuario__usuario_id=kwargs.get('user_id'))
-        serializer = InstanciaSerializer(queryset, many=True)
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
 
