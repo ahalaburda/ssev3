@@ -14,9 +14,12 @@ class Instancias {
   }
 
   getInstanciaExpedienteEachUser(page) {
-    const token_parts = JSON.parse(atob(localStorage.getItem('access_token').split('.')[1]));
-    const user_id = token_parts.user_id;
-    return http.get(`/instancias/expedientes/${user_id}?format=json&page=${page}`);
+    if (localStorage.getItem('access_token')) {
+      const token_parts = JSON.parse(atob(localStorage.getItem('access_token').split('.')[1]));
+      const user_id = token_parts.user_id;
+      return http.get(`/instancias/expedientes/${user_id}?format=json&page=${page}`);
+    }
+    return http.get(`/instancias/expedientes/0?format=json&page=${page}`);
   }
 }
 

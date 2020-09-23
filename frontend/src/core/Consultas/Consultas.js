@@ -145,6 +145,7 @@ class Consultas extends Component {
                     onChange={e => this.handleIdChange(e)}
                     onBlur={e => this.handleIdChange(e)}
                     value={this.state.id}
+                    autoFocus
                   />
                   {this.validator.message('id', this.state.id, 'required|numeric|min:0,num')}
                 </div>
