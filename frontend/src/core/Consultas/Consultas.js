@@ -29,7 +29,8 @@ class Consultas extends Component {
       className: 'text-danger',
       messages: {
         numeric: 'Debe ingresar un número.',
-        min: 'El número debe ser positivo.',
+        min: 'ID no valido.',
+        max: 'Máximo 50 caracteres.',
         required: 'Este campo no puede estar vacío.'
       }
     });
@@ -38,22 +39,33 @@ class Consultas extends Component {
   handleIdChange = e => {
     this.setState({id: e.target.value});
     this.validator.showMessageFor('id');
+    this.validator.hideMessageFor('description');
+    this.validator.hideMessageFor('numExp');
+    this.validator.hideMessageFor('year');
   }
 
   handleDescriptionChange = e => {
     this.setState({description: e.target.value});
     this.validator.showMessageFor('description');
+    this.validator.hideMessageFor('id');
+    this.validator.hideMessageFor('numExp');
+    this.validator.hideMessageFor('year');
   }
-
+  
   handleNumChange = e => {
     this.setState({num: e.target.value});
     this.validator.showMessageFor('numExp');
+    this.validator.hideMessageFor('id');
+    this.validator.hideMessageFor('description');
   }
-
+  
   handleYearChange = e => {
     this.setState({year: e.target.value});
     this.validator.showMessageFor('year');
+    this.validator.hideMessageFor('id');
+    this.validator.hideMessageFor('description');
   }
+
 
   findById = id => {
     InstanciaService.getByExpedienteId(id)
@@ -99,14 +111,17 @@ class Consultas extends Component {
   }
 
   findByDescription = description => {
-    InstanciaService.getByExpDescription(description)
+     InstanciaService.getByExpDescription(description)
       .then(response => {
-        this.setStateFromResponse(response);
+        if (response.data.count === 0) {
+          Popups.error('Expediente(s) no encontrado(s).');
+        }  else{
+          this.setStateFromResponse(response);
+        }  
       })
-      .catch(e => {
-        Popups.error('Ocurrió un error durante la búsqueda.');
-        console.log(`Error findByExpedienteId: InstanciaService\n${e}`);
-      });
+      .catch((e) => {
+        Popups.error('Ocurrio un error durante la busqueda.');    
+      });  
   }
 
   handleDescriptionSearch = () => {
@@ -147,7 +162,7 @@ class Consultas extends Component {
                     value={this.state.id}
                     autoFocus
                   />
-                  {this.validator.message('id', this.state.id, 'required|numeric|min:0,num')}
+                  {this.validator.message('id', this.state.id, 'required|numeric|min:1,num')}
                 </div>
                 <div className="col text-center">
                   <button
@@ -171,7 +186,7 @@ class Consultas extends Component {
                     onBlur={e => this.handleDescriptionChange(e)}
                     value={this.state.description}
                   />
-                  {this.validator.message('description', this.state.description, 'required')}
+                  {this.validator.message('description', this.state.description, 'required|max:50')}
                 </div>
                 <div className="col text-center">
                   <button
@@ -196,14 +211,6 @@ class Consultas extends Component {
                     value={this.state.num}
                   />
                   {this.validator.message('numExp', this.state.num, 'required|numeric|min:0,num')}
-                </div>
-                <div className="col text-center">
-                  <button
-                    className="btn btn-sm btn-primary"
-                    onClick={this.handleYearNumSearch}
-                    onBlur={e => this.handleYearNumSearch(e)}
-                  > Buscar
-                  </button>
                 </div>
 
               </div>

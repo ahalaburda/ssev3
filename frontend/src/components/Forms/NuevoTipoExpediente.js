@@ -26,7 +26,8 @@ class NuevoTipoExpediente extends Component {
     this.validator = new SimpleReactValidator({
       className: 'text-danger',
       messages: {
-        required: 'Este campo no puede estar vacío.'
+        required: 'Este campo no puede estar vacío.',
+        max: 'Máximo 100 caracteres.'
       }
     });
   }
@@ -48,6 +49,7 @@ class NuevoTipoExpediente extends Component {
         })
       })
       .catch((e) => {
+        Popups.error('Ocurrió un error al procesar la información');
         console.log(e);
       });
   }
@@ -103,6 +105,7 @@ class NuevoTipoExpediente extends Component {
           if (r.status !== 201) return false //TODO agregar rollback de los detalles ya cargados si ocurre un error
         })
         .catch(e => {
+          Popups.error('Ocurrió un error al procesar la información');
           console.log(e);
         })
     })
@@ -124,21 +127,23 @@ class NuevoTipoExpediente extends Component {
               descripcion: response.data.descripcion,
               activo: response.data.activo ? "Activo" : "Inactivo"
             })
-            Popups.success("Guardado con exito");
+            Popups.success("Guardado con éxito");
             this.handleClose();
           } else {
             //si ocurrio algun error al guardar los detalles se borra la cabecera
             TiposDeExpedientesService.delete(response.data.id)
               .then(r => {
-                if (r.status === 204) Popups.error("Ocurrio un error, no se pudo crear")
+                if (r.status === 204) Popups.error("Ocurrió un error, no se pudo crear")
               })
               .catch(e => {
+                Popups.error('Ocurrió un error al procesar la información');
                 console.log(e)
               })
           }
         }
       })
       .catch(e => {
+        Popups.error('Ocurrió un error al procesar la información');
         console.log(e)
       })
   }
@@ -190,7 +195,7 @@ class NuevoTipoExpediente extends Component {
                 onChange={e => this.setDescription(e)}
                 onBlur={e => this.setDescription(e)}
               />
-              {this.validator.message('description', this.state.description, 'required')}
+              {this.validator.message('description', this.state.description, 'required|max:100')}
             </div>
             <div className="form-group">
               <label>Dependencias *</label>

@@ -20,7 +20,9 @@ class NuevoObjetoDeGasto extends Component {
         this.validator = new SimpleReactValidator({
             className: 'text-danger',
             messages: {
-                required: 'Este campo no puede estar vacío.'
+                required: 'Este campo no puede estar vacío.',
+                alpha_num_dash_space:'Caracter no permitido.',
+                max: 'Máximo 50 caracteres.'
             }
         });
     }
@@ -63,6 +65,7 @@ class NuevoObjetoDeGasto extends Component {
                 }
             })
             .catch(e => {
+                Popups.error('Ocurrió un error al procesar la información');
                 console.log(e);
             });
     }
@@ -110,7 +113,7 @@ class NuevoObjetoDeGasto extends Component {
                                 onChange={e => this.setDescription(e)}
                                 onBlur={e => this.setDescription(e)}
                             />
-                            {this.validator.message('description', this.state.description, 'required')}
+                            {this.validator.message('description', this.state.description, 'required|max:50|alpha_num_dash_space')}
                         </div>
                     </form>
                 </Modal.Body>
