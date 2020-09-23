@@ -164,7 +164,7 @@ class TipoDeExpediente extends Component {
 
   render() {
     const paginationOptions = {
-      rowsPerPageText: 'Filas por página',
+      noRowsPerPage: true,
       rangeSeparatorText: 'de',
       selectAllRowsItem: true,
       selectAllRowsItemText: 'Todos'
@@ -223,6 +223,8 @@ class TipoDeExpediente extends Component {
           data={this.state.list}
           defaultSortField="descripcion"
           pagination
+          paginationServer
+          paginationPerPage={20}
           paginationComponentOptions={paginationOptions}
           highlightOnHover={true}
           noHeader={true}

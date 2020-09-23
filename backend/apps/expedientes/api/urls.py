@@ -4,8 +4,8 @@ from .views import *
 urlpatterns = [
     path('expedientes/', ExpedienteListView.as_view()),
     path('expedientes/<pk>', ExpedienteDetailView.as_view()),
-    path('expedientes_detalle/', ExpedienteDetail.as_view()),
     path('instancias/', InstanciaListView.as_view()),
+    path('instancias/expedientes/<user_id>', InstanciaExpedienteList.as_view()),
     path('instancias/<pk>', InstanciaDetailView.as_view()),
     path('comentarios/', ComentarioListView.as_view()),
     path('comentarios/<pk>', ComentarioDetailView.as_view()),

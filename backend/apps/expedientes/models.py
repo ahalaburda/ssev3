@@ -61,6 +61,7 @@ class Expediente(models.Model):
     lote_id = models.ForeignKey(Lote, db_column='lote_id', null=True, blank=True, on_delete=models.CASCADE)
     fecha_creacion = models.DateTimeField(auto_now_add=True, blank=True)
     fecha_actualizacion = models.DateTimeField(auto_now=True, blank=True)
+    fecha_mesa_entrada = models.DateTimeField(auto_now=True, blank=True)
 
     class Meta:
         verbose_name_plural = "Expedientes"
@@ -92,6 +93,10 @@ class Instancia(models.Model):
     fecha_creacion = models.DateTimeField(auto_now_add=True, blank=True)
     fecha_recepcion = models.DateTimeField()
     fecha_final = models.DateTimeField()
+    usuario_id_entrada = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='usuario_id_entrada', null=True,
+                                           related_name='usuario_entrada', on_delete=models.CASCADE)
+    usuario_id_salida = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='usuario_id_salida', null=True,
+                                          related_name='usuario_salida', on_delete=models.CASCADE)
 
     class Meta:
         verbose_name_plural = "Instancias"
