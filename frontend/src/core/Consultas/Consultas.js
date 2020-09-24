@@ -73,9 +73,7 @@ class Consultas extends Component {
         this.setStateFromResponse(response);
       })
       .catch(e => {
-        if (e.response.status === 404) {
-          Popups.error('Expediente no encontrado.')
-        }
+        Popups.error('Expediente no encontrado.')
         console.log(`Error findByExpedienteId: InstanciaService\n${e}`);
       });
   }
@@ -86,7 +84,6 @@ class Consultas extends Component {
     }
   }
 
-  //TODO verificar fechaMe
   setStateFromResponse = response => {
     //se controla el contador del response porque da codigo 200 aunque no encuentre ningun expediente
     if (response.data.count > 0) {
@@ -95,7 +92,8 @@ class Consultas extends Component {
           return {
             id: ie.expediente_id.id,
             numero: ie.expediente_id.numero_mesa_de_entrada,
-            fechaMe: moment(ie.expediente_id.fecha_actualizacion).format('DD/MM/YYYY - kk:mm:ss'),
+            fechaMe: moment(ie.expediente_id.fecha_mesa_entrada) ?
+              moment(ie.expediente_id.fecha_mesa_entrada).format('DD/MM/YYYY - kk:mm:ss') : 'Sin fecha',
             descripcion: ie.expediente_id.descripcion,
             origen: ie.expediente_id.dependencia_origen_id.descripcion,
             destino: ie.expediente_id.dependencia_destino_id.descripcion,
@@ -205,7 +203,7 @@ class Consultas extends Component {
                 <div className="col-5 input-group">
                   <input
                     type="text"
-                    className="form2-control form-control-sm"
+                    className="form-control form-control-sm"
                     onChange={e => this.handleNumChange(e)}
                     onBlur={e => this.handleNumChange(e)}
                     value={this.state.num}
