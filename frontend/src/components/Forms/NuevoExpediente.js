@@ -5,6 +5,7 @@ import TiposDeExpedientesService from "../../services/TiposDeExpedientes";
 import Select from "react-select";
 import DependenciasService from "../../services/Dependencias";
 import moment from 'moment';
+import Popups from "../Popups";
 
 class NuevoExpediente extends Component {
     constructor(props) {
@@ -26,6 +27,8 @@ class NuevoExpediente extends Component {
         this.validator = new SimpleReactValidator({
             className: 'text-danger',
             messages: {
+                alpha_num_dash_space:'Caracter no permitido.',
+                max: 'Máximo 50 caracteres.',
                 required: 'Este campo no puede estar vacío.'
             }
         });
@@ -106,8 +109,10 @@ class NuevoExpediente extends Component {
                         }
                     })
                 })
+                Popups.success("Expediente creado con éxito.");
             })
             .catch((e) => {
+                Popups.error('Ocurrió un error al procesar la información.');
                 console.log(e);
             });
     }
@@ -212,7 +217,7 @@ class NuevoExpediente extends Component {
                                         onChange={e => this.setDescription(e)}
                                         onBlur={e => this.setDescription(e)}
                                     />
-                                    {this.validator.message('description', this.state.description, 'required')}
+                                    {this.validator.message('description', this.state.description, 'required|alpha_num_dash_space|max:50')}
                                 </div>
                             </div>
                         </div>
