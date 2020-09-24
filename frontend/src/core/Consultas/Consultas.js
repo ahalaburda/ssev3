@@ -61,9 +61,7 @@ class Consultas extends Component {
         this.setStateFromResponse(response);
       })
       .catch(e => {
-        if (e.response.status === 404) {
-          Popups.error('Expediente no encontrado.')
-        }
+        Popups.error('Expediente no encontrado.')
         console.log(`Error findByExpedienteId: InstanciaService\n${e}`);
       });
   }
@@ -83,7 +81,8 @@ class Consultas extends Component {
           return {
             id: ie.expediente_id.id,
             numero: ie.expediente_id.numero_mesa_de_entrada,
-            fechaMe: moment(ie.expediente_id.fecha_actualizacion).format('DD/MM/YYYY - kk:mm:ss'),
+            fechaMe: moment(ie.expediente_id.fecha_mesa_entrada) ?
+              moment(inst.expediente_id.fecha_mesa_entrada).format('DD/MM/YYYY - kk:mm:ss') : 'Sin fecha',
             descripcion: ie.expediente_id.descripcion,
             origen: ie.expediente_id.dependencia_origen_id.descripcion,
             destino: ie.expediente_id.dependencia_destino_id.descripcion,
@@ -197,15 +196,6 @@ class Consultas extends Component {
                   />
                   {this.validator.message('numExp', this.state.num, 'required|numeric|min:0,num')}
                 </div>
-                <div className="col text-center">
-                  <button
-                    className="btn btn-sm btn-primary"
-                    onClick={this.handleYearNumSearch}
-                    onBlur={e => this.handleYearNumSearch(e)}
-                  > Buscar
-                  </button>
-                </div>
-
               </div>
               <div className="form-group row">
                 <label className="col-form-label col-sm-4">Año: </label>

@@ -35,7 +35,8 @@ class Expediente extends Component {
         return {
           id: inst.expediente_id.id,
           numero: inst.expediente_id.numero_mesa_de_entrada + "/" + inst.expediente_id.anho,
-          fecha_me: moment(inst.expediente_id.fecha_mesa_entrada).format('DD/MM/YYYY - kk:mm:ss'),
+          fecha_me: moment(inst.expediente_id.fecha_mesa_entrada).isValid() ?
+            moment(inst.expediente_id.fecha_mesa_entrada).format('DD/MM/YYYY - kk:mm:ss') : 'Sin fecha',
           origen: inst.expediente_id.dependencia_origen_id.descripcion,
           tipo: inst.expediente_id.tipo_de_expediente_id.descripcion,
           descripcion: inst.expediente_id.descripcion,
