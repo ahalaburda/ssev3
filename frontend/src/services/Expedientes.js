@@ -14,4 +14,4 @@ class Expedientes {
   }
 }
 
-export default new Expedientes;
+export default new Expedientes();

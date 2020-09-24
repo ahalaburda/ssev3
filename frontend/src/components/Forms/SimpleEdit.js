@@ -34,12 +34,21 @@ class SimpleEdit extends Component {
     })
   }
 
-  componentWillReceiveProps(nextProps, nextContext) {
-    this.setState({
+  // componentWillReceiveProps(nextProps, nextContext) {
+  //   this.setState({
+  //     id: nextProps.item.id,
+  //     description: nextProps.item.descripcion,
+  //     active: nextProps.item.activo
+  //   });
+  // }
+
+  //reemplazo de funcion componentWillReceiveProps
+  static getDerivedStateFromProps(nextProps) {
+    return {
       id: nextProps.item.id,
       description: nextProps.item.descripcion,
       active: nextProps.item.activo
-    });
+    }
   }
 
   /**
