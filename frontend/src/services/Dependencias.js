@@ -1,12 +1,12 @@
 import http from './http-common';
 
 class Dependencias {
+  /**
+   * Obtener todas las dependencias
+   * @returns {Promise<AxiosResponse<Dependencias>>}
+   */
   getAll() {
     return http.get('/dependencias/?format=json');
-  }
-
-  getById(id) {
-    return http.get(`/dependencias/${id}?format=json`);
   }
 }
 
