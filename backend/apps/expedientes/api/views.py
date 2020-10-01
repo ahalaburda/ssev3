@@ -1,11 +1,13 @@
 from django_filters import rest_framework as filters
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from rest_framework.response import Response
-
 from .serializers import *
 
 
 class ExpedienteFilter(filters.FilterSet):
+    """
+    Filtros para la lista de expediente.
+    """
     prioridad = filters.CharFilter(field_name='prioridad_id__descripcion', lookup_expr='exact')
     estado = filters.CharFilter(field_name='estado_id__descripcion', lookup_expr='exact')
     descripcion = filters.CharFilter(field_name='descripcion', lookup_expr='icontains')
@@ -20,6 +22,9 @@ class ExpedienteFilter(filters.FilterSet):
 
 
 class ExpedienteListView(ListCreateAPIView):
+    """
+    Vista para lista de todos los expedientes. Se permite la creacion en la misma vista.
+    """
     queryset = Expediente.objects.all()
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = ExpedienteFilter
@@ -30,9 +35,15 @@ class ExpedienteListView(ListCreateAPIView):
         return ExpedienteSerializer
 
 
+
 class ExpedienteDetailView(RetrieveUpdateDestroyAPIView):
+    """
+    Vista para un expediente dado su ID, se permite actualizar y eliminar el expediente en la misma vista.
+    """
     queryset = Expediente.objects.all()
 
+    # si el metodo es PUT o PATCH se utiliza el serializer para actualizar, si no el normal con el atributo depth
+    # seteado.
     def get_serializer_class(self):
         if self.request.method in ['PUT']:
             return ExpedienteNewUpdateSerializer
@@ -41,20 +52,10 @@ class ExpedienteDetailView(RetrieveUpdateDestroyAPIView):
         return ExpedienteSerializer
 
 
-class ExpedienteDetail(ListCreateAPIView):
-    # queryset = Instancia.objects.filter(dependencia_actual_id__dependencia_por_usuario__usuario_id=1)
-    queryset = Expediente.objects.all()
-    filter_backends = (filters.DjangoFilterBackend,)
-    filter_class = ExpedienteFilter
-    serializer_class = ExpedienteListSerializer
-
-    def get_serializer_class(self):
-        if self.request.method in ['POST']:
-            return ExpedienteNewUpdateSerializer
-        return ExpedienteSerializer
-
-
 class InstanciaFilter(filters.FilterSet):
+    """
+    Filtros para la lista de instancias
+    """
     expediente_descripcion = filters.CharFilter(field_name='expediente_id__descripcion', lookup_expr='icontains')
     estado = filters.CharFilter(field_name='estado_id__descripcion', lookup_expr='exact')
     fecha_creacion = filters.DateFromToRangeFilter(field_name='fecha_creacion')
@@ -70,7 +71,7 @@ class InstanciaFilter(filters.FilterSet):
 
 def get_last_instancias():
     """
-    Obtener las ultimas instancias de cada expediente
+    Obtener las ultimas instancias para cada expediente.
     """
     return Instancia.objects.filter(id__in=[i.id for i in Instancia.objects.raw(
         'select max(id) as id from expedientes_instancia group by expediente_id '
@@ -78,6 +79,10 @@ def get_last_instancias():
 
 
 class InstanciaListView(ListCreateAPIView):
+    """
+    Vista para lista de instancias, la lista utiliza la funcion de get_last_instancias para traer siempre las ultimas
+     instancias. Se permite la creacion de una nueva instancia en la misma vista.
+    """
     queryset = get_last_instancias()
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = InstanciaFilter
@@ -89,6 +94,10 @@ class InstanciaListView(ListCreateAPIView):
 
 
 class InstanciaExpedienteList(ListAPIView):
+    """
+    Vista para la lista de expedientes con respecto a la dependencia actual en la que se encuentra el usuario
+    autenticado.
+    """
     queryset = get_last_instancias()
     serializer_class = InstanciaSerializer
 
@@ -105,6 +114,9 @@ class InstanciaExpedienteList(ListAPIView):
 
 
 class InstanciaDetailView(RetrieveUpdateDestroyAPIView):
+    """
+    Vista para una instancia dado un ID, se permite actualizar y eliminar en la misma vista.
+    """
     queryset = Instancia.objects.all()
 
     def get_serializer_class(self):
@@ -116,6 +128,9 @@ class InstanciaDetailView(RetrieveUpdateDestroyAPIView):
 
 
 class ComentarioListView(ListCreateAPIView):
+    """
+    Vista para todos los comentarios, se permite agregar comentarios en la misma vista.
+    """
     queryset = Comentario.objects.all()
 
     def get_serializer_class(self):
@@ -125,6 +140,9 @@ class ComentarioListView(ListCreateAPIView):
 
 
 class ComentarioDetailView(RetrieveUpdateDestroyAPIView):
+    """
+    Vista para un comentario dado un ID, se permite actualizar y eliminar en la misma vista.
+    """
     queryset = Comentario.objects.all()
 
     def get_serializer_class(self):
@@ -135,6 +153,7 @@ class ComentarioDetailView(RetrieveUpdateDestroyAPIView):
         return ComentarioSerializer
 
 
+# Vistas para lista y detalle de objeto de gasto, prioridad y estado
 class Objeto_de_GastoListView(ListCreateAPIView):
     queryset = Objeto_de_Gasto.objects.all()
     serializer_class = Objeto_de_GastoSerializer
@@ -163,20 +182,3 @@ class EstadoListView(ListCreateAPIView):
 class EstadoDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Estado.objects.all()
     serializer_class = EstadoSerializer
-
-
-# Query de expediente detail
-    # queryset = Expediente.objects.raw(
-    #     'SELECT expedientes_expediente.id, tipo_de_expediente_id, MAX(expedientes_instancia.id) as instancia_id, '
-    #     'expedientes_instancia.estado_id as estado_instancia, expedientes_expediente.descripcion,'
-    #     'numero_mesa_de_entrada, anho, monto_currency, monto, expedientes_expediente.fecha_creacion, '
-    #     'fecha_actualizacion, dependencia_destino_id, dependencia_origen_id, dependencia_actual_id, lote_id, '
-    #     'objeto_de_gasto_id, prioridad_id '
-    #     'FROM expedientes_expediente '
-    #     'INNER JOIN expedientes_instancia on expedientes_expediente.id = expedientes_instancia.expediente_id '
-    #     'INNER JOIN expedientes_estado on expedientes_estado.id = expedientes_instancia.estado_id '
-    #     'INNER JOIN (SELECT dependencia_id FROM `dependencias_dependencia_por_usuario` as dpu INNER JOIN auth_user on'
-    #     'dpu.usuario_id = auth_user.id WHERE auth_user.id = 1) as dpu on dpu.dependencia_id = '
-    #     'expedientes_instancia.dependencia_actual_id '
-    #     'WHERE expedientes_instancia.estado_id = 1 or expedientes_instancia.estado_id = 2 '
-    #     'GROUP BY expedientes_expediente.id, expedientes_instancia.id')

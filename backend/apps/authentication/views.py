@@ -5,6 +5,7 @@ from .serializers import CustomTokenObtainPairSerializer
 from rest_framework.views import APIView
 from rest_framework import status, permissions
 
+
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
