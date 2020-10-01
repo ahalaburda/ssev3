@@ -36,6 +36,11 @@ class Consultas extends Component {
     });
   }
 
+  /**
+   * Setear el estado ID con el valor ingresado en el input.
+   * Mostrar los mensajes de validacion correspondientes.
+   * @param e
+   */
   handleIdChange = e => {
     this.setState({id: e.target.value});
     this.validator.showMessageFor('id');
@@ -44,6 +49,11 @@ class Consultas extends Component {
     this.validator.hideMessageFor('year');
   }
 
+  /**
+   * Setear el estado descripcion con el valor ingresado en el input.
+   * Mostrar los mensajes de validacion correspondientes.
+   * @param e
+   */
   handleDescriptionChange = e => {
     this.setState({description: e.target.value});
     this.validator.showMessageFor('description');
@@ -51,14 +61,24 @@ class Consultas extends Component {
     this.validator.hideMessageFor('numExp');
     this.validator.hideMessageFor('year');
   }
-  
+
+  /**
+   * Setear el estado numero de mesa de entrada con el valor ingresado en el input.
+   * Mostrar los mensajes de validacion conrrespondientes.
+   * @param e
+   */
   handleNumChange = e => {
     this.setState({num: e.target.value});
     this.validator.showMessageFor('numExp');
     this.validator.hideMessageFor('id');
     this.validator.hideMessageFor('description');
   }
-  
+
+  /**
+   * Setear el estado anho con el valor ingresado en el input.
+   * Mostrar los mensajes de validacion correspondientes.
+   * @param e
+   */
   handleYearChange = e => {
     this.setState({year: e.target.value});
     this.validator.showMessageFor('year');
@@ -66,27 +86,34 @@ class Consultas extends Component {
     this.validator.hideMessageFor('description');
   }
 
-
+  /**
+   * Toma el ID pasado del estado y ejecuta el servicio para buscar un expediente por su ID.
+   * @param id
+   */
   findById = id => {
     InstanciaService.getByExpedienteId(id)
       .then(response => {
         this.setStateFromResponse(response);
       })
       .catch(e => {
-        if (e.response.status === 404) {
-          Popups.error('Expediente no encontrado.')
-        }
+        Popups.error('Expediente no encontrado.')
         console.log(`Error findByExpedienteId: InstanciaService\n${e}`);
       });
   }
 
+  /**
+   * Chequea si las validaciones estan correctas y pasa el ID a la funcion findById.
+   */
   handleIdSearch = () => {
     if (this.validator.fieldValid('id')) {
       this.findById(this.state.id);
     }
   }
 
-  //TODO verificar fechaMe
+  /**
+   * Dado un response de Axios, este setea el estado con la lista de expedientes a mostrar.
+   * @param response
+   */
   setStateFromResponse = response => {
     //se controla el contador del response porque da codigo 200 aunque no encuentre ningun expediente
     if (response.data.count > 0) {
@@ -95,7 +122,8 @@ class Consultas extends Component {
           return {
             id: ie.expediente_id.id,
             numero: ie.expediente_id.numero_mesa_de_entrada,
-            fechaMe: moment(ie.expediente_id.fecha_actualizacion).format('DD/MM/YYYY - kk:mm:ss'),
+            fechaMe: moment(ie.expediente_id.fecha_mesa_entrada) ?
+              moment(ie.expediente_id.fecha_mesa_entrada).format('DD/MM/YYYY - kk:mm:ss') : 'Sin fecha',
             descripcion: ie.expediente_id.descripcion,
             origen: ie.expediente_id.dependencia_origen_id.descripcion,
             destino: ie.expediente_id.dependencia_destino_id.descripcion,
@@ -110,28 +138,41 @@ class Consultas extends Component {
     }
   }
 
+  /**
+   * Toma la descripcion pasada del estado y ejecuta el servicio de busqueda por descripcion.
+   * @param description
+   */
   findByDescription = description => {
-     InstanciaService.getByExpDescription(description)
+    InstanciaService.getByExpDescription(description)
       .then(response => {
         if (response.data.count === 0) {
           Popups.error('Expediente(s) no encontrado(s).');
-        }  else{
+        } else {
           this.setStateFromResponse(response);
-        }  
+        }
       })
       .catch((e) => {
-        Popups.error('Ocurrio un error durante la busqueda.');    
-      });  
+        Popups.error('Ocurrio un error durante la busqueda.');
+        console.log(`Error findByDescription: InstanciaService\n${e}`);
+      });
   }
 
+  /**
+   * Chequea si las validaciones estan correctas y pasa la descripcion a la funcioni findByDescription.
+   */
   handleDescriptionSearch = () => {
     if (this.validator.fieldValid('description')) {
       this.findByDescription(this.state.description);
     }
   }
 
-  handleYearNumSearch = () => {
-    InstanciaService.getByExpYearNum(this.state.year, this.state.num)
+  /**
+   * Toma el anho y el numero del estado y ejecuta el servicio de busqueda por anho y numero de mesa de entrada.
+   * @param year
+   * @param num
+   */
+  findByYearNum = (year, num) => {
+    InstanciaService.getByExpYearNum(year, num)
       .then(response => {
         this.setStateFromResponse(response);
       })
@@ -139,6 +180,16 @@ class Consultas extends Component {
         Popups.error('Ocurrio un error durante la búsqueda.');
         console.log(`Error findByExpYearNum: InstanciaService\n${e}`);
       });
+  }
+
+  /**
+   * Chequea si las validaciones estan correctas y pasa el anho y la descripcion a la funcion findByYearNum.
+   */
+  handleYearNumSearch = () => {
+    if (this.validator.fieldValid('numExp') && this.validator.fieldValid('year')) {
+      console.log('mensaje en if');
+      this.findByYearNum(this.state.year, this.state.num);
+    }
   }
 
   render() {
@@ -205,7 +256,8 @@ class Consultas extends Component {
                 <div className="col-5 input-group">
                   <input
                     type="text"
-                    className="form2-control form-control-sm"
+                    className="form-control form-control-sm"
+                    name="numExp"
                     onChange={e => this.handleNumChange(e)}
                     onBlur={e => this.handleNumChange(e)}
                     value={this.state.num}
@@ -220,7 +272,7 @@ class Consultas extends Component {
                   <input
                     type="number"
                     className="form-control form-control-sm"
-                    name='year'
+                    name="year"
                     onChange={e => this.handleYearChange(e)}
                     onBlur={e => this.handleYearChange(e)}
                     value={this.state.year}

@@ -29,13 +29,18 @@ class Expediente extends Component {
     this.retrieveExpedientes(1);
   }
 
+  /**
+   * De acuerdo al response pasado del servicio, este setea la lista de expedientes del estado.
+   * @param response
+   */
   setListFromResponse = response => {
     this.setState({
       list: response.data.results.map(inst => {
         return {
           id: inst.expediente_id.id,
           numero: inst.expediente_id.numero_mesa_de_entrada + "/" + inst.expediente_id.anho,
-          fecha_me: moment(inst.expediente_id.fecha_mesa_entrada).format('DD/MM/YYYY - kk:mm:ss'),
+          fecha_me: moment(inst.expediente_id.fecha_mesa_entrada).isValid() ?
+            moment(inst.expediente_id.fecha_mesa_entrada).format('DD/MM/YYYY - kk:mm:ss') : 'Sin fecha',
           origen: inst.expediente_id.dependencia_origen_id.descripcion,
           tipo: inst.expediente_id.tipo_de_expediente_id.descripcion,
           descripcion: inst.expediente_id.descripcion,
@@ -68,6 +73,11 @@ class Expediente extends Component {
       });
   }
 
+  /**
+   * Toma la pagina correspondiente de la tabla y llama al metodo retrieveExpedientes para traer los respectivos
+   * expedientes.
+   * @param page
+   */
   handlePageChange = page => {
     this.retrieveExpedientes(page);
   }
@@ -90,6 +100,7 @@ class Expediente extends Component {
   }
 
   render() {
+    // columnas para la tabla
     let columns = [
       {
         name: 'ID',
@@ -174,6 +185,8 @@ class Expediente extends Component {
         button: true,
       }
     ];
+
+    // configuraciones de paginacion
     const paginationOptions = {
       noRowsPerPage: true,
       rangeSeparatorText: 'de',
@@ -208,11 +221,11 @@ class Expediente extends Component {
             dense={true}
             className="table-responsive table-sm table-bordered"
           />
-          {/*<NuevoExpediente*/}
-          {/*  setShow={this.setShowNew}*/}
-          {/*  showModal={this.state.showNew}*/}
-          {/*  newItem={this.addItem}*/}
-          {/*/>*/}
+          <NuevoExpediente
+            setShow={this.setShowNew}
+            showModal={this.state.showNew}
+            newItem={this.addItem}
+          />
         </div>
       </div>
     );

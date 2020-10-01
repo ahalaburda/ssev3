@@ -20,7 +20,7 @@ class Consulta extends Component {
   }
 
   render() {
-    //TODO formatear la fecha
+    // columnas para la tabla
     const columns = [
       {
         name: 'ID',
@@ -92,8 +92,9 @@ class Consulta extends Component {
       }
     ];
 
+    // opciones para la paginacion
     const paginationOptions = {
-      rowsPerPageText: 'Filas por página',
+      noRowsPerPage: true,
       rangeSeparatorText: 'de',
       selectAllRowsItem: true,
       selectAllRowsItemText: 'Todos'
