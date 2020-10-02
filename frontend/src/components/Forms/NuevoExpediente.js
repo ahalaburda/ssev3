@@ -4,8 +4,10 @@ import SimpleReactValidator from "simple-react-validator";
 import TiposDeExpedientesService from "../../services/TiposDeExpedientes";
 import Select from "react-select";
 import DependenciasService from "../../services/Dependencias";
-import moment from 'moment';
+import DependenciasPorUsuarioService from "../../services/DependenciasPorUsuario";
+import moment from "moment";
 import Popups from "../Popups";
+import helper from "../../utils/helper";
 
 class NuevoExpediente extends Component {
   constructor(props) {
@@ -18,7 +20,6 @@ class NuevoExpediente extends Component {
       showDestino: '',
       sizeSelect: ''
     }
-    this.retrieveTiposDeExpedientes = this.retrieveTiposDeExpedientes.bind(this);
     this.setDescription = this.setDescription.bind(this);
     this.handleSaveClick = this.handleSaveClick.bind(this);
     this.handleSelectTipoExpediente = this.handleSelectTipoExpediente.bind(this);
@@ -37,7 +38,7 @@ class NuevoExpediente extends Component {
   /**
    * Obtener las dependencias de la base de datos y cargarlos como opciones para el select
    */
-  retrieveDependencias() {
+  retrieveAllDependencias() {
     DependenciasService.getAll()
       .then((response) => {
         this.setState({
@@ -51,7 +52,7 @@ class NuevoExpediente extends Component {
         })
       })
       .catch((e) => {
-        console.log(e);
+        console.log(`Error DependenciasService.\n${e}`);
       });
   }
 
@@ -72,13 +73,35 @@ class NuevoExpediente extends Component {
         });
       })
       .catch(e => {
-        console.log(e);
+        console.log(`Error TiposDeExpedientesService.\n${e}`);
+      });
+  }
+
+  /**
+   * Obtener las posibles dependencias de origen de acuerdo al usuario activo.
+   */
+  retrieveDependenciasByUser() {
+    DependenciasPorUsuarioService.getByUser(helper.getCurrentUserId())
+      .then(response => {
+        this.setState({
+          origen: response.data.results.map(dxu => {
+            return {
+              id: dxu.dependencia_id.id,
+              value: dxu.dependencia_id.descripcion,
+              label: dxu.dependencia_id.descripcion
+            }
+          })
+        })
+      })
+      .catch(e => {
+        console.log(`Error DependenciasPorUsuarioService.\n${e}`);
       });
   }
 
   componentDidMount() {
     this.retrieveTiposDeExpedientes();
-    this.retrieveDependencias();
+    this.retrieveAllDependencias();
+    this.retrieveDependenciasByUser();
   }
 
   /**
@@ -109,10 +132,8 @@ class NuevoExpediente extends Component {
             }
           })
         })
-        Popups.success("Expediente creado con éxito.");
       })
       .catch((e) => {
-        Popups.error('Ocurrió un error al procesar la información.');
         console.log(e);
       });
   }
@@ -209,7 +230,6 @@ class NuevoExpediente extends Component {
                 <div className="form-group col">
                   <label>Descripcion *</label>
                   <textarea
-                    type="text"
                     className="form-control"
                     name="description"
                     placeholder="Agrega una descripcion"
@@ -217,7 +237,7 @@ class NuevoExpediente extends Component {
                     onChange={e => this.setDescription(e)}
                     onBlur={e => this.setDescription(e)}
                   />
-                  {this.validator.message('description', this.state.description, 'required|alpha_num_dash_space|max:50')}
+                  {this.validator.message('description', this.state.description, 'required|alpha_num_dash_space|max:200')}
                 </div>
               </div>
             </div>
