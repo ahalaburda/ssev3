@@ -43,6 +43,14 @@ class Instancias {
     }
     return http.get(`/instancias/expedientes/0?format=json&page=${page}`);
   }
+
+  /**
+   * Obtener todas las instancias.
+   * @returns {Promise<AxiosResponse<Instancia>>}
+   */
+  getAll() {
+    return http.get('instancias/?format=json');
+  }
 }
 
 export default new Instancias();

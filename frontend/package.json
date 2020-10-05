@@ -18,6 +18,7 @@
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",
     "react-data-table-component": "^6.9.3",
+    "react-date-picker": "^8.0.3",
     "react-dom": "^16.13.1",
     "react-fontawesome": "^1.7.1",
     "react-notifications-component": "^2.4.0",
