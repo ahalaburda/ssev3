@@ -22,45 +22,6 @@ class ExpedienteSerializer(serializers.ModelSerializer):
         depth = 2
 
 
-class ExpedienteByIdSerializer(serializers.ModelSerializer):
-    dependencia_actual = serializers.CharField(required=True)
-    estado_id = serializers.CharField(required=True)
-
-    class Meta:
-        model = Expediente
-        fields = ['id', 'numero_mesa_de_entrada', 'fecha_actualizacion', 'dependencia_origen_id',
-                  'dependencia_destino_id', 'descripcion', 'estado_id', 'dependencia_actual']
-        depth = 1
-
-
-# expedientes por dependencia y usuario
-class ExpedienteListSerializer(serializers.Serializer):
-    id = serializers.IntegerField(required=True)
-    instancia_id = serializers.IntegerField(required=True)
-    estado_instancia = serializers.IntegerField(required=True)
-    tipo_de_expediente_id = serializers.CharField(required=True)
-    descripcion = serializers.CharField(required=True)
-    numero_mesa_de_entrada = serializers.IntegerField(required=True)
-    anho = serializers.IntegerField(required=True)
-    monto_currency = serializers.CharField(required=True)
-    monto = serializers.CharField(required=True)
-    fecha_creacion = serializers.CharField(required=True)
-    fecha_actualizacion = serializers.CharField(required=True)
-    dependencia_destino_id = serializers.CharField(required=True)
-    dependencia_origen_id = serializers.CharField(required=True)
-    lote_id = serializers.IntegerField(required=True)
-    objeto_de_gasto_id = serializers.CharField(required=True)
-    prioridad_id = serializers.CharField(required=True)
-    dependencia_actual_id = serializers.CharField(required=True)
-
-    class Meta:
-        fields = ('id', 'instancia_id', 'estado_instancia')
-        # fields = (
-        # 'id', 'numero_mesa_de_entrada', 'anho', 'descripcion', 'monto_currency', 'monto', 'fecha_creacion',
-        # 'fecha_actualizacion', 'tipo_de_expediente_id', 'dependencia_origen_id', 'dependencia_destino_id',
-        # 'objeto_de_gasto_id', 'estado_id', 'prioridad_id', 'instancias')
-
-
 class ExpedienteNewUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Expediente
@@ -80,6 +41,9 @@ class InstanciaNewUpdateSerializer(serializers.ModelSerializer):
 
 
 class ComentarioSerializer(serializers.ModelSerializer):
+    """
+    Serializer para comentario, agregando el campo extra de nombre de usuario (nickname).
+    """
     usuario = serializers.ReadOnlyField(source='usuario_id.username')
 
     class Meta:

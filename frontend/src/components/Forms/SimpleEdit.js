@@ -114,6 +114,9 @@ class SimpleEdit extends Component {
       });
   }
 
+  /**
+   * Chequea si las valiaciones estan correctas, si esta correcto ejecuta la actualizacion.
+   */
   handleUpdate = () => {
     if (this.checkValid()) {
       this.update();

@@ -1,7 +1,14 @@
 import {store} from "react-notifications-component";
 import "react-notifications-component/dist/theme.css"
 
+/**
+ * Mensajes popups
+ */
 class Popups {
+  /**
+   * Mensaje de exito.
+   * @param message mensaje a mostrar.
+   */
   success(message) {
     store.addNotification({
       message: message,
@@ -16,6 +23,10 @@ class Popups {
     });
   }
 
+  /**
+   * Mensaje de error.
+   * @param message mensaje a mostrar
+   */
   error(message) {
     store.addNotification({
       message: message,

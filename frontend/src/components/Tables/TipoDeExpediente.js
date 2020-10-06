@@ -43,7 +43,7 @@ class TipoDeExpediente extends Component {
     TiposDeExpedientesService.getAll()
       .then(response => {
         this.setState({
-          list: response.data.map(tde => {
+          list: response.data.results.map(tde => {
             return {
               id: tde.id,
               descripcion: tde.descripcion,
