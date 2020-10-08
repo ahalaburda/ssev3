@@ -5,6 +5,8 @@ import Popups from "../../components/Popups";
 import Reporte from "../../components/Tables/Reporte";
 import DependenciasService from "../../services/Dependencias";
 import ObjetosDeGastosService from "../../services/ObjetosDeGastos";
+import InstanciaService from "../../services/Instancias";
+import moment from 'moment';
 
 
 
@@ -13,7 +15,7 @@ class Reportes extends Component {
     super(props);
     this.state = {
       data: [],
-      startDate: '',
+      startDate: new Date(),
       endDate: '',
       origen: [],
       objetoDeGasto: [],
@@ -24,8 +26,50 @@ class Reportes extends Component {
   }
   
 
+  setListFromResponse = response => {
+    this.setState({
+      data: response.data.results.map(exp => {
+        return {
+          id: exp.expediente_id.id,
+          numero: exp.expediente_id.numero_mesa_de_entrada + "/" + exp.expediente_id.anho,
+          fecha_me: moment(exp.expediente_id.fecha_mesa_entrada).isValid() ?
+            moment(exp.expediente_id.fecha_mesa_entrada).format('DD/MM/YYYY - kk:mm:ss') : 'Sin fecha',
+          origen: exp.expediente_id.dependencia_origen_id.descripcion,
+          tipo: exp.expediente_id.tipo_de_expediente_id.descripcion,
+          descripcion: exp.expediente_id.descripcion,
+          estado: exp.estado_id.descripcion,
+          dependencia: exp.dependencia_actual_id.descripcion
+        }
+      }),
+      loading: false
+    });
+  }
+
+ 
+
   /**
-   * Obtener las dependencias de la base de datos y cargarlos como opciones para el select
+   * Obtiene todos los expedientes de la base de datos y los carga en la tabla
+   */
+  retrieveExpedientes() {
+    this.setState({loading: true});
+    InstanciaService.getAll()
+      .then(response => {
+        if (response.data.count > 0) {
+          this.setListFromResponse(response);
+          this.setState({totalRows: response.data.count});
+        } else {
+          this.setState({loading: false});
+          Popups.error('No se encontro ningun expediente');
+        }
+      })
+      .catch(e => {
+        Popups.error('Ocurrio un error al obtener los expedientes.');
+        console.log(`Error retrieveExpedientes:\n${e}`);
+      })
+  }
+
+  /**
+   * Obtiene todas las dependencias de la base de datos y los cargar como opciones para el select
    */
   retrieveDependencias() {
     DependenciasService.getAll()
@@ -72,7 +116,56 @@ class Reportes extends Component {
   componentDidMount() {
     this.retrieveDependencias();
     this.retrieveObjetosDeGastos();
+    this.retrieveExpedientes();
   }
+
+  handleDescriptionChange = e => {
+    this.setState({description: e.target.value});
+  }
+
+   
+
+  /**
+   * Toma la descripcion pasada del estado y ejecuta el servicio de busqueda por descripcion.
+   * @param description
+   */
+  findByDescription = description => {
+    InstanciaService.getByExpDescription(description)
+      .then(response => {
+        if (response.data.count === 0) {
+          Popups.error('Expediente(s) no encontrado(s).');
+        } else {
+          this.setListFromResponse(response);
+        }
+      })
+      .catch((e) => {
+        Popups.error('Ocurrio un error durante la busqueda.');
+        console.log(`Error findByDescription: InstanciaService\n${e}`);
+      });
+  }
+
+  /**
+   * Filtra los expedientes segun el estado de los mismos.
+   * @param {estado} estado 
+   */
+  findByEstado = estado => {
+    InstanciaService.getByExpEstado(estado)
+    .then(response => {
+      if (response.data.count === 0){
+        Popups.error('Expediente(s) no encontrado(s).');
+      } else {
+        this.setListFromResponse(response);
+      }
+    })
+  }
+
+  
+  handleSearch = () => { 
+    this.findByDescription(this.state.description);
+    
+  }
+
+
 
   render() {
     return (
@@ -158,7 +251,7 @@ class Reportes extends Component {
               type="text"
               name='id'
               className="form-control form-control-sm-1"
-              
+              onChange={e => this.handleDescriptionChange(e)}
             />
           </div>
         </div>
@@ -167,17 +260,19 @@ class Reportes extends Component {
           <div className='row'>  
             <div className='card-header py-3 col-md-9'>
               <div className="btn-group ml-auto">
-                  <button type="button" className="btn btn-sm btn-success shadow-sm">Recibido</button>
-                  <button type="button" className="btn btn-sm btn-warning shadow-sm">No Recibido</button>
-                  <button type="button" className="btn btn-sm btn-info shadow-sm">Derivado</button>
-                  <button type="button" className="btn btn-sm btn-danger shadow-sm">Rechazado</button>
-                  <button type="button" className="btn btn-sm btn-secondary shadow-sm">Finalizado</button>                       
+                  <button type="button" className="btn btn-sm btn-success shadow-sm" onClick={val => this.findByEstado('recibido')}>Recibido</button>
+                  <button type="button" className="btn btn-sm btn-warning shadow-sm" onClick={val => this.findByEstado('no recibido')}>No Recibido</button>
+                  <button type="button" className="btn btn-sm btn-info shadow-sm" onClick={val => this.findByEstado('derivado')}>Derivado</button>
+                  <button type="button" className="btn btn-sm btn-dark shadow-sm" onClick={val => this.findByEstado('pausado')}>Pausado</button>
+                  <button type="button" className="btn btn-sm btn-danger shadow-sm" onClick={val => this.findByEstado('rechazado')}>Rechazado</button>
+                  <button type="button" className="btn btn-sm btn-secondary shadow-sm" onClick={val => this.findByEstado('finalizado')}>Finalizado</button>                       
               </div>               
             </div>   
 
             <div className="py-3 col-md-3 text-right">
               <button
                 className="btn btn-sm btn-primary"
+                onClick={this.handleSearch}
               > Buscar
               </button>
             </div> 
@@ -185,7 +280,7 @@ class Reportes extends Component {
         </div>
 
       </div> 
-      <Reporte />
+      <Reporte data={this.state.data} />
       </>
     );
   }

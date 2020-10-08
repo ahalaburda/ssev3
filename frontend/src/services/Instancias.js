@@ -11,6 +11,15 @@ class Instancias {
   }
 
   /**
+   * Obtiene una o varias instancias de acuerdo al estado dado.
+   * @param estado Estado de Expediente
+   * @returns {Promise<AxiosResponse<Instancia>>}
+   */
+  getByExpEstado(estado){
+    return http.get(`/instancias/?estado=${estado}&format=json`)
+  }
+  
+  /**
    * Obtener una o varias instancias de acuerdo a una descripcion dada.
    * @param description Descripcion buscada
    * @returns {Promise<AxiosResponse<Instancia>>}
