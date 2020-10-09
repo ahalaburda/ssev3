@@ -7,6 +7,7 @@ import DependenciasService from "../../services/Dependencias";
 import ObjetosDeGastosService from "../../services/ObjetosDeGastos";
 import InstanciaService from "../../services/Instancias";
 import moment from 'moment';
+import SimpleReactValidator from 'simple-react-validator';
 
 
 
@@ -18,11 +19,14 @@ class Reportes extends Component {
       startDate: new Date(),
       endDate: '',
       origen: [],
+      origenSelected: '',
       objetoDeGasto: [],
+      objetoSelected: '',
       description: ''
     }
     this.retrieveDependencias = this.retrieveDependencias.bind(this);
     this.retrieveObjetosDeGastos = this.retrieveObjetosDeGastos.bind(this);
+    this.validator = new SimpleReactValidator();
   }
   
 
@@ -123,14 +127,23 @@ class Reportes extends Component {
     this.setState({description: e.target.value});
   }
 
+  setOrigen = origen => {
+    this.setState({origenSelected: origen});  
+  }
+
+  setObjetoGasto = objeto => {
+    this.setState({objetoSelected : objeto})
+  }
+
    
 
   /**
    * Toma la descripcion pasada del estado y ejecuta el servicio de busqueda por descripcion.
    * @param description
    */
-  findByDescription = description => {
-    InstanciaService.getByExpDescription(description)
+  findExp = (origen, description) => {
+    InstanciaService.getByExpObjeto(origen)
+    // InstanciaService.getByExpDescription(description)
       .then(response => {
         if (response.data.count === 0) {
           Popups.error('Expediente(s) no encontrado(s).');
@@ -144,27 +157,14 @@ class Reportes extends Component {
       });
   }
 
-  /**
-   * Filtra los expedientes segun el estado de los mismos.
-   * @param {estado} estado 
-   */
-  findByEstado = estado => {
-    InstanciaService.getByExpEstado(estado)
-    .then(response => {
-      if (response.data.count === 0){
-        Popups.error('Expediente(s) no encontrado(s).');
-      } else {
-        this.setListFromResponse(response);
-      }
-    })
-  }
+  
 
   
   handleSearch = () => { 
-    this.findByDescription(this.state.description);
-    
+    if (this.validator.fieldValid('selectObjeto')) {
+      this.findExp(this.state.objetoSelected.value,this.state.description);
+    }
   }
-
 
 
   render() {
@@ -219,12 +219,16 @@ class Reportes extends Component {
               <label className=" col-form-label col-sm-3">Origen: </label>
                 <div className="col-md-9">
                   <Select
-                    options={this.state.origen}
-                    placeholder="Selecciona..."
-                    name="select" 
-                    isClearable="True"
-                    isSearchable="True"                  
+                    
+                    options = {this.state.origen}
+                    placeholder = "Selecciona..."
+                    name = "selectOrigen" 
+                    value= {this.state.origenSelected}
+                    onChange = {origen => this.setOrigen(origen)}                  
+                    isClearable ="True"
+                    isSearchable ="True"                  
                   />
+                  {this.validator.message('selectOrigen', this.state.origenSelected, 'required')}
                 </div>
             </div>
           </div>
@@ -235,12 +239,15 @@ class Reportes extends Component {
               <label className="col-form-label col-sm-3">Objeto: </label>
                 <div className="col-md-9">
                   <Select
-                    options={this.state.objetoDeGasto} 
-                    placeholder="Selecciona..."
-                    name="select"  
+                    options = {this.state.objetoDeGasto} 
+                    placeholder = "Selecciona..."
+                    name = "selectObjeto"
+                    value =  {this.state.objetoSelected}
+                    onChange = {objeto => this.setObjetoGasto(objeto)}
                     isClearable="True" 
                     isSearchable="True"
                   />
+                  {this.validator.message('selectObjeto', this.state.objetoSelected, 'required')}
                 </div>             
             </div>
           </div>
