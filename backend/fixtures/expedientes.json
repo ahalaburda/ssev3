@@ -1,0 +1,944 @@
+[{
+	"model": "expedientes.estado",
+	"pk": 1,
+	"fields": {
+		"descripcion": "No Recibido",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.estado",
+	"pk": 2,
+	"fields": {
+		"descripcion": "Recibido",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.estado",
+	"pk": 3,
+	"fields": {
+		"descripcion": "Derivado",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.estado",
+	"pk": 4,
+	"fields": {
+		"descripcion": "Rechazado",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.estado",
+	"pk": 5,
+	"fields": {
+		"descripcion": "Finalizado",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.estado",
+	"pk": 6,
+	"fields": {
+		"descripcion": "Anulado",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.estado",
+	"pk": 7,
+	"fields": {
+		"descripcion": "Pausado",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.prioridad",
+	"pk": 1,
+	"fields": {
+		"descripcion": "Baja",
+		"activo": false
+	}
+}, {
+	"model": "expedientes.prioridad",
+	"pk": 2,
+	"fields": {
+		"descripcion": "Alta",
+		"activo": false
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 1,
+	"fields": {
+		"descripcion": "Sueldos",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 2,
+	"fields": {
+		"descripcion": "Dietas",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 3,
+	"fields": {
+		"descripcion": "Gastos de Representacion",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 4,
+	"fields": {
+		"descripcion": "Aguinaldo",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 5,
+	"fields": {
+		"descripcion": "Remuneracion Extraordinaria",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 6,
+	"fields": {
+		"descripcion": "Remuneracion Adicional",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 7,
+	"fields": {
+		"descripcion": "Subsidio Familiar",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 8,
+	"fields": {
+		"descripcion": "Bonificaciones y gratifiaciones",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 9,
+	"fields": {
+		"descripcion": "Aporte jubilatorio del empleador",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 10,
+	"fields": {
+		"descripcion": "Jornales",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 11,
+	"fields": {
+		"descripcion": "Subsidio para la salud",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 12,
+	"fields": {
+		"descripcion": "Otros gastos del personal",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 13,
+	"fields": {
+		"descripcion": "Servicios basicos",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 14,
+	"fields": {
+		"descripcion": "Transporte y almacenaje",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 15,
+	"fields": {
+		"descripcion": "Pasajes y viaticos",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 16,
+	"fields": {
+		"descripcion": "Gastos por servicios de aseo y mantenimiento",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 17,
+	"fields": {
+		"descripcion": "Alquileres y derechos",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 18,
+	"fields": {
+		"descripcion": "Servicios tecnicos y profesionales",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 19,
+	"fields": {
+		"descripcion": "Servicios de ceremonial",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 20,
+	"fields": {
+		"descripcion": "Servicios de caterina",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 21,
+	"fields": {
+		"descripcion": "Servicios de capacitacion y adiestramiento",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 22,
+	"fields": {
+		"descripcion": "Textiles y vestuarios",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 23,
+	"fields": {
+		"descripcion": "Productos de papel carton e impresos",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 24,
+	"fields": {
+		"descripcion": "Bienes de consumo de oficinas e insumos",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 25,
+	"fields": {
+		"descripcion": "Productos e instrum quimicos y medicinales",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 26,
+	"fields": {
+		"descripcion": "Combustibles y lubricantes",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 27,
+	"fields": {
+		"descripcion": "Otros bienes de consumo",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 28,
+	"fields": {
+		"descripcion": "Construcciones",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 29,
+	"fields": {
+		"descripcion": "Adquisiciones de maquinarias",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 30,
+	"fields": {
+		"descripcion": "Adquisiciones de equipos de oficina y computacion",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 31,
+	"fields": {
+		"descripcion": "Adquisicion de ativos intangibles",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 32,
+	"fields": {
+		"descripcion": "Becas",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 33,
+	"fields": {
+		"descripcion": "Aportes a entidades educativas e instituciones",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 34,
+	"fields": {
+		"descripcion": "Transferencias de ctes a ent del sector privado",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.objeto_de_gasto",
+	"pk": 35,
+	"fields": {
+		"descripcion": "Pago de impuestos, tasas, gastos judiciales y otro",
+		"activo": true
+	}
+}, {
+	"model": "expedientes.expediente",
+	"pk": 1,
+	"fields": {
+		"numero_mesa_de_entrada": 2348,
+		"anho": 2013,
+		"descripcion": "expediente inicial 2348",
+		"tipo_de_expediente_id": 33,
+		"dependencia_origen_id": 9,
+		"dependencia_destino_id": 14,
+		"monto_currency": "PYG",
+		"monto": "150000",
+		"objeto_de_gasto_id": 3,
+		"estado_id": 1,
+		"prioridad_id": 1,
+		"lote_id": 1,
+		"fecha_creacion": "2013-05-02T07:05:15Z",
+		"fecha_actualizacion": "2013-05-02T07:05:32Z",
+		"fecha_mesa_entrada": null
+	}
+}, {
+	"model": "expedientes.expediente",
+	"pk": 2,
+	"fields": {
+		"numero_mesa_de_entrada": 2349,
+		"anho": 2013,
+		"descripcion": "numeracion automatica 2349",
+		"tipo_de_expediente_id": 33,
+		"dependencia_origen_id": 9,
+		"dependencia_destino_id": 14,
+		"monto_currency": "PYG",
+		"monto": "150000",
+		"objeto_de_gasto_id": 3,
+		"estado_id": 1,
+		"prioridad_id": 1,
+		"lote_id": 1,
+		"fecha_creacion": "2013-05-02T07:05:10Z",
+		"fecha_actualizacion": "2013-05-02T07:05:23Z",
+		"fecha_mesa_entrada": null
+	}
+}, {
+	"model": "expedientes.expediente",
+	"pk": 3,
+	"fields": {
+		"numero_mesa_de_entrada": 2352,
+		"anho": 2013,
+		"descripcion": "Solicitud de vacaciones.",
+		"tipo_de_expediente_id": 33,
+		"dependencia_origen_id": 3,
+		"dependencia_destino_id": 2,
+		"monto_currency": "PYG",
+		"monto": "150000",
+		"objeto_de_gasto_id": 3,
+		"estado_id": 1,
+		"prioridad_id": 1,
+		"lote_id": 1,
+		"fecha_creacion": "2013-05-02T07:05:19Z",
+		"fecha_actualizacion": "2013-05-02T07:05:42Z",
+		"fecha_mesa_entrada": null
+	}
+}, {
+	"model": "expedientes.expediente",
+	"pk": 4,
+	"fields": {
+		"numero_mesa_de_entrada": 2351,
+		"anho": 2013,
+		"descripcion": "solicitud de da libre.",
+		"tipo_de_expediente_id": 33,
+		"dependencia_origen_id": 9,
+		"dependencia_destino_id": 2,
+		"monto_currency": "PYG",
+		"monto": "366000",
+		"objeto_de_gasto_id": 5,
+		"estado_id": 2,
+		"prioridad_id": 1,
+		"lote_id": 2,
+		"fecha_creacion": "2013-05-02T07:05:45Z",
+		"fecha_actualizacion": "2013-05-02T07:05:23Z",
+		"fecha_mesa_entrada": null
+	}
+}, {
+	"model": "expedientes.expediente",
+	"pk": 5,
+	"fields": {
+		"numero_mesa_de_entrada": 2350,
+		"anho": 2013,
+		"descripcion": "Solicitud de pago a ESSAP",
+		"tipo_de_expediente_id": 13,
+		"dependencia_origen_id": 4,
+		"dependencia_destino_id": 12,
+		"monto_currency": "PYG",
+		"monto": "366000",
+		"objeto_de_gasto_id": 5,
+		"estado_id": 2,
+		"prioridad_id": 2,
+		"lote_id": 2,
+		"fecha_creacion": "2013-05-02T09:05:33Z",
+		"fecha_actualizacion": "2013-05-02T10:05:30Z",
+		"fecha_mesa_entrada": null
+	}
+}, {
+	"model": "expedientes.expediente",
+	"pk": 6,
+	"fields": {
+		"numero_mesa_de_entrada": 2393,
+		"anho": 2013,
+		"descripcion": "PAGO 144 F30 MES DE MAYO TIPO 1 MONTO 17188000",
+		"tipo_de_expediente_id": 2,
+		"dependencia_origen_id": 14,
+		"dependencia_destino_id": 12,
+		"monto_currency": "PYG",
+		"monto": "366000",
+		"objeto_de_gasto_id": 5,
+		"estado_id": 2,
+		"prioridad_id": 1,
+		"lote_id": 2,
+		"fecha_creacion": "2013-05-02T11:05:00Z",
+		"fecha_actualizacion": "2013-05-06T10:05:55Z",
+		"fecha_mesa_entrada": null
+	}
+}, {
+	"model": "expedientes.expediente",
+	"pk": 7,
+	"fields": {
+		"numero_mesa_de_entrada": 2355,
+		"anho": 2013,
+		"descripcion": "Reposici\u00f3n de fondo fijo, Vinader Computaci\u00f3n n\u00ba boleta 12969 monto 120.000 Gs.   ",
+		"tipo_de_expediente_id": 13,
+		"dependencia_origen_id": 15,
+		"dependencia_destino_id": 12,
+		"monto_currency": "PYG",
+		"monto": "423200",
+		"objeto_de_gasto_id": 5,
+		"estado_id": 3,
+		"prioridad_id": 2,
+		"lote_id": 3,
+		"fecha_creacion": "2013-05-02T11:05:50Z",
+		"fecha_actualizacion": "2013-05-02T02:05:35Z",
+		"fecha_mesa_entrada": null
+	}
+}, {
+	"model": "expedientes.expediente",
+	"pk": 8,
+	"fields": {
+		"numero_mesa_de_entrada": 2413,
+		"anho": 2013,
+		"descripcion": "111 SUELDOS, FF10, TIPO 1,MES DE MAYO MONTO 2363700 ",
+		"tipo_de_expediente_id": 2,
+		"dependencia_origen_id": 14,
+		"dependencia_destino_id": 12,
+		"monto_currency": "PYG",
+		"monto": "423200",
+		"objeto_de_gasto_id": 5,
+		"estado_id": 3,
+		"prioridad_id": 2,
+		"lote_id": 3,
+		"fecha_creacion": "2013-05-02T11:05:06Z",
+		"fecha_actualizacion": "2013-05-07T08:05:39Z",
+		"fecha_mesa_entrada": null
+	}
+}, {
+	"model": "expedientes.expediente",
+	"pk": 9,
+	"fields": {
+		"numero_mesa_de_entrada": 2397,
+		"anho": 2013,
+		"descripcion": "141 CONTRATACI\u00d3N DE PERSONAL T\u00c9CNICO, FF10, TIPO 1, MES DE MAYO, RAMON PRIETO, MONTO 1.950 .000 Gs.",
+		"tipo_de_expediente_id": 2,
+		"dependencia_origen_id": 14,
+		"dependencia_destino_id": 12,
+		"monto_currency": "PYG",
+		"monto": "423200",
+		"objeto_de_gasto_id": 5,
+		"estado_id": 3,
+		"prioridad_id": 2,
+		"lote_id": 3,
+		"fecha_creacion": "2013-05-02T12:05:32Z",
+		"fecha_actualizacion": "2013-05-06T11:05:53Z",
+		"fecha_mesa_entrada": null
+	}
+}, {
+	"model": "expedientes.expediente",
+	"pk": 10,
+	"fields": {
+		"numero_mesa_de_entrada": 2356,
+		"anho": 2013,
+		"descripcion": "141 CONTRATACI\u00d3N DE PERSONAL T\u00c9CNICO, FF10, TIPO 1, MES DE MAYO, EUCLIDES GONZ\u00c1LEZ, MONTO 2.200 .000 Gs.",
+		"tipo_de_expediente_id": 2,
+		"dependencia_origen_id": 14,
+		"dependencia_destino_id": 12,
+		"monto_currency": "PYG",
+		"monto": "746300",
+		"objeto_de_gasto_id": 7,
+		"estado_id": 4,
+		"prioridad_id": 1,
+		"lote_id": 4,
+		"fecha_creacion": "2013-05-02T12:05:16Z",
+		"fecha_actualizacion": "2013-05-02T02:05:48Z",
+		"fecha_mesa_entrada": null
+	}
+}, {
+	"model": "expedientes.expediente",
+	"pk": 11,
+	"fields": {
+		"numero_mesa_de_entrada": 2358,
+		"anho": 2012,
+		"descripcion": "Solicitud de viatico para el Lic Marciano Leiva y Chofer Fernando Araujo a fin de viajar a Asunci\u00f3n los d\u00edas 06 y 07 de mayo del cte.a\u00f1o, a fin de realizar tramites en la C.G.R, Dir.de E.E.N y Secretaria de la funci\u00f3n Publica.Monto: Gs .1 .391 .520 ",
+		"tipo_de_expediente_id": 2,
+		"dependencia_origen_id": 3,
+		"dependencia_destino_id": 12,
+		"monto_currency": "PYG",
+		"monto": "746300",
+		"objeto_de_gasto_id": 7,
+		"estado_id": 4,
+		"prioridad_id": 1,
+		"lote_id": 4,
+		"fecha_creacion": "2013-05-02T12:05:34Z",
+		"fecha_actualizacion": "2013-05-02T01:05:06Z",
+		"fecha_mesa_entrada": null
+	}
+}, {
+	"model": "expedientes.expediente",
+	"pk": 12,
+	"fields": {
+		"numero_mesa_de_entrada": 2354,
+		"anho": 2013,
+		"descripcion": "Solicitud de viatico para el Lic Marciano Leiva y Chofer Fernando Araujo a fin de viajar a Asunci\u00f3n los d\u00edas 06 y 07 de mayo del cte.a\u00f1o, a fin de realizar tramites en la C.G.R, Dir.de E.E.N y Secretaria de la funci\u00f3n Publica.Monto: Gs .1 .391 .520 ",
+		"tipo_de_expediente_id": 8,
+		"dependencia_origen_id": 3,
+		"dependencia_destino_id": 12,
+		"monto_currency": "PYG",
+		"monto": "746300",
+		"objeto_de_gasto_id": 7,
+		"estado_id": 4,
+		"prioridad_id": 1,
+		"lote_id": 4,
+		"fecha_creacion": "2013-05-02T12:05:09Z",
+		"fecha_actualizacion": "2013-05-02T01:05:45Z",
+		"fecha_mesa_entrada": null
+	}
+}, {
+	"model": "expedientes.expediente",
+	"pk": 13,
+	"fields": {
+		"numero_mesa_de_entrada": 2401,
+		"anho": 2013,
+		"descripcion": "145 HONORARIOS PROFESIONALES, FF30, TIPO 2, SUB - PROGRAMA 2, OSCAR SALAZAR, MONTO 5.000 .000 ",
+		"tipo_de_expediente_id": 2,
+		"dependencia_origen_id": 14,
+		"dependencia_destino_id": 12,
+		"monto_currency": "PYG",
+		"monto": "692700",
+		"objeto_de_gasto_id": 9,
+		"estado_id": 5,
+		"prioridad_id": 2,
+		"lote_id": 5,
+		"fecha_creacion": "2013-05-02T01:05:39Z",
+		"fecha_actualizacion": "2013-05-06T11:05:53Z",
+		"fecha_mesa_entrada": null
+	}
+}, {
+	"model": "expedientes.expediente",
+	"pk": 14,
+	"fields": {
+		"numero_mesa_de_entrada": 2403,
+		"anho": 2013,
+		"descripcion": "144 JORNALES, FF10, TIPO 1, MES DE MAYO,VARIOS, MONTO 50.180 .000 GS.",
+		"tipo_de_expediente_id": 2,
+		"dependencia_origen_id": 14,
+		"dependencia_destino_id": 12,
+		"monto_currency": "PYG",
+		"monto": "692700",
+		"objeto_de_gasto_id": 9,
+		"estado_id": 5,
+		"prioridad_id": 2,
+		"lote_id": 5,
+		"fecha_creacion": "2013-05-02T01:05:53Z",
+		"fecha_actualizacion": "2013-05-06T12:05:40Z",
+		"fecha_mesa_entrada": null
+	}
+}, {
+	"model": "expedientes.expediente",
+	"pk": 15,
+	"fields": {
+		"numero_mesa_de_entrada": 2353,
+		"anho": 2013,
+		"descripcion": "Solicitud del SUM para el martes 07 de mayo 19 hs ",
+		"tipo_de_expediente_id": 12,
+		"dependencia_origen_id": 31,
+		"dependencia_destino_id": 2,
+		"monto_currency": "PYG",
+		"monto": "692700",
+		"objeto_de_gasto_id": 9,
+		"estado_id": 5,
+		"prioridad_id": 2,
+		"lote_id": 5,
+		"fecha_creacion": "2013-05-02T01:05:32Z",
+		"fecha_actualizacion": "2013-05-02T01:05:22Z",
+		"fecha_mesa_entrada": null
+	}
+}, {
+	"model": "expedientes.expediente",
+	"pk": 16,
+	"fields": {
+		"numero_mesa_de_entrada": 2402,
+		"anho": 2013,
+		"descripcion": "111 SUELDOS, FF10, TIPO 2, SUB - PROGRAMA 2, MES DE MAYO, VARIOS, MONTO 34.051 .544 ",
+		"tipo_de_expediente_id": 2,
+		"dependencia_origen_id": 14,
+		"dependencia_destino_id": 12,
+		"monto_currency": "PYG",
+		"monto": "692700",
+		"objeto_de_gasto_id": 9,
+		"estado_id": 5,
+		"prioridad_id": 2,
+		"lote_id": 5,
+		"fecha_creacion": "2013-05-02T01:05:06Z",
+		"fecha_actualizacion": "2013-05-06T12:05:01Z",
+		"fecha_mesa_entrada": null
+	}
+}, {
+	"model": "expedientes.instancia",
+	"pk": 1,
+	"fields": {
+		"expediente_id": 3,
+		"dependencia_anterior_id": 9,
+		"dependencia_actual_id": 5,
+		"dependencia_siguiente_id": 7,
+		"estado_id": 2,
+		"fecha_creacion": "2020-08-14T13:25:27.164Z",
+		"fecha_recepcion": "2020-08-14T13:25:10Z",
+		"fecha_final": "2020-08-15T12:00:00Z",
+		"usuario_id_entrada": null,
+		"usuario_id_salida": null
+	}
+}, {
+	"model": "expedientes.instancia",
+	"pk": 2,
+	"fields": {
+		"expediente_id": 3,
+		"dependencia_anterior_id": 5,
+		"dependencia_actual_id": 7,
+		"dependencia_siguiente_id": 13,
+		"estado_id": 4,
+		"fecha_creacion": "2020-08-24T13:09:44.808Z",
+		"fecha_recepcion": "2020-08-24T13:09:42Z",
+		"fecha_final": "2020-08-24T13:09:43Z",
+		"usuario_id_entrada": null,
+		"usuario_id_salida": null
+	}
+}, {
+	"model": "expedientes.instancia",
+	"pk": 3,
+	"fields": {
+		"expediente_id": 3,
+		"dependencia_anterior_id": 7,
+		"dependencia_actual_id": 13,
+		"dependencia_siguiente_id": 27,
+		"estado_id": 3,
+		"fecha_creacion": "2020-08-24T13:10:25.131Z",
+		"fecha_recepcion": "2020-08-25T13:10:16Z",
+		"fecha_final": "2020-08-25T13:10:21Z",
+		"usuario_id_entrada": null,
+		"usuario_id_salida": null
+	}
+}, {
+	"model": "expedientes.instancia",
+	"pk": 4,
+	"fields": {
+		"expediente_id": 5,
+		"dependencia_anterior_id": 1,
+		"dependencia_actual_id": 2,
+		"dependencia_siguiente_id": 6,
+		"estado_id": 1,
+		"fecha_creacion": "2020-08-24T13:10:39.957Z",
+		"fecha_recepcion": "2020-08-24T13:10:37Z",
+		"fecha_final": "2020-08-24T13:10:39Z",
+		"usuario_id_entrada": null,
+		"usuario_id_salida": null
+	}
+}, {
+	"model": "expedientes.instancia",
+	"pk": 5,
+	"fields": {
+		"expediente_id": 5,
+		"dependencia_anterior_id": 2,
+		"dependencia_actual_id": 6,
+		"dependencia_siguiente_id": 10,
+		"estado_id": 2,
+		"fecha_creacion": "2020-08-24T13:11:12.508Z",
+		"fecha_recepcion": "2020-08-25T13:11:08Z",
+		"fecha_final": "2020-08-25T13:11:10Z",
+		"usuario_id_entrada": null,
+		"usuario_id_salida": null
+	}
+}, {
+	"model": "expedientes.instancia",
+	"pk": 6,
+	"fields": {
+		"expediente_id": 1,
+		"dependencia_anterior_id": 4,
+		"dependencia_actual_id": 36,
+		"dependencia_siguiente_id": 37,
+		"estado_id": 3,
+		"fecha_creacion": "2020-08-25T15:10:40.580Z",
+		"fecha_recepcion": "2020-08-25T15:10:38Z",
+		"fecha_final": "2020-08-25T15:10:39Z",
+		"usuario_id_entrada": null,
+		"usuario_id_salida": null
+	}
+}, {
+	"model": "expedientes.instancia",
+	"pk": 7,
+	"fields": {
+		"expediente_id": 2,
+		"dependencia_anterior_id": 41,
+		"dependencia_actual_id": 7,
+		"dependencia_siguiente_id": 16,
+		"estado_id": 6,
+		"fecha_creacion": "2020-08-25T15:10:55.296Z",
+		"fecha_recepcion": "2020-08-25T15:10:52Z",
+		"fecha_final": "2020-08-25T15:10:54Z",
+		"usuario_id_entrada": null,
+		"usuario_id_salida": null
+	}
+}, {
+	"model": "expedientes.instancia",
+	"pk": 8,
+	"fields": {
+		"expediente_id": 4,
+		"dependencia_anterior_id": 2,
+		"dependencia_actual_id": 10,
+		"dependencia_siguiente_id": 35,
+		"estado_id": 3,
+		"fecha_creacion": "2020-08-25T15:11:09.778Z",
+		"fecha_recepcion": "2020-08-25T15:11:06Z",
+		"fecha_final": "2020-08-25T15:11:08Z",
+		"usuario_id_entrada": null,
+		"usuario_id_salida": null
+	}
+}, {
+	"model": "expedientes.instancia",
+	"pk": 9,
+	"fields": {
+		"expediente_id": 6,
+		"dependencia_anterior_id": 12,
+		"dependencia_actual_id": 13,
+		"dependencia_siguiente_id": 14,
+		"estado_id": 7,
+		"fecha_creacion": "2020-08-25T15:11:31.381Z",
+		"fecha_recepcion": "2020-08-25T15:11:29Z",
+		"fecha_final": "2020-08-25T15:11:30Z",
+		"usuario_id_entrada": null,
+		"usuario_id_salida": null
+	}
+}, {
+	"model": "expedientes.instancia",
+	"pk": 10,
+	"fields": {
+		"expediente_id": 7,
+		"dependencia_anterior_id": 50,
+		"dependencia_actual_id": 49,
+		"dependencia_siguiente_id": 52,
+		"estado_id": 1,
+		"fecha_creacion": "2020-08-25T15:11:50.399Z",
+		"fecha_recepcion": "2020-08-25T15:11:47Z",
+		"fecha_final": "2020-08-25T15:11:49Z",
+		"usuario_id_entrada": null,
+		"usuario_id_salida": null
+	}
+}, {
+	"model": "expedientes.instancia",
+	"pk": 11,
+	"fields": {
+		"expediente_id": 8,
+		"dependencia_anterior_id": 3,
+		"dependencia_actual_id": 9,
+		"dependencia_siguiente_id": 15,
+		"estado_id": 4,
+		"fecha_creacion": "2020-08-26T13:37:01.610Z",
+		"fecha_recepcion": "2020-08-26T13:36:57Z",
+		"fecha_final": "2020-08-26T13:37:00Z",
+		"usuario_id_entrada": null,
+		"usuario_id_salida": null
+	}
+}, {
+	"model": "expedientes.instancia",
+	"pk": 12,
+	"fields": {
+		"expediente_id": 9,
+		"dependencia_anterior_id": 12,
+		"dependencia_actual_id": 5,
+		"dependencia_siguiente_id": 7,
+		"estado_id": 6,
+		"fecha_creacion": "2020-08-26T13:37:15.898Z",
+		"fecha_recepcion": "2020-08-26T13:37:13Z",
+		"fecha_final": "2020-08-26T13:37:14Z",
+		"usuario_id_entrada": null,
+		"usuario_id_salida": null
+	}
+}, {
+	"model": "expedientes.instancia",
+	"pk": 13,
+	"fields": {
+		"expediente_id": 10,
+		"dependencia_anterior_id": 14,
+		"dependencia_actual_id": 16,
+		"dependencia_siguiente_id": 45,
+		"estado_id": 1,
+		"fecha_creacion": "2020-08-26T13:37:33.592Z",
+		"fecha_recepcion": "2020-08-26T13:37:29Z",
+		"fecha_final": "2020-08-26T13:37:30Z",
+		"usuario_id_entrada": null,
+		"usuario_id_salida": null
+	}
+}, {
+	"model": "expedientes.instancia",
+	"pk": 14,
+	"fields": {
+		"expediente_id": 11,
+		"dependencia_anterior_id": 15,
+		"dependencia_actual_id": 16,
+		"dependencia_siguiente_id": 17,
+		"estado_id": 2,
+		"fecha_creacion": "2020-08-26T13:37:49.168Z",
+		"fecha_recepcion": "2020-08-26T13:37:46Z",
+		"fecha_final": "2020-08-26T13:37:48Z",
+		"usuario_id_entrada": null,
+		"usuario_id_salida": null
+	}
+}, {
+	"model": "expedientes.instancia",
+	"pk": 15,
+	"fields": {
+		"expediente_id": 12,
+		"dependencia_anterior_id": 35,
+		"dependencia_actual_id": 32,
+		"dependencia_siguiente_id": 38,
+		"estado_id": 2,
+		"fecha_creacion": "2020-08-26T13:38:05.201Z",
+		"fecha_recepcion": "2020-08-26T13:38:02Z",
+		"fecha_final": "2020-08-26T13:38:04Z",
+		"usuario_id_entrada": null,
+		"usuario_id_salida": null
+	}
+}, {
+	"model": "expedientes.instancia",
+	"pk": 16,
+	"fields": {
+		"expediente_id": 13,
+		"dependencia_anterior_id": 10,
+		"dependencia_actual_id": 40,
+		"dependencia_siguiente_id": 39,
+		"estado_id": 1,
+		"fecha_creacion": "2020-08-26T13:38:21.423Z",
+		"fecha_recepcion": "2020-08-26T13:38:17Z",
+		"fecha_final": "2020-08-26T13:38:19Z",
+		"usuario_id_entrada": null,
+		"usuario_id_salida": null
+	}
+}, {
+	"model": "expedientes.instancia",
+	"pk": 17,
+	"fields": {
+		"expediente_id": 14,
+		"dependencia_anterior_id": 10,
+		"dependencia_actual_id": 2,
+		"dependencia_siguiente_id": 5,
+		"estado_id": 3,
+		"fecha_creacion": "2020-08-26T13:38:35.331Z",
+		"fecha_recepcion": "2020-08-26T13:38:32Z",
+		"fecha_final": "2020-08-26T13:38:34Z",
+		"usuario_id_entrada": null,
+		"usuario_id_salida": null
+	}
+}, {
+	"model": "expedientes.instancia",
+	"pk": 18,
+	"fields": {
+		"expediente_id": 15,
+		"dependencia_anterior_id": 50,
+		"dependencia_actual_id": 16,
+		"dependencia_siguiente_id": 9,
+		"estado_id": 4,
+		"fecha_creacion": "2020-08-26T13:38:54.868Z",
+		"fecha_recepcion": "2020-08-26T13:38:47Z",
+		"fecha_final": "2020-08-26T13:38:49Z",
+		"usuario_id_entrada": null,
+		"usuario_id_salida": null
+	}
+}, {
+	"model": "expedientes.instancia",
+	"pk": 19,
+	"fields": {
+		"expediente_id": 16,
+		"dependencia_anterior_id": 2,
+		"dependencia_actual_id": 8,
+		"dependencia_siguiente_id": 11,
+		"estado_id": 1,
+		"fecha_creacion": "2020-08-26T13:39:29.414Z",
+		"fecha_recepcion": "2020-08-26T13:39:25Z",
+		"fecha_final": "2020-08-26T13:39:26Z",
+		"usuario_id_entrada": null,
+		"usuario_id_salida": null
+	}
+}, {
+	"model": "expedientes.instancia",
+	"pk": 20,
+	"fields": {
+		"expediente_id": 7,
+		"dependencia_anterior_id": 49,
+		"dependencia_actual_id": 52,
+		"dependencia_siguiente_id": 7,
+		"estado_id": 3,
+		"fecha_creacion": "2020-08-26T13:40:32.734Z",
+		"fecha_recepcion": "2020-08-26T13:40:27Z",
+		"fecha_final": "2020-08-26T13:40:30Z",
+		"usuario_id_entrada": null,
+		"usuario_id_salida": null
+	}
+}, {
+	"model": "expedientes.instancia",
+	"pk": 21,
+	"fields": {
+		"expediente_id": 7,
+		"dependencia_anterior_id": 52,
+		"dependencia_actual_id": 7,
+		"dependencia_siguiente_id": 2,
+		"estado_id": 2,
+		"fecha_creacion": "2020-08-26T13:40:53.275Z",
+		"fecha_recepcion": "2020-08-26T13:40:50Z",
+		"fecha_final": "2020-08-26T13:40:51Z",
+		"usuario_id_entrada": null,
+		"usuario_id_salida": null
+	}
+}]
