@@ -170,6 +170,9 @@ class Expediente extends Component {
         name: 'Acciones',
         cell: row =>
           <div>
+            <button className="btn btn-sm btn-link text-primar">
+              <FontAwesomeIcon icon="pencil-alt"/>
+            </button>
             <button
               className="btn btn-sm btn-link text-primary"
               onClick={() => this.handleViewClick(row)}
@@ -179,7 +182,7 @@ class Expediente extends Component {
             <button
               className="btn btn-sm btn-link text-primary" data-toggle="modal" data-target="#editModal"
               onClick={() => this.getObjectRow(row)}>
-              <FontAwesomeIcon icon="edit"/>
+              <FontAwesomeIcon icon="comment"/>
             </button>
           </div>,
         button: true,
