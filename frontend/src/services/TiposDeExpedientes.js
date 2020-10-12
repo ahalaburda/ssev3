@@ -63,6 +63,30 @@ class TiposDeExpedientes {
   delete(id) {
     return http.delete(`tipos_de_expedientes/${id}`);
   }
+
+  /**
+   * Retorna la ultima dependencia de una ruta determinado por el ID del tipo de expediente. Si el ID es menor a 1 se
+   * retorna por defecto 1 (Dependencia origen)
+   * @param tdeId
+   * @returns {{success: boolean, dependencia: number}}
+   */
+  getLastDependencia(tdeId) {
+    http.get(`tipos_de_expedientes_detalles/?tipo_de_expediente_id=${tdeId}`)
+      .then(response => {
+        return {
+          success: true,
+          dependencia: response.data.results.slice(-1).dependencia_id
+        }
+      })
+      .catch(e => {
+        console.log(`Error getLastDependencia\n${e}`);
+        return {
+          success: false,
+          dependencia: 1
+        }
+      })
+  }
+
 }
 
 export default new TiposDeExpedientes();

@@ -49,7 +49,25 @@ class Instancias {
    * @returns {Promise<AxiosResponse<Instancia>>}
    */
   getAll() {
-    return http.get('instancias/?format=json');
+    return http.get('/instancias/?format=json');
+  }
+
+  /**
+   * Crea una nueva instancia
+   * @param data
+   * @returns {Promise<AxiosResponse<any>>}
+   */
+  create(data) {
+    return http.post('/instancias/', data);
+  }
+
+  /**
+   * Elimina una instancia
+   * @param id ID de la instancia a eliminar
+   * @returns {Promise<AxiosResponse<any>>}
+   */
+  delete(id) {
+    return http.delete(`/instancias/${id}`);
   }
 }
 
