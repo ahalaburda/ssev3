@@ -55,9 +55,9 @@ class Expediente(models.Model):
     objeto_de_gasto_id = models.ForeignKey(Objeto_de_Gasto, db_column='objeto_de_gasto_id',  null=True, blank=True,
                                            on_delete=models.CASCADE)
     estado_id = models.ForeignKey(Estado, db_column='estado_id',  related_name='estado_id', null=False, blank=False,
-                                  on_delete=models.CASCADE)
+                                  on_delete=models.CASCADE, default=1)
     prioridad_id = models.ForeignKey(Prioridad, db_column='prioridad_id',  related_name='prioridad', null=False,
-                                     blank=False, on_delete=models.CASCADE)
+                                     blank=False, on_delete=models.CASCADE, default=1)
     lote_id = models.ForeignKey(Lote, db_column='lote_id', null=True, blank=True, on_delete=models.CASCADE)
     fecha_creacion = models.DateTimeField(auto_now_add=True, blank=True)
     fecha_actualizacion = models.DateTimeField(auto_now=True, blank=True)
@@ -81,7 +81,7 @@ class Instancia(models.Model):
                                       blank=False, on_delete=models.CASCADE)
     dependencia_anterior_id = models.ForeignKey(Dependencia, db_column='dependencia_anterior_id',
                                                 related_name='instancia_anterior', null=True, blank=True,
-                                                on_delete=models.CASCADE)
+                                                on_delete=models.CASCADE, default=1)
     dependencia_actual_id = models.ForeignKey(Dependencia, db_column='dependencia_actual_id',
                                               related_name='instancia_actual', null=False, blank=False,
                                               on_delete=models.CASCADE)
@@ -89,14 +89,14 @@ class Instancia(models.Model):
                                                  related_name='instancia_siguiente', null=False, blank=False,
                                                  on_delete=models.CASCADE)
     estado_id = models.ForeignKey(Estado, db_column='estado_id', related_name='estado', null=False, blank=False,
-                                  on_delete=models.CASCADE)
+                                  on_delete=models.CASCADE, default=1)
     fecha_creacion = models.DateTimeField(auto_now_add=True, blank=True)
-    fecha_recepcion = models.DateTimeField()
-    fecha_final = models.DateTimeField()
+    fecha_recepcion = models.DateTimeField(blank=True, null=True)
+    fecha_final = models.DateTimeField(blank=True, null=True)
     usuario_id_entrada = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='usuario_id_entrada', null=True,
                                            related_name='usuario_entrada', on_delete=models.CASCADE)
     usuario_id_salida = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='usuario_id_salida', null=True,
-                                          related_name='usuario_salida', on_delete=models.CASCADE)
+                                          blank=True, related_name='usuario_salida', on_delete=models.CASCADE)
 
     class Meta:
         verbose_name_plural = "Instancias"
