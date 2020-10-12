@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Modal} from "react-bootstrap";
+import {Modal, Form} from "react-bootstrap";
 import SimpleReactValidator from "simple-react-validator";
 import TiposDeExpedientesService from "../../services/TiposDeExpedientes";
 import Select from "react-select";
@@ -19,9 +19,9 @@ class NuevoExpediente extends Component {
       origen_list: [],
       destino_list: [],
       showDestino: '',
-      tipo_expediente: '',
-      origen: '',
-      destino: '',
+      tipo_expediente: {},
+      origen: {},
+      destino: {},
       description: ''
     }
     this.setDescription = this.setDescription.bind(this);
@@ -155,19 +155,23 @@ class NuevoExpediente extends Component {
 
   /**
    * Retorna la dependencia destino de acuerdo al tipo de expediente seleccionado
-   * @param id
+   * @param tdeId
    * @returns {number}
    */
   dependenciaDestino = tdeId => {
     if (tdeId === 1) { // si es 1 (Sin Ruta Predefinida) se utiliza el destino seteado por el usuario
-      return this.state.destino;
-    } else if (tdeId < 1) { // si es mayor a  1 se obtiene la ultima dependencia de la ruta
-      const lastDependencia = TiposDeExpedientesService.getLastDependencia(tdeId);
-      if (lastDependencia.success) {
-        return lastDependencia.dependencia;
-      } else {
-        return 0; // si retorna 0 (cero) es porque ocurrio un error al traer la ultima dependencia de la ruta
-      }
+      return this.state.destino.id;
+    } else if (tdeId > 1) { // si es mayor a  1 se obtiene la ultima dependencia de la ruta
+      TiposDeExpedientesService.getLastDependencia(tdeId)
+        .then(response => {
+          return response.data.results.slice(-1)[0].dependencia_id.id
+        })
+        .catch(e => {
+          console.log(`Error dependenciaDestino()\n${e}`);
+          return 0;
+        });
+    } else {
+      return 0;
     }
   }
 
@@ -176,10 +180,11 @@ class NuevoExpediente extends Component {
    * @returns {Promise<AxiosResponse<*>>}
    */
   saveExpediente = () => {
+    //TODO controlar que dependencia destino no se 0 (cero)
     const dependenciaDestino = this.dependenciaDestino(this.state.tipo_expediente.id);
     const newExpediente = {
       anho: moment().year(),
-      descripcion: this.state.descripcion,
+      descripcion: this.state.description,
       tipo_de_expediente_id: this.state.tipo_expediente.id,
       dependencia_origen_id: this.state.origen.id,
       dependencia_destino_id: dependenciaDestino
@@ -194,18 +199,32 @@ class NuevoExpediente extends Component {
     let expedienteId = 0;
     this.saveExpediente()
       .then(response => {
-        expedienteId = response.data.id;
+        console.log(response);
       })
       .catch(e => {
-        console.log(`Error save() en nuevo expediente\n${e}`);
+        console.log(`Error save(expediente) en nuevo expediente\n${e}`);
+        return false;
       });
+    //TODO controlar que si no existe el token no se puede guardar el expediente
     const usuario_entrada_id = helper.existToken() ? helper.getCurrentUserId() : null;
+    const dependencia_siguiente = TiposDeExpedientesService.getSecondDependencia(this.state.tipo_expediente.id);
     const instancia = {
       expediente_id: expedienteId,
-      dependencia_actual_id: null,
-      dependencia_siguiente_id: null,
+      dependencia_actual_id: this.state.origen.id,
+      dependencia_siguiente_id: dependencia_siguiente,
       usuario_id_entrada: usuario_entrada_id,
     }
+    // guardar la primera instancia del expediente
+    InstanciasService.create(instancia)
+      .then(() => {
+        Popups.success('Expediente creado correctamente.');
+        return true;
+      })
+      .catch(e => {
+        console.log(`Error save(Instancia) en nuevo expediente\n${e}`);
+        // hacer rollback del expediente ya creado
+        return false;
+      });
   }
 
   /**
@@ -236,36 +255,34 @@ class NuevoExpediente extends Component {
 
   render() {
     const date = moment().format('LLL');
-
     return (
       <Modal
         show={this.props.showModal}
         onHide={this.handleClose}
         backdrop="static"
-        centered
-      >
+        centered>
         <Modal.Header>
           <Modal.Title>Nuevo Expediente</Modal.Title>
           <label className="font-weight-bold">{date}</label>
         </Modal.Header>
         <Modal.Body>
-          <form>
-            <div className="form-group">
-              <div className="row">
+          <Form>
+            <Form.Group>
+              <Form.Row>
                 <div className="form-group col">
-                  <label>Tipo de Expediente</label>
+                  <Form.Label>Tipo de Expediente</Form.Label>
                   <Select
-                    defaultValue={this.state.tipos_expediente_list[0]}
                     options={this.state.tipos_expediente_list}
+                    placeholder="Selecciona..."
                     name="select"
                     onChange={(value) => this.handleSelectTipoExpediente(value)}
                   />
                   {this.validator.message('select', this.state.tipos_expediente_list, 'required')}
                 </div>
-              </div>
-              <div className="form-row">
+              </Form.Row>
+              <Form.Row>
                 <div className="form-group col">
-                  <label>Origen</label>
+                  <Form.Label>Origen</Form.Label>
                   <Select
                     options={this.state.origen_list}
                     placeholder="Selecciona..."
@@ -274,9 +291,8 @@ class NuevoExpediente extends Component {
                   />
                   {this.validator.message('select', this.state.origen_list, 'required')}
                 </div>
-
-              </div>
-              <div className="form-row">
+              </Form.Row>
+              <Form.Row>
                 <div className="form-group col">
                   <div className={this.state.showDestino}>
                     <label>Destino</label>
@@ -289,23 +305,22 @@ class NuevoExpediente extends Component {
                     {this.validator.message('select', this.state.destino_list, 'required')}
                   </div>
                 </div>
-              </div>
-              <div className="form-row">
+              </Form.Row>
+              <Form.Row>
                 <div className="form-group col">
-                  <label>Descripcion *</label>
-                  <textarea
-                    className="form-control"
-                    name="description"
-                    placeholder="Agrega una descripcion"
-                    value={this.state.description}
-                    onChange={e => this.setDescription(e)}
-                    onBlur={e => this.setDescription(e)}
+                  <Form.Label>Descripcion *</Form.Label>
+                  <Form.Control as="textarea" rows="3"
+                                name="description"
+                                placeholder="Agrega una descripcion"
+                                value={this.state.description}
+                                onChange={e => this.setDescription(e)}
+                                onBlur={e => this.setDescription(e)}
                   />
                   {this.validator.message('description', this.state.description, 'required|alpha_num_dash_space|max:200')}
                 </div>
-              </div>
-            </div>
-          </form>
+              </Form.Row>
+            </Form.Group>
+          </Form>
         </Modal.Body>
         <Modal.Footer>
           <button
@@ -317,8 +332,7 @@ class NuevoExpediente extends Component {
           <button
             onClick={this.handleSaveClick}
             type="button"
-            className="btn btn-sm btn-primary"
-          >
+            className="btn btn-sm btn-primary">
             Guardar
           </button>
         </Modal.Footer>

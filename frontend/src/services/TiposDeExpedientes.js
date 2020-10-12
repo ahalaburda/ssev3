@@ -65,26 +65,23 @@ class TiposDeExpedientes {
   }
 
   /**
-   * Retorna la ultima dependencia de una ruta determinado por el ID del tipo de expediente. Si el ID es menor a 1 se
-   * retorna por defecto 1 (Dependencia origen)
+   * Retorna la ultima dependencia de una ruta determinado por el ID del tipo de expediente. Si ocurre un error se
+   * retorna 0 (cero)
    * @param tdeId
-   * @returns {{success: boolean, dependencia: number}}
+   * @returns Promise<AxiosResponse<any>>
    */
   getLastDependencia(tdeId) {
-    http.get(`tipos_de_expedientes_detalles/?tipo_de_expediente_id=${tdeId}`)
-      .then(response => {
-        return {
-          success: true,
-          dependencia: response.data.results.slice(-1).dependencia_id
-        }
-      })
-      .catch(e => {
-        console.log(`Error getLastDependencia\n${e}`);
-        return {
-          success: false,
-          dependencia: 1
-        }
-      })
+    return http.get(`tipos_de_expedientes_detalles/?tipo_de_expediente_id=${tdeId}`);
+  }
+
+  /**
+   * Retorna la segunda dependencia de una ruta determinado por el ID del tipo de expediente. Si ocurre un error se
+   * retorna 0 (cero)
+   * @param tdeId
+   * @returns Promise<AxiosResponse<any>>
+   */
+  getSecondDependencia(tdeId) {
+    return http.get(`tipos_de_expedientes_detalles/?tipo_de_expediente_id=${tdeId}`);
   }
 
 }
