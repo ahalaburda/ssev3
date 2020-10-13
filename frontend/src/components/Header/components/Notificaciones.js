@@ -4,12 +4,12 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 function Notificaciones() {
   return (
     <li className="nav-item dropdown no-arrow mx-1">
-      <a className="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button" data-toggle="dropdown"
+      <div className="nav-link dropdown-toggle" id="messagesDropdown" role="button" data-toggle="dropdown"
          aria-haspopup="true" aria-expanded="false">
         <FontAwesomeIcon icon="bell" size="sm"/>
         {/* Counter - Messages */}
         <span className="badge badge-danger badge-counter">2</span>
-      </a>
+      </div>
       {/* Dropdown - Messages */}
       <div className="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
            aria-labelledby="messagesDropdown">
