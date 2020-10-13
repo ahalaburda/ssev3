@@ -7,7 +7,6 @@ import DependenciasService from "../../services/Dependencias";
 import ObjetosDeGastosService from "../../services/ObjetosDeGastos";
 import InstanciaService from "../../services/Instancias";
 import moment from 'moment';
-import SimpleReactValidator from 'simple-react-validator';
 
 
 
@@ -26,7 +25,6 @@ class Reportes extends Component {
     }
     this.retrieveDependencias = this.retrieveDependencias.bind(this);
     this.retrieveObjetosDeGastos = this.retrieveObjetosDeGastos.bind(this);
-    this.validator = new SimpleReactValidator();
   }
   
 
@@ -108,8 +106,7 @@ class Reportes extends Component {
               label: d.descripcion,
             }
           })
-        })
-      
+        })     
       })
       .catch(e => {
         Popups.error('Ocurrio un error al procesar la información');
@@ -126,24 +123,43 @@ class Reportes extends Component {
   handleDescriptionChange = e => {
     this.setState({description: e.target.value});
   }
-
+  /**
+   * Si el usuario selecciona algun origen lo almacena,
+   * si no deja el campo vacio para la busqueda
+   * @param {*} origen 
+   */
   setOrigen = origen => {
-    this.setState({origenSelected: origen});  
+    if (origen != null) {
+      this.setState({origenSelected: origen.value});  
+    }  else {
+      this.setState({origenSelected: ''})
+    }
   }
 
+  /**
+   * Si el usuario selecciona algun objeto de gasto lo almacena,
+   * si no deja el campo vacio para la busqueda
+   * @param {*} objeto 
+   */
   setObjetoGasto = objeto => {
-    this.setState({objetoSelected : objeto})
+    if (objeto != null ) {
+      this.setState({objetoSelected : objeto.value})
+    }  else {
+      this.setState({objetoSelected: ''})
+    }
   }
 
    
 
   /**
-   * Toma la descripcion pasada del estado y ejecuta el servicio de busqueda por descripcion.
-   * @param description
+   * Toma el origen, objeto de gasto y descripcion pasada y 
+   * ejecuta el servicio de busqueda de reportes.
+   * @param {*} origen 
+   * @param {*} objeto 
+   * @param {*} description 
    */
-  findExp = (origen, description) => {
-    InstanciaService.getByExpObjeto(origen)
-    // InstanciaService.getByExpDescription(description)
+  findExp = (origen, objeto, description) => {
+    InstanciaService.getExpForReportes(origen,objeto,description)
       .then(response => {
         if (response.data.count === 0) {
           Popups.error('Expediente(s) no encontrado(s).');
@@ -153,17 +169,31 @@ class Reportes extends Component {
       })
       .catch((e) => {
         Popups.error('Ocurrio un error durante la busqueda.');
-        console.log(`Error findByDescription: InstanciaService\n${e}`);
+        console.log(`Error findByExp: InstanciaService\n${e}`);
       });
   }
 
-  
-
-  
-  handleSearch = () => { 
-    if (this.validator.fieldValid('selectObjeto')) {
-      this.findExp(this.state.objetoSelected.value,this.state.description);
-    }
+  findByEstado = estado => {
+    InstanciaService.getByExpEstado(this.state.origenSelected,
+      this.state.objetoSelected,
+      this.state.description, 
+      estado)
+      .then(response => {
+        if (response.data.count === 0) {
+          Popups.error('Expediente(s) no encontrado(s).');
+        } else {
+          this.setListFromResponse(response);
+        }
+      })
+      .catch((e) => {
+        Popups.error('Ocurrio un error durante la busqueda.');
+        console.log(`Error findByEstado: InstanciaService\n${e}`);
+      });
+  }
+ 
+  handleSearch = () => {   
+      this.findExp(this.state.origenSelected,this.state.objetoSelected,
+        this.state.description);  
   }
 
 
@@ -223,12 +253,11 @@ class Reportes extends Component {
                     options = {this.state.origen}
                     placeholder = "Selecciona..."
                     name = "selectOrigen" 
-                    value= {this.state.origenSelected}
+                    value= {this.state.origenSelected.value}
                     onChange = {origen => this.setOrigen(origen)}                  
                     isClearable ="True"
                     isSearchable ="True"                  
                   />
-                  {this.validator.message('selectOrigen', this.state.origenSelected, 'required')}
                 </div>
             </div>
           </div>
@@ -242,12 +271,11 @@ class Reportes extends Component {
                     options = {this.state.objetoDeGasto} 
                     placeholder = "Selecciona..."
                     name = "selectObjeto"
-                    value =  {this.state.objetoSelected}
+                    value =  {this.state.objetoSelected.label}
                     onChange = {objeto => this.setObjetoGasto(objeto)}
                     isClearable="True" 
                     isSearchable="True"
                   />
-                  {this.validator.message('selectObjeto', this.state.objetoSelected, 'required')}
                 </div>             
             </div>
           </div>
@@ -256,10 +284,10 @@ class Reportes extends Component {
             <label className="col-form-label m-0 font-weight-bold">Filtrar por Descripción: </label>
             <input
               type="text"
-              name='id'
+              name='description'
               className="form-control form-control-sm-1"
               onChange={e => this.handleDescriptionChange(e)}
-            />
+            />           
           </div>
         </div>
         

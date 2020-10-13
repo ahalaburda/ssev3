@@ -58,16 +58,8 @@ class Instancias {
    * @param estado Estado de Expediente
    * @returns {Promise<AxiosResponse<Instancia>>}
    */
-  getByExpEstado(estado){
-    return http.get(`/instancias/?estado=${estado}&format=json`)
-  }
-
-  getByExpObjeto(objeto){
-    return http.get(`/instancias/?objeto_de_gasto=${objeto}&format=json`)
-  }
-
-  getByExpOrigen(origen){
-    return http.get(`/instancias/?origen=${origen}&format=json`)
+  getByExpEstado(origen,objeto,descripcion,estado){
+    return http.get(`/instancias/?origen=${origen}&objeto_de_gasto=${objeto}&expediente_descripcion=${descripcion}&estado=${estado}&format=json`)
   }
 
   getExpForReportes(origen,objeto,descripcion){
