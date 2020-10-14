@@ -63,27 +63,6 @@ class TiposDeExpedientes {
   delete(id) {
     return http.delete(`tipos_de_expedientes/${id}`);
   }
-
-  /**
-   * Retorna la ultima dependencia de una ruta determinado por el ID del tipo de expediente. Si ocurre un error se
-   * retorna 0 (cero)
-   * @param tdeId
-   * @returns Promise<AxiosResponse<any>>
-   */
-  getLastDependencia(tdeId) {
-    return http.get(`tipos_de_expedientes_detalles/?tipo_de_expediente_id=${tdeId}`);
-  }
-
-  /**
-   * Retorna la segunda dependencia de una ruta determinado por el ID del tipo de expediente. Si ocurre un error se
-   * retorna 0 (cero)
-   * @param tdeId
-   * @returns Promise<AxiosResponse<any>>
-   */
-  getSecondDependencia(tdeId) {
-    return http.get(`tipos_de_expedientes_detalles/?tipo_de_expediente_id=${tdeId}`);
-  }
-
 }
 
 export default new TiposDeExpedientes();
