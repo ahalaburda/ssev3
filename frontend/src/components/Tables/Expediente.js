@@ -38,7 +38,8 @@ class Expediente extends Component {
       list: response.data.results.map(inst => {
         return {
           id: inst.expediente_id.id,
-          numero: inst.expediente_id.numero_mesa_de_entrada + "/" + inst.expediente_id.anho,
+          numero: inst.expediente_id.numero_mesa_de_entrada === null ? 'Sin nro.' :
+            inst.expediente_id.numero_mesa_de_entrada + "/" + inst.expediente_id.anho,
           fecha_me: moment(inst.expediente_id.fecha_mesa_entrada).isValid() ?
             moment(inst.expediente_id.fecha_mesa_entrada).format('DD/MM/YYYY - kk:mm:ss') : 'Sin fecha',
           origen: inst.expediente_id.dependencia_origen_id.descripcion,
