@@ -1,4 +1,5 @@
 import http from "./http-common";
+import helper from "../utils/helper";
 
 class Instancias {
   /**
@@ -37,10 +38,8 @@ class Instancias {
    * @returns {Promise<AxiosResponse<Instancia>>}
    */
   getInstanciaExpedienteEachUser(page) {
-    if (localStorage.getItem('access_token')) {
-      const token_parts = JSON.parse(atob(localStorage.getItem('access_token').split('.')[1]));
-      const user_id = token_parts.user_id;
-      return http.get(`/instancias/expedientes/${user_id}?format=json&page=${page}`);
+    if (helper.existToken()) {
+      return http.get(`/instancias/expedientes/${helper.getCurrentUserId()}?format=json&page=${page}`);
     }
     return http.get(`/instancias/expedientes/0?format=json&page=${page}`);
   }
@@ -50,7 +49,25 @@ class Instancias {
    * @returns {Promise<AxiosResponse<Instancia>>}
    */
   getAll() {
-    return http.get('instancias/?format=json');
+    return http.get('/instancias/?format=json');
+  }
+
+  /**
+   * Crea una nueva instancia
+   * @param data
+   * @returns {Promise<AxiosResponse<any>>}
+   */
+  create(data) {
+    return http.post('/instancias/', data);
+  }
+
+  /**
+   * Elimina una instancia
+   * @param id ID de la instancia a eliminar
+   * @returns {Promise<AxiosResponse<any>>}
+   */
+  delete(id) {
+    return http.delete(`/instancias/${id}`);
   }
 }
 

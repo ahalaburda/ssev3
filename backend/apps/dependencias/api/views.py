@@ -2,6 +2,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from apps.dependencias.models import Dependencia, Dependencia_por_usuario
 from .serializers import DependenciaSerializer, Dependencia_por_usuarioSerializer, \
     Dependencia_por_usuarioNewUpdateSerializer
+from django_filters import rest_framework as filters
 
 
 class DependenciaListView(ListCreateAPIView):
@@ -20,12 +21,20 @@ class DependenciaDetailView(RetrieveUpdateDestroyAPIView):
     serializer_class = DependenciaSerializer
 
 
+class Dependencia_por_usuarioFilter(filters.FilterSet):
+    class Meta:
+        model = Dependencia_por_usuario
+        fields = ('usuario_id', 'dependencia_id')
+
+
 class Dependencia_por_usuarioListView(ListCreateAPIView):
     """
     Lista para todas las dependencias por usuario. Se permite la creacion de una nueva dependencia por usuaro en
     la misma vista.
     """
     queryset = Dependencia_por_usuario.objects.all()
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = Dependencia_por_usuarioFilter
 
     # si es post se utiliza el serializer para actualizar, si no, simplemente el destinado a listar.
     def get_serializer_class(self):
