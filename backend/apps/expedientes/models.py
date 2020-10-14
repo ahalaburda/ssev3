@@ -86,7 +86,7 @@ class Instancia(models.Model):
                                               related_name='instancia_actual', null=False, blank=False,
                                               on_delete=models.CASCADE)
     dependencia_siguiente_id = models.ForeignKey(Dependencia, db_column='dependencia_siguiente_id',
-                                                 related_name='instancia_siguiente', null=False, blank=False,
+                                                 related_name='instancia_siguiente', null=True, blank=True,
                                                  on_delete=models.CASCADE)
     estado_id = models.ForeignKey(Estado, db_column='estado_id', related_name='estado', null=False, blank=False,
                                   on_delete=models.CASCADE, default=1)
