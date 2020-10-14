@@ -221,18 +221,17 @@ class NuevoExpediente extends Component {
     InstanciasService.create(instancia)
       .then(() => {
         Popups.success('Expediente creado correctamente.');
-        return true;
       })
       .catch(e => {
         console.log(`Error saveInstancia en nuevo expediente\n${e}`);
+        // si ocurre un error al guardar la instancia se borra el expediente creado
         ExpedientesService.delete(expId)
           .then(() => {
             Popups.error('Ocurrio un error al crear el nuevo expediente.');
           })
           .catch(e => {
             console.log(`Error eliminar expediente al hacer rollback\n${e}`);
-          })
-        return false;
+          });
       });
   }
 
@@ -242,11 +241,11 @@ class NuevoExpediente extends Component {
   save = () => {
     this.saveExpediente()
       .then(response => {
-        return this.saveInstancia(response.data.id);
+        this.saveInstancia(response.data.id);
       })
       .catch(e => {
+        Popups.error('Ocurrio un error al crear el nuevo expediente.');
         console.log(`Error save() en nuevo expediente\n${e}`);
-        return false;
       });
   }
 
@@ -278,8 +277,9 @@ class NuevoExpediente extends Component {
    * Si todas las validaciones estan correctas, guarda, si no muestran los mensajes de errores.
    */
   handleSaveClick = () => {
-    //TODO no cierra el modal al guardar.
-    this.checkValid() & this.save() && this.props.setShow(false);
+    this.checkValid();
+    this.save();
+    this.props.setShow(false);
   }
 
   render() {
