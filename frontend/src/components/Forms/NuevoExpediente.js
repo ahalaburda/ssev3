@@ -16,17 +16,20 @@ class NuevoExpediente extends Component {
     super(props);
     this.state = {
       tipos_expediente_list: [],
-      origen_list: [],
-      destino_list: [],
+      start_list: [],
+      end_list: [],
       showDestino: '',
       tipo_expediente: {},
-      origen: {},
-      destino: {},
-      description: ''
+      start: {},
+      end: {},
+      next_id: 0,
+      description: '',
+      high_priority: false
     }
     this.setDescription = this.setDescription.bind(this);
     this.handleSaveClick = this.handleSaveClick.bind(this);
     this.handleSelectTipoExpediente = this.handleSelectTipoExpediente.bind(this);
+    this.handleCheckPriority = this.handleCheckPriority.bind(this);
     this.handleClose = this.handleClose.bind(this);
     //opciones y mensajes para la validacion
     this.validator = new SimpleReactValidator({
@@ -46,7 +49,7 @@ class NuevoExpediente extends Component {
     DependenciasService.getAll()
       .then((response) => {
         this.setState({
-          destino_list: response.data.results.map((d) => {
+          end_list: response.data.results.map((d) => {
             return {
               id: d.id,
               value: d.descripcion,
@@ -84,12 +87,12 @@ class NuevoExpediente extends Component {
   /**
    * Obtener las posibles dependencias de origen de acuerdo al usuario activo.
    */
+  //TODO al iniciar por primera vez el server frontend, genera error al no poder acceder al contenido del localstorage porque este esta vacio aun.
   retrieveDependenciasByUser() {
-    //TODO al iniciar por primera vez el server frontend, genera error al no poder acceder al contenido del localstorage porque este esta vacio aun.
     DependenciasPorUsuarioService.getByUser(helper.getCurrentUserId())
       .then(response => {
         this.setState({
-          origen_list: response.data.results.map(dxu => {
+          start_list: response.data.results.map(dxu => {
             return {
               id: dxu.dependencia_id.id,
               value: dxu.dependencia_id.descripcion,
@@ -121,17 +124,20 @@ class NuevoExpediente extends Component {
   }
 
   /**
-   * Setear el tipo de expediente y se oculta el campo destino mientras que el tipo de expediente no sea
-   * "Sin ruta predefinida"
-   * @param tde
+   * Setear el tipo de expediente, la segunda y la ultima dependencia para el tipo de expediente y se oculta el campo
+   * destino mientras que el tipo de expediente no sea "Sin ruta predefinida".
+   * @param tde tipo expediente ID
    */
   handleSelectTipoExpediente = tde => {
     const sinRutaPredefinida = this.state.tipos_expediente_list[0];
-    //Si el tipo de expediente seleccionado es igual a sinRutaPredefinida se muestra el selector destino
+    // si el tipo expediente es distinto a sin ruta predefinida se busca la dependencia siguiente y la ultima (destino)
+    tde !== sinRutaPredefinida && this.nextNLastDependencia(tde.id);
+    // si el tipo de expediente seleccionado es igual a sinRutaPredefinida se muestra el selector destino
     this.setState({
       showDestino: tde === sinRutaPredefinida ? '' : 'd-none',
       tipo_expediente: tde
     });
+    this.checkValid();
   }
 
   /**
@@ -139,40 +145,45 @@ class NuevoExpediente extends Component {
    * @param origen
    */
   handleSelectOrigen = origen => {
-    this.setState({origen: origen});
+    this.setState({start: origen});
     this.checkValid();
   }
 
   /**
-   * Setea el destino del expediente
+   * Setea el destino del expediente. Si se setea el destino es porque se selecciono sin ruta predefinida, entonces el
+   * destino, next y last dependencia son iguales.
    * @param destino
    */
   handleSelectDestino = destino => {
-    this.setState({destino: destino});
+    this.setState({end: destino});
     this.checkValid();
   }
 
-
   /**
-   * Retorna la dependencia destino de acuerdo al tipo de expediente seleccionado
+   * Setea la siguiente y ultima dependencia de la ruta de acuerdo al tipo de expediente seleccionado.
    * @param tdeId
-   * @returns {number}
    */
-  dependenciaDestino = tdeId => {
-    if (tdeId === 1) { // si es 1 (Sin Ruta Predefinida) se utiliza el destino seteado por el usuario
-      return this.state.destino.id;
-    } else if (tdeId > 1) { // si es mayor a  1 se obtiene la ultima dependencia de la ruta
-      TiposDeExpedientesService.getLastDependencia(tdeId)
+  nextNLastDependencia = tdeId => {
+    if (tdeId > 1) { // mayor a 1 es porque ya tiene una ruta predefinida
+      TiposDeExpedientesService.getDetails(tdeId)
         .then(response => {
-          return response.data.results.slice(-1)[0].dependencia_id.id
+          this.setState({
+            next_id: response.data.results[1].dependencia_id.id,
+            end: response.data.results.slice(-1)[0].dependencia_id
+          })
         })
         .catch(e => {
-          console.log(`Error dependenciaDestino()\n${e}`);
-          return 0;
+          console.log(`Error secondDependencia()\n${e}`);
         });
-    } else {
-      return 0;
     }
+  }
+
+  /**
+   * Marca el expediente como prioridad "alta".
+   */
+  handleCheckPriority = () => {
+    this.setState({high_priority: !this.state.high_priority});
+    this.checkValid();
   }
 
   /**
@@ -180,39 +191,31 @@ class NuevoExpediente extends Component {
    * @returns {Promise<AxiosResponse<*>>}
    */
   saveExpediente = () => {
-    //TODO controlar que dependencia destino no se 0 (cero)
-    const dependenciaDestino = this.dependenciaDestino(this.state.tipo_expediente.id);
     const newExpediente = {
       anho: moment().year(),
       descripcion: this.state.description,
       tipo_de_expediente_id: this.state.tipo_expediente.id,
-      dependencia_origen_id: this.state.origen.id,
-      dependencia_destino_id: dependenciaDestino
+      dependencia_origen_id: this.state.start.id,
+      dependencia_destino_id: this.state.end.id,
+      prioridad_id: this.state.high_priority ? 2 : 1
     }
     return ExpedientesService.create(newExpediente);
   }
 
   /**
-   * Guarda el nuevo expediente con su respectiva instancia
+   * Guarda la instancia inicial para el nuevo expediente.
+   * @param expId
    */
-  save = () => {
-    let expedienteId = 0;
-    this.saveExpediente()
-      .then(response => {
-        console.log(response);
-      })
-      .catch(e => {
-        console.log(`Error save(expediente) en nuevo expediente\n${e}`);
-        return false;
-      });
-    //TODO controlar que si no existe el token no se puede guardar el expediente
-    const usuario_entrada_id = helper.existToken() ? helper.getCurrentUserId() : null;
-    const dependencia_siguiente = TiposDeExpedientesService.getSecondDependencia(this.state.tipo_expediente.id);
+  //TODO controlar que si no existe el token no se puede guardar el expediente
+  saveInstancia = expId => {
+    const user_in_id = helper.existToken() ? helper.getCurrentUserId() : null;
+    // si next_id es igual a 0 (cero) es porque se selecciono Sin Ruta Predefinida y la siguiente instancia se setea al
+    // procesar el expediente.
     const instancia = {
-      expediente_id: expedienteId,
-      dependencia_actual_id: this.state.origen.id,
-      dependencia_siguiente_id: dependencia_siguiente,
-      usuario_id_entrada: usuario_entrada_id,
+      expediente_id: expId,
+      dependencia_actual_id: this.state.start.id,
+      dependencia_siguiente_id: this.state.next_id !== 0 && this.state.next_id,
+      usuario_id_entrada: user_in_id,
     }
     // guardar la primera instancia del expediente
     InstanciasService.create(instancia)
@@ -221,8 +224,28 @@ class NuevoExpediente extends Component {
         return true;
       })
       .catch(e => {
-        console.log(`Error save(Instancia) en nuevo expediente\n${e}`);
-        // hacer rollback del expediente ya creado
+        console.log(`Error saveInstancia en nuevo expediente\n${e}`);
+        ExpedientesService.delete(expId)
+          .then(() => {
+            Popups.error('Ocurrio un error al crear el nuevo expediente.');
+          })
+          .catch(e => {
+            console.log(`Error eliminar expediente al hacer rollback\n${e}`);
+          })
+        return false;
+      });
+  }
+
+  /**
+   * Guarda el nuevo expediente con su respectiva instancia
+   */
+  save = () => {
+    this.saveExpediente()
+      .then(response => {
+        return this.saveInstancia(response.data.id);
+      })
+      .catch(e => {
+        console.log(`Error save() en nuevo expediente\n${e}`);
         return false;
       });
   }
@@ -239,7 +262,12 @@ class NuevoExpediente extends Component {
    */
   handleClose = () => {
     this.setState({
+      start: {},
+      end: {},
+      tipo_expediente: {},
+      next_id: 0,
       description: '',
+      high_priority: false,
       showDestino: ''
     });
     this.validator.hideMessages();
@@ -247,14 +275,16 @@ class NuevoExpediente extends Component {
   }
 
   /**
-   * Si todas las validaciones estan correctas, entonces guarda, si no muestran los mensajes de errores.
+   * Si todas las validaciones estan correctas, guarda, si no muestran los mensajes de errores.
    */
   handleSaveClick = () => {
+    //TODO no cierra el modal al guardar.
     this.checkValid() & this.save() && this.props.setShow(false);
   }
 
   render() {
     const date = moment().format('LLL');
+
     return (
       <Modal
         show={this.props.showModal}
@@ -284,12 +314,12 @@ class NuevoExpediente extends Component {
                 <div className="form-group col">
                   <Form.Label>Origen</Form.Label>
                   <Select
-                    options={this.state.origen_list}
+                    options={this.state.start_list}
                     placeholder="Selecciona..."
                     name="select"
                     onChange={value => this.handleSelectOrigen(value)}
                   />
-                  {this.validator.message('select', this.state.origen_list, 'required')}
+                  {this.validator.message('select', this.state.start_list, 'required')}
                 </div>
               </Form.Row>
               <Form.Row>
@@ -297,12 +327,12 @@ class NuevoExpediente extends Component {
                   <div className={this.state.showDestino}>
                     <label>Destino</label>
                     <Select
-                      options={this.state.destino_list}
+                      options={this.state.end_list}
                       placeholder="Selecciona..."
                       name="select"
                       onChange={value => this.handleSelectDestino(value)}
                     />
-                    {this.validator.message('select', this.state.destino_list, 'required')}
+                    {this.validator.message('select', this.state.end_list, 'required')}
                   </div>
                 </div>
               </Form.Row>
@@ -318,6 +348,14 @@ class NuevoExpediente extends Component {
                   />
                   {this.validator.message('description', this.state.description, 'required|alpha_num_dash_space|max:200')}
                 </div>
+              </Form.Row>
+              <Form.Row>
+                <Form.Check
+                  type="checkbox"
+                  label="Marcar como prioridad alta."
+                  value={this.state.high_priority}
+                  onChange={e => {this.handleCheckPriority(e)}}
+                />
               </Form.Row>
             </Form.Group>
           </Form>
