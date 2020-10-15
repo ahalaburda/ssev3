@@ -15,11 +15,6 @@ class Reporte extends Component {
     };
   }
 
-  // Para la primera carga siempre trae la pagina 1 (uno)
-  // componentDidMount() {
-  //   this.retrieveExpedientes();
-  // }
-
   //reemplazo de funcion componentWillReceiveProps
   static getDerivedStateFromProps(nextProps) {
     return {list: nextProps.data}

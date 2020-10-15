@@ -9,7 +9,6 @@ import InstanciaService from "../../services/Instancias";
 import moment from 'moment';
 
 
-
 class Reportes extends Component {
   constructor(props) {
     super(props);
@@ -25,11 +24,24 @@ class Reportes extends Component {
       objetoSelected: '',
       description: ''
     }
-    this.retrieveDependencias = this.retrieveDependencias.bind(this);
-    this.retrieveObjetosDeGastos = this.retrieveObjetosDeGastos.bind(this);
-  }
-  
 
+  }
+
+  componentDidMount() {
+    this.retrieveDependencias();
+    this.retrieveObjetosDeGastos();
+    this.retrieveExpedientes();
+  }
+  componentWillUnmount() {
+    // fix Warning: Can't perform a React state update on an unmounted component
+    this.setState = (state,callback)=>{
+        return;
+    };
+}
+  /**
+   * De acuerdo a los filtros aplicados, se encarga de cargar los expedientes a mostrar
+   * @param  response 
+   */
   setListFromResponse = response => {
     this.setState({
       data: response.data.results.map(exp => {
@@ -48,8 +60,6 @@ class Reportes extends Component {
       loading: false
     });
   }
-
- 
 
   /**
    * Obtiene todos los expedientes de la base de datos y los carga en la tabla
@@ -73,7 +83,7 @@ class Reportes extends Component {
   }
 
   /**
-   * Obtiene todas las dependencias de la base de datos y los cargar como opciones para el select
+   * Obtiene todas las dependencias de la base de datos y los carga como opciones para el select
    */
   retrieveDependencias() {
     DependenciasService.getAll()
@@ -95,7 +105,7 @@ class Reportes extends Component {
   }
 
   /**
-   * Obtener los objetos de gastos de la base de datos y ccargarlos como opciones para el select
+   * Obtiene los objetos de gastos de la base de datos y los carga como opciones para el select
    */
   retrieveObjetosDeGastos() {
     ObjetosDeGastosService.getAll(1)
@@ -116,11 +126,6 @@ class Reportes extends Component {
       })
   }
 
-  componentDidMount() {
-    this.retrieveDependencias();
-    this.retrieveObjetosDeGastos();
-    this.retrieveExpedientes();
-  }
 
   handleDescriptionChange = e => {
     this.setState({description: e.target.value});
@@ -150,9 +155,7 @@ class Reportes extends Component {
       this.setState({objetoSelected: ''})
     }
   }
-
-   
-
+  
   /**
    * Toma el origen, objeto de gasto y descripcion pasada y 
    * ejecuta el servicio de busqueda de reportes.
@@ -178,16 +181,23 @@ class Reportes extends Component {
   handleSearch = (estado) => { 
     const fecha_desde = `${this.state.formattedStartDate.getFullYear()}-${this.state.formattedStartDate.getMonth()+1}-${this.state.formattedStartDate.getDate()}`;
     const fecha_hasta = `${this.state.formattedEndDate.getFullYear()}-${this.state.formattedEndDate.getMonth()+1}-${this.state.formattedEndDate.getDate()}`;         
+    //Si se completan los 2 filtros de fecha se ejecuta
     if (this.state.startDate != null && this.state.endDate != null) {
       this.findExp(fecha_desde,fecha_hasta,this.state.origenSelected,this.state.objetoSelected,
         this.state.description,estado);
-    } else if(this.state.startDate != null && this.state.endDate == null){
+    }
+    //Si solo se completa el filtro de "fecha desde" se ejecuta 
+    else if(this.state.startDate != null && this.state.endDate == null){
       this.findExp(fecha_desde,'',this.state.origenSelected,this.state.objetoSelected,
         this.state.description,estado);
-    } else if (this.state.endDate != null && this.state.startDate == null) {
+    } 
+    //Si solo se completa el filtro de "fecha hasta" se ejecuta
+    else if (this.state.endDate != null && this.state.startDate == null) {
       this.findExp('',fecha_hasta,this.state.origenSelected,this.state.objetoSelected,
         this.state.description,estado);
-    } else{
+    }
+    //Si no se completa ningun filtro de fecha se ejecuta  
+    else{
       this.findExp('','',this.state.origenSelected,this.state.objetoSelected,
         this.state.description,estado);
     }
