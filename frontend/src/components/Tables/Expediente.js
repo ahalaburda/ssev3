@@ -38,7 +38,8 @@ class Expediente extends Component {
       list: response.data.results.map(inst => {
         return {
           id: inst.expediente_id.id,
-          numero: inst.expediente_id.numero_mesa_de_entrada + "/" + inst.expediente_id.anho,
+          numero: inst.expediente_id.numero_mesa_de_entrada === null ? 'Sin nro.' :
+            inst.expediente_id.numero_mesa_de_entrada + "/" + inst.expediente_id.anho,
           fecha_me: moment(inst.expediente_id.fecha_mesa_entrada).isValid() ?
             moment(inst.expediente_id.fecha_mesa_entrada).format('DD/MM/YYYY - kk:mm:ss') : 'Sin fecha',
           origen: inst.expediente_id.dependencia_origen_id.descripcion,
@@ -170,6 +171,9 @@ class Expediente extends Component {
         name: 'Acciones',
         cell: row =>
           <div>
+            <button className="btn btn-sm btn-link text-primar">
+              <FontAwesomeIcon icon="pencil-alt"/>
+            </button>
             <button
               className="btn btn-sm btn-link text-primary"
               onClick={() => this.handleViewClick(row)}
@@ -179,7 +183,7 @@ class Expediente extends Component {
             <button
               className="btn btn-sm btn-link text-primary" data-toggle="modal" data-target="#editModal"
               onClick={() => this.getObjectRow(row)}>
-              <FontAwesomeIcon icon="edit"/>
+              <FontAwesomeIcon icon="comment"/>
             </button>
           </div>,
         button: true,

@@ -1,0 +1,365 @@
+[{
+	"model": "dependencias.dependencia",
+	"pk": 1,
+	"fields": {
+		"descripcion": "Origen",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 2,
+	"fields": {
+		"descripcion": "Gabinete Rector",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 3,
+	"fields": {
+		"descripcion": "Direccion Gral de Administracion y Finanzas",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 4,
+	"fields": {
+		"descripcion": "Direccion Administrativa",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 5,
+	"fields": {
+		"descripcion": "Direccion Financiera",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 6,
+	"fields": {
+		"descripcion": "Departamento de Auditoria",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 7,
+	"fields": {
+		"descripcion": "Departamento de Patrimonio",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 8,
+	"fields": {
+		"descripcion": "Control y Procedimientos",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 9,
+	"fields": {
+		"descripcion": "Mesa Entrada",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 10,
+	"fields": {
+		"descripcion": "Secretaria General",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 11,
+	"fields": {
+		"descripcion": "Departamento de Presupuesto",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 12,
+	"fields": {
+		"descripcion": "Departamento de Contabilidad",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 13,
+	"fields": {
+		"descripcion": "Departamento de Tesoreria",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 14,
+	"fields": {
+		"descripcion": "Departamento de RRHH",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 15,
+	"fields": {
+		"descripcion": "FAC Ciencias y Tecnologia",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 16,
+	"fields": {
+		"descripcion": "FAC Economicas y Administrativas",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 17,
+	"fields": {
+		"descripcion": "FAC Ingenieria",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 18,
+	"fields": {
+		"descripcion": "FAC Agropecuarias  y Forestales",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 19,
+	"fields": {
+		"descripcion": "Externo",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 20,
+	"fields": {
+		"descripcion": "Departamento de Informatica",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 21,
+	"fields": {
+		"descripcion": "Unidad Operativa de Contrataciones",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 22,
+	"fields": {
+		"descripcion": "Departamento Jur\u00eddico",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 23,
+	"fields": {
+		"descripcion": "Comit\u00e9 de Evaluaci\u00f3n",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 24,
+	"fields": {
+		"descripcion": "FAC Derecho",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 25,
+	"fields": {
+		"descripcion": "FAC de Humanidades",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 26,
+	"fields": {
+		"descripcion": "FAC de Medicina",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 27,
+	"fields": {
+		"descripcion": "Direccion de Planificacion",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 28,
+	"fields": {
+		"descripcion": "Relaciones Internacionales",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 29,
+	"fields": {
+		"descripcion": "Asesoria Juridica",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 30,
+	"fields": {
+		"descripcion": "Departamento de Comunicaciones",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 31,
+	"fields": {
+		"descripcion": "Bienestar Universitario",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 32,
+	"fields": {
+		"descripcion": "Direccion Gral Academica",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 33,
+	"fields": {
+		"descripcion": "Biblioteca",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 34,
+	"fields": {
+		"descripcion": "Vice Rectorado",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 35,
+	"fields": {
+		"descripcion": "Servicios Generales",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 36,
+	"fields": {
+		"descripcion": "Posgrado",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 37,
+	"fields": {
+		"descripcion": "Direcci\u00f3n de Investigaci\u00f3n y Extensi\u00f3n",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 38,
+	"fields": {
+		"descripcion": "Direcci\u00f3n Academica",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 39,
+	"fields": {
+		"descripcion": "FACEA Administracion",
+		"activo": false
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 40,
+	"fields": {
+		"descripcion": "Incuni",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 41,
+	"fields": {
+		"descripcion": "Protocolo y Eventos",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 42,
+	"fields": {
+		"descripcion": "MECIP REC ",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 43,
+	"fields": {
+		"descripcion": "Cooperaci\u00f3n Estudiantil",
+		"activo": false
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 44,
+	"fields": {
+		"descripcion": "Departamento de Mantenimiento",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 45,
+	"fields": {
+		"descripcion": "Evaluaci\u00f3n Acad\u00e9mica-Estadistica",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 46,
+	"fields": {
+		"descripcion": "Asuntos Legales U Acad",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 47,
+	"fields": {
+		"descripcion": "Departamento de Documentaci\u00f3n Institucional",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 48,
+	"fields": {
+		"descripcion": "Direcci\u00f3n de Investigaci\u00f3n y Ambiente",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 49,
+	"fields": {
+		"descripcion": "Direcci\u00f3n de Aseguramiento de la Calidad",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 50,
+	"fields": {
+		"descripcion": "Direcci\u00f3n de Cooperaci\u00f3n",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 51,
+	"fields": {
+		"descripcion": "Departamento de Extensi\u00f3n Universitaria",
+		"activo": true
+	}
+}, {
+	"model": "dependencias.dependencia",
+	"pk": 52,
+	"fields": {
+		"descripcion": "Departamento de Difusi\u00f3n Cultural",
+		"activo": true
+	}
+}]
