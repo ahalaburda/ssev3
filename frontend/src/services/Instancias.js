@@ -70,17 +70,22 @@ class Instancias {
     return http.delete(`/instancias/${id}`);
   }
 
-  /**
+ /**
    * Obtiene una o varias instancias de acuerdo al estado dado.
    * @param estado Estado de Expediente
    * @returns {Promise<AxiosResponse<Instancia>>}
    */
-  getByExpEstado(origen,objeto,descripcion,estado){
-    return http.get(`/instancias/?origen=${origen}&objeto_de_gasto=${objeto}&expediente_descripcion=${descripcion}&estado=${estado}&format=json`)
-  }
-
-  getExpForReportes(origen,objeto,descripcion){
-    return http.get(`/instancias/?origen=${origen}&objeto_de_gasto=${objeto}&expediente_descripcion=${descripcion}&format=json`)
+  /**
+   * Obtiene un a o varias instancias de acuerdo a los filtros seleccionados
+   * @param {*} fecha_desde 
+   * @param {*} fecha_hasta 
+   * @param {*} origen 
+   * @param {*} objeto 
+   * @param {*} descripcion 
+   * @param {*} estado 
+   */
+  getExpForReportes(fecha_desde,fecha_hasta,origen,objeto,descripcion,estado){
+    return http.get(`/instancias/?fecha_desde=${fecha_desde}&fecha_hasta=${fecha_hasta}&origen=${origen}&objeto_de_gasto=${objeto}&expediente_descripcion=${descripcion}&estado=${estado}&format=json`)
 
   }
 }

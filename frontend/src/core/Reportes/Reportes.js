@@ -15,8 +15,10 @@ class Reportes extends Component {
     super(props);
     this.state = {
       data: [],
-      startDate: new Date(),
-      endDate: '',
+      startDate: null,
+      endDate: null,
+      formattedStartDate: new Date(),
+      formattedEndDate:new Date(),
       origen: [],
       origenSelected: '',
       objetoDeGasto: [],
@@ -158,8 +160,8 @@ class Reportes extends Component {
    * @param {*} objeto 
    * @param {*} description 
    */
-  findExp = (origen, objeto, description) => {
-    InstanciaService.getExpForReportes(origen,objeto,description)
+  findExp = (fecha_desde,fecha_hasta,origen, objeto, description,estado) => {
+    InstanciaService.getExpForReportes(fecha_desde, fecha_hasta, origen, objeto, description, estado)
       .then(response => {
         if (response.data.count === 0) {
           Popups.error('Expediente(s) no encontrado(s).');
@@ -172,30 +174,39 @@ class Reportes extends Component {
         console.log(`Error findByExp: InstanciaService\n${e}`);
       });
   }
-
-  findByEstado = estado => {
-    InstanciaService.getByExpEstado(this.state.origenSelected,
-      this.state.objetoSelected,
-      this.state.description, 
-      estado)
-      .then(response => {
-        if (response.data.count === 0) {
-          Popups.error('Expediente(s) no encontrado(s).');
-        } else {
-          this.setListFromResponse(response);
-        }
-      })
-      .catch((e) => {
-        Popups.error('Ocurrio un error durante la busqueda.');
-        console.log(`Error findByEstado: InstanciaService\n${e}`);
-      });
-  }
  
-  handleSearch = () => {   
-      this.findExp(this.state.origenSelected,this.state.objetoSelected,
-        this.state.description);  
+  handleSearch = (estado) => { 
+    const fecha_desde = `${this.state.formattedStartDate.getFullYear()}-${this.state.formattedStartDate.getMonth()+1}-${this.state.formattedStartDate.getDate()}`;
+    const fecha_hasta = `${this.state.formattedEndDate.getFullYear()}-${this.state.formattedEndDate.getMonth()+1}-${this.state.formattedEndDate.getDate()}`;         
+    if (this.state.startDate != null && this.state.endDate != null) {
+      this.findExp(fecha_desde,fecha_hasta,this.state.origenSelected,this.state.objetoSelected,
+        this.state.description,estado);
+    } else if(this.state.startDate != null && this.state.endDate == null){
+      this.findExp(fecha_desde,'',this.state.origenSelected,this.state.objetoSelected,
+        this.state.description,estado);
+    } else if (this.state.endDate != null && this.state.startDate == null) {
+      this.findExp('',fecha_hasta,this.state.origenSelected,this.state.objetoSelected,
+        this.state.description,estado);
+    } else{
+      this.findExp('','',this.state.origenSelected,this.state.objetoSelected,
+        this.state.description,estado);
+    }
+  
   }
 
+  setStartDate = (date) =>{
+    this.setState({startDate: date })
+    if (date != null) { 
+      this.setState({formattedStartDate: date})
+    }
+  }
+
+  setEndDate = (date) =>{
+    this.setState({endDate: date});
+    if (date != null) { 
+      this.setState({formattedEndDate: date})  
+    }  
+  }
 
   render() {
     return (
@@ -212,14 +223,14 @@ class Reportes extends Component {
                   <div className="form-group row">
                     <label className="col-form-label col-sm-3" name='fechaDesde'>Desde: </label>
                     <DatePicker
-                      className="col-1 input-group date"
-                      calendarIcon =''
-                      selected={this.state.startDate}
-                      onChange={date => this.setState({startDate: date})}
+                      className="col-md-1 input-group date"
+                      calendarIcon = ''
+                      selected = {this.state.startDate}
+                      onChange = {date => this.setStartDate(date)}
                       selectsStart
-                      startDate={this.state.startDate}
-                      endDate={this.state.endDate}
-                      value= {this.state.startDate}
+                      startDate = {this.state.startDate}
+                      endDate = {this.state.endDate}
+                      value = {this.state.startDate}
                     />
                   </div>
                 </div>
@@ -228,15 +239,15 @@ class Reportes extends Component {
                   <div className="form-group row">
                   <label className="col-form-label col-sm-3" name='fechaHasta'>Hasta:</label>
                   <DatePicker
-                    className="col-1 input-group date"
-                    calendarIcon= ''
-                    selected={this.state.endDate}
-                    onChange={date => this.setState({endDate:date})}
+                    className = "col-md-1 input-group date"
+                    calendarIcon = ''
+                    selected = {this.state.endDate}
+                    onChange = {date => this.setEndDate(date)}
                     selectsEnd
-                    startDate={this.state.startDate}
-                    minDate={this.state.startDate}
-                    endDate={this.state.endDate}
-                    value= {this.state.endDate}
+                    startDate = {this.state.startDate}
+                    minDate = {this.state.startDate}
+                    endDate = {this.state.endDate}
+                    value = {this.state.endDate}
                   />
                 </div>
               </div>
@@ -249,7 +260,6 @@ class Reportes extends Component {
               <label className=" col-form-label col-sm-3">Origen: </label>
                 <div className="col-md-9">
                   <Select
-                    
                     options = {this.state.origen}
                     placeholder = "Selecciona..."
                     name = "selectOrigen" 
@@ -295,19 +305,19 @@ class Reportes extends Component {
           <div className='row'>  
             <div className='card-header py-3 col-md-9'>
               <div className="btn-group ml-auto">
-                  <button type="button" className="btn btn-sm btn-success shadow-sm" onClick={val => this.findByEstado('recibido')}>Recibido</button>
-                  <button type="button" className="btn btn-sm btn-warning shadow-sm" onClick={val => this.findByEstado('no recibido')}>No Recibido</button>
-                  <button type="button" className="btn btn-sm btn-info shadow-sm" onClick={val => this.findByEstado('derivado')}>Derivado</button>
-                  <button type="button" className="btn btn-sm btn-dark shadow-sm" onClick={val => this.findByEstado('pausado')}>Pausado</button>
-                  <button type="button" className="btn btn-sm btn-danger shadow-sm" onClick={val => this.findByEstado('rechazado')}>Rechazado</button>
-                  <button type="button" className="btn btn-sm btn-secondary shadow-sm" onClick={val => this.findByEstado('finalizado')}>Finalizado</button>                       
+                  <button type="button" className="btn btn-sm btn-success shadow-sm" onClick={val => this.handleSearch('recibido')}>Recibido</button>
+                  <button type="button" className="btn btn-sm btn-warning shadow-sm" onClick={val => this.handleSearch('no recibido')}>No Recibido</button>
+                  <button type="button" className="btn btn-sm btn-info shadow-sm" onClick={val => this.handleSearch('derivado')}>Derivado</button>
+                  <button type="button" className="btn btn-sm btn-dark shadow-sm" onClick={val => this.handleSearch('pausado')}>Pausado</button>
+                  <button type="button" className="btn btn-sm btn-danger shadow-sm" onClick={val => this.handleSearch('rechazado')}>Rechazado</button>
+                  <button type="button" className="btn btn-sm btn-secondary shadow-sm" onClick={val => this.handleSearch('finalizado')}>Finalizado</button>                       
               </div>               
             </div>   
 
             <div className="py-3 col-md-3 text-right">
               <button
                 className="btn btn-sm btn-primary"
-                onClick={this.handleSearch}
+                onClick={estado => this.handleSearch('')}
               > Buscar
               </button>
             </div> 

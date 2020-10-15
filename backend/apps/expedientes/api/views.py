@@ -58,7 +58,8 @@ class InstanciaFilter(filters.FilterSet):
     """
     expediente_descripcion = filters.CharFilter(field_name='expediente_id__descripcion', lookup_expr='icontains')
     estado = filters.CharFilter(field_name='estado_id__descripcion', lookup_expr='exact')
-    fecha_creacion = filters.DateFromToRangeFilter(field_name='fecha_creacion')
+    fecha_desde = filters.DateTimeFilter(field_name='expediente_id__fecha_creacion', lookup_expr='gte')
+    fecha_hasta = filters.DateTimeFilter(field_name='expediente_id__fecha_creacion', lookup_expr='lte')
     actual = filters.CharFilter(field_name='dependencia_actual_id__descripcion', lookup_expr='icontains')
     expediente_anho = filters.CharFilter(field_name='expediente_id__anho', lookup_expr='exact')
     expediente_nro_mesa = filters.CharFilter(field_name='expediente_id__numero_mesa_de_entrada', lookup_expr='exact')
@@ -68,7 +69,7 @@ class InstanciaFilter(filters.FilterSet):
     class Meta:
         model = Instancia
         fields = ('expediente_id', 'expediente_descripcion', 'expediente_anho', 'expediente_nro_mesa', 'estado',
-                  'fecha_creacion', 'actual', 'objeto_de_gasto', 'origen')
+                  'fecha_desde', 'fecha_hasta', 'actual', 'objeto_de_gasto', 'origen')
 
 
 def get_last_instancias():
