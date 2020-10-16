@@ -5,6 +5,7 @@ import DataTable from "react-data-table-component";
 import NuevoExpediente from "../Forms/NuevoExpediente";
 import moment from "moment";
 import Popups from "../Popups";
+import ProcesarExpediente from "../Forms/ProcesarExpediente";
 
 /**
  * Tabla para expedientes
@@ -16,6 +17,8 @@ class Expediente extends Component {
       loading: false,
       showNew: false,
       showEdit: false,
+      showProcess: false,
+      expedienteData: {},
       list: [],
       totalRows: 0
     };
@@ -94,10 +97,30 @@ class Expediente extends Component {
   }
 
   /**
-   * Setear el estado 'showNew' para mostrar u ocultar el modal
+   * Setear el estado 'showNew' para mostrar u ocultar el modal de nuevo expediente
    */
   setShowNew = show => {
     this.setState({showNew: show});
+  }
+
+  /**
+   * Setear el esatado 'showProcess' para mostrar u ocultar modal de procesar expediente
+   */
+  setShowProcess = show => {
+    this.setState({showProcess: show});
+  }
+
+  handleProcessExpediente = expId => {
+    this.setShowProcess(true);
+    InstanciaService.getByExpedienteId(expId)
+      .then(response => {
+        this.setState({
+          expedienteData: response.data.results[0]
+        });
+      })
+      .catch(e => {
+        console.log(`Error handleProcessExpediente\n${e}`);
+      });
   }
 
   render() {
@@ -171,18 +194,20 @@ class Expediente extends Component {
         name: 'Acciones',
         cell: row =>
           <div>
-            <button className="btn btn-sm btn-link text-primar">
+            <button
+              className="btn btn-sm btn-link text-primary"
+              title="Procesar expediente"
+              onClick={() => this.handleProcessExpediente(row.id)}>
               <FontAwesomeIcon icon="pencil-alt"/>
             </button>
             <button
               className="btn btn-sm btn-link text-primary"
-              onClick={() => this.handleViewClick(row)}
-              data-toggle="modal" data-target="#viewTipoExpedienteModal">
+              title="Ver expediente">
               <FontAwesomeIcon icon="eye"/>
             </button>
             <button
-              className="btn btn-sm btn-link text-primary" data-toggle="modal" data-target="#editModal"
-              onClick={() => this.getObjectRow(row)}>
+              className="btn btn-sm btn-link text-primary"
+              title="Comentar expediente">
               <FontAwesomeIcon icon="comment"/>
             </button>
           </div>,
@@ -229,6 +254,11 @@ class Expediente extends Component {
             setShow={this.setShowNew}
             showModal={this.state.showNew}
             newItem={this.addItem}
+          />
+          <ProcesarExpediente
+            setShow={this.setShowProcess}
+            showModal={this.state.showProcess}
+            expedienteData={this.state.expedienteData}
           />
         </div>
       </div>
