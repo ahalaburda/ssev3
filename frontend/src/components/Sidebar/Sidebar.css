@@ -22,7 +22,7 @@
 
 #sidebar.active .nav-item .nav-link {
     display: flex;
-    justify-content: start;
+    justify-content: flex-start;
 }
 
 #sidebar.active .nav-item .nav-link span {
