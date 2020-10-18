@@ -1,5 +1,4 @@
 import React, {Component} from "react";
-import DatePicker from 'react-date-picker';
 import Select from "react-select";
 import Popups from "../../components/Popups";
 import Reporte from "../../components/Tables/Reporte";
@@ -7,7 +6,11 @@ import DependenciasService from "../../services/Dependencias";
 import ObjetosDeGastosService from "../../services/ObjetosDeGastos";
 import InstanciaService from "../../services/Instancias";
 import moment from 'moment';
-
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import DatePicker, {registerLocale} from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
+import es from 'date-fns/locale/es';
+registerLocale('es', es);
 
 class Reportes extends Component {
   constructor(props) {
@@ -231,26 +234,33 @@ class Reportes extends Component {
                 <label className="col-form-label col-sm-8 font-weight-bold" name='filtroPorFecha'>Filtrar por fecha: </label>
                 <div className='col-md-6'>
                   <div className="form-group row">
-                    <label className="col-form-label col-sm-3" name='fechaDesde'>Desde: </label>
+                    <label className="col-form-label col-sm-3" name='fechaDesde'>Desde:</label>
+                    <div  className = "col-md-9 input-group date">
                     <DatePicker
-                      className="col-md-1 input-group date"
-                      calendarIcon = ''
+                      locale = "es"
+                      dateFormat = "dd/MM/yyyy"                     
+                      isClearable
                       selected = {this.state.startDate}
                       onChange = {date => this.setStartDate(date)}
                       selectsStart
                       startDate = {this.state.startDate}
                       endDate = {this.state.endDate}
                       value = {this.state.startDate}
+                      
                     />
+                    </div>
+                    
                   </div>
                 </div>
                 
                 <div className='col-md-6'>
                   <div className="form-group row">
                   <label className="col-form-label col-sm-3" name='fechaHasta'>Hasta:</label>
+                  <div className = "col-md-9 input-group date">
                   <DatePicker
-                    className = "col-md-1 input-group date"
-                    calendarIcon = ''
+                    locale = "es"  
+                    dateFormat = "dd/MM/yyyy"           
+                    isClearable
                     selected = {this.state.endDate}
                     onChange = {date => this.setEndDate(date)}
                     selectsEnd
@@ -259,6 +269,7 @@ class Reportes extends Component {
                     endDate = {this.state.endDate}
                     value = {this.state.endDate}
                   />
+                  </div>
                 </div>
               </div>
             </div>
@@ -328,7 +339,7 @@ class Reportes extends Component {
               <button
                 className="btn btn-sm btn-primary"
                 onClick={estado => this.handleSearch('')}
-              > Buscar
+              > Buscar <FontAwesomeIcon icon="search"/>
               </button>
             </div> 
           </div>
