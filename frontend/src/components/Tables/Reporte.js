@@ -1,7 +1,8 @@
 import React, {Component} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import DataTable from "react-data-table-component";
-
+import VerExpediente from "../Forms/VerExpediente";
+import InstanciasService from "../../services/Instancias";
 /**
  * Tabla para reportes
  */
@@ -11,6 +12,14 @@ class Reporte extends Component {
     this.state = {
       loading: false,
       data: [],
+      numero:'',
+      descripcion:'',
+     // objetoDeGasto:'',
+      fecha:'',
+      estado:'',
+      origen:'',
+      dependenciaActual:'',
+      tipoDeExpediente:'',
       totalRows: 0
     };
   }
@@ -18,6 +27,25 @@ class Reporte extends Component {
   //reemplazo de funcion componentWillReceiveProps
   static getDerivedStateFromProps(nextProps) {
     return {list: nextProps.data}
+  }
+
+  handleViewExpediente =row=>{
+    InstanciasService.getByExpedienteId(row.id)
+    .then(response =>{
+      this.setState({
+        numero: row.numero,
+        descripcion: row.descripcion,
+        fecha: row.fecha_me,
+        estado: row.estado,
+        origen: row.origen,
+        dependenciaActual: row.dependencia,
+        tipoDeExpediente: row.tipo,
+        objetoDeGasto: response.data.results.map(exp =>{
+          return exp.expediente_id.objeto_de_gasto_id.descripcion
+        })
+      });
+    })
+    
   }
 
 
@@ -93,7 +121,8 @@ class Reporte extends Component {
           <div>
             <button
               className="btn btn-sm btn-link text-primary"
-              data-toggle="modal" data-target="#viewTipoExpedienteModal">
+              onClick= {()=> this.handleViewExpediente(row)}
+              data-toggle="modal" data-target="#viewExpedienteModal">
               <FontAwesomeIcon icon="eye"/>
             </button>
             <button className="btn btn-sm btn-link text-primary">
@@ -131,6 +160,18 @@ class Reporte extends Component {
             className="table-responsive table-sm table-bordered"
           />
         </div>
+        
+        {/*Modal para ver tipo de expediente con sus rutas*/}
+        <VerExpediente
+          estado = {this.state.estado}
+          origen = {this.state.origen}
+          dependenciaActual = {this.state.dependenciaActual}
+          numero = {this.state.numero}
+          fecha = {this.state.fecha}
+          objetoDeGasto = {this.state.objetoDeGasto}
+          descripcion = {this.state.descripcion}
+          tipoDeExpediente = {this.state.tipoDeExpediente}
+          />
       </div>
     );
   }
