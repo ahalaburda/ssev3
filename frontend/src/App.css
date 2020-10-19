@@ -11170,3 +11170,11 @@ footer.sticky-footer .copyright {
 body.sidebar-toggled footer.sticky-footer {
   width: 100%;
 }
+.react-datepicker,
+ .react-datepicker-wrapper,
+.react-datepicker__input-container,
+.react-datepicker__input-container input {
+    width: 100%;
+    margin-top: 1px;
+    
+} 
