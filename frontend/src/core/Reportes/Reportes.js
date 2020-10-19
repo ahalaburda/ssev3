@@ -17,8 +17,8 @@ class Reportes extends Component {
     super(props);
     this.state = {
       data: [],
-      startDate: null,
-      endDate: null,
+      startDate: new Date(),
+      endDate: new Date(),
       formattedStartDate: new Date(),
       formattedEndDate:new Date(),
       origen: [],
@@ -235,8 +235,9 @@ class Reportes extends Component {
                 <div className='col-md-6'>
                   <div className="form-group row">
                     <label className="col-form-label col-sm-3" name='fechaDesde'>Desde:</label>
-                    <div  className = "col-md-9 input-group date">
+                    <div  className = "col-md-9 ">
                     <DatePicker
+                      className = "form-control"
                       locale = "es"
                       dateFormat = "dd/MM/yyyy"                     
                       isClearable
@@ -245,8 +246,7 @@ class Reportes extends Component {
                       selectsStart
                       startDate = {this.state.startDate}
                       endDate = {this.state.endDate}
-                      value = {this.state.startDate}
-                      
+                      value = {this.state.startDate} 
                     />
                     </div>
                     
@@ -256,8 +256,9 @@ class Reportes extends Component {
                 <div className='col-md-6'>
                   <div className="form-group row">
                   <label className="col-form-label col-sm-3" name='fechaHasta'>Hasta:</label>
-                  <div className = "col-md-9 input-group date">
+                  <div className = "col-md-9 ">
                   <DatePicker
+                  className='form-control'
                     locale = "es"  
                     dateFormat = "dd/MM/yyyy"           
                     isClearable
@@ -339,7 +340,7 @@ class Reportes extends Component {
               <button
                 className="btn btn-sm btn-primary"
                 onClick={estado => this.handleSearch('')}
-              > Buscar <FontAwesomeIcon icon="search"/>
+              > <FontAwesomeIcon icon="search"/>Buscar
               </button>
             </div> 
           </div>
