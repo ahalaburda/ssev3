@@ -14,7 +14,7 @@ class Reporte extends Component {
       data: [],
       numero:'',
       descripcion:'',
-     // objetoDeGasto:'',
+      objetoDeGasto:'',
       fecha:'',
       estado:'',
       origen:'',
