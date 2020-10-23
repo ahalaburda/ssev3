@@ -69,6 +69,16 @@ class Instancias {
   delete(id) {
     return http.delete(`/instancias/${id}`);
   }
+
+  /**
+   * Actualiza X campo de la instancia
+   * @param id ID de instancia
+   * @param data Nuevos datos
+   * @returns {Promise<AxiosResponse<any>>}
+   */
+  update(id, data) {
+    return http.patch(`/instancias/${id}`, data);
+  }
 }
 
 export default new Instancias();
