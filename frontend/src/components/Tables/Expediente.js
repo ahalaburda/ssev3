@@ -3,6 +3,7 @@ import InstanciaService from "../../services/Instancias";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import DataTable from "react-data-table-component";
 import NuevoExpediente from "../Forms/NuevoExpediente";
+import helper from "../../utils/helper";
 import moment from "moment";
 import Popups from "../Popups";
 import ProcesarExpediente from "../Forms/ProcesarExpediente";
@@ -18,7 +19,7 @@ class Expediente extends Component {
       showNew: false,
       showEdit: false,
       showProcess: false,
-      expedienteData: {},
+      expedienteData: helper.getExpedienteInitialState(),
       list: [],
       totalRows: 0
     };
