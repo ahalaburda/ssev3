@@ -18,26 +18,119 @@ class Helper {
   }
 
   /**
-   * Retorna un expediente vacio con todos sus campos disponibles
-   * @returns {{estado_id: {descripcion: string, id: number, activo: boolean},
-   * expediente_id: {
+   * Retorna un expediente vacio
+   * @returns {{
+   * descripcion: string,
+   * estado_id: {
    *    descripcion: string,
-   *    estado_id: {descripcion: string, id: number, activo: boolean},
-   *    dependencia_origen_id: {descripcion: string, id: number, activo: boolean},
-   *    dependencia_destino_id: {descripcion: string, id: number, activo: boolean},
-   *    prioridad_id: {descripcion: string, id: number, activo: boolean},
-   *    fecha_actualizacion: string,
-   *    fecha_creacion: string,
-   *    tipo_de_expediente_id: {descripcion: string, id: number, activo: boolean},
-   *    monto: string,
-   *    monto_currency: string,
-   *    fecha_mesa_entrada: string,
-   *    objeto_de_gasto_id: {descripcion: string, id: number, activo: boolean},
-   *    numero_mesa_de_entrada: number,
-   *    anho: number,
-   *    lote_id: {descripcion: string, dependencia_destino_id: {descripcion: string, id: number, activo: boolean}, id: number, fecha_creacion: string, activo: boolean},
-   *    id: number
+   *    id: number,
+   *    activo: boolean
    * },
+   * dependencia_origen_id: {
+   *    descripcion: string,
+   *    id: number,
+   *    activo: boolean
+   * },
+   * dependencia_destino_id: {
+   *    descripcion: string,
+   *    id: number,
+   *    activo: boolean
+   * },
+   * prioridad_id: {
+   *    descripcion: string,
+   *    id: number,
+   *    activo: boolean
+   * },
+   * fecha_actualizacion: string,
+   * fecha_creacion: string,
+   * tipo_de_expediente_id: {
+   *    descripcion: string,
+   *    id: number,
+   *    activo: boolean
+   * },
+   * monto: string,
+   * monto_currency: string,
+   * fecha_mesa_entrada: string,
+   * objeto_de_gasto_id: {
+   *    descripcion: string,
+   *    id: number,
+   *    activo: boolean
+   * },
+   * numero_mesa_de_entrada: number,
+   * anho: number,
+   * lote_id: {
+   *    descripcion: string,
+   *    dependencia_destino_id: {
+   *        descripcion: string,
+   *        id: number,
+   *        activo: boolean
+   *     },
+   *     id: number,
+   *
+   *     fecha_creacion: string,
+   *     activo: boolean
+   * },
+   * id: number}}
+   */
+  getExpedienteInitialState() {
+    return {
+      "id": 0,
+      "numero_mesa_de_entrada": 0,
+      "anho": 0,
+      "descripcion": "",
+      "monto_currency": "",
+      "monto": "",
+      "fecha_creacion": "",
+      "fecha_actualizacion": "",
+      "fecha_mesa_entrada": "",
+      "tipo_de_expediente_id": {
+        "id": 0,
+        "descripcion": "",
+        "activo": false
+      },
+      "dependencia_origen_id": {
+        "id": 0,
+        "descripcion": "",
+        "activo": false
+      },
+      "dependencia_destino_id": {
+        "id": 0,
+        "descripcion": ""
+        , "activo": false
+      },
+      "objeto_de_gasto_id": {
+        "id": 0,
+        "descripcion": "",
+        "activo": false
+      },
+      "estado_id": {
+        "id": 0,
+        "descripcion": "",
+        "activo": false
+      },
+      "prioridad_id": {
+        "id": 0,
+        "descripcion": ""
+        , "activo": false
+      },
+      "lote_id": {
+        "id": 0,
+        "descripcion": "",
+        "fecha_creacion": "",
+        "activo": false,
+        "dependencia_destino_id": {
+          "id": 0,
+          "descripcion": ""
+          , "activo": false
+        }
+      }
+    }
+  }
+
+  /**
+   * Retorna una instancia vacia con todos sus campos disponibles
+   * @returns {{estado_id: {descripcion: string, id: number, activo: boolean},
+   * expediente_id: {},
    * usuario_id_salida: null,
    * fecha_final: string,
    * dependencia_siguiente_id: {descripcion: string, id: number, activo: boolean},
@@ -48,64 +141,13 @@ class Helper {
    * fecha_creacion: string,
    * dependencia_actual_id: {descripcion: string, id: number, activo: boolean}}}
    */
-  getExpedienteInitialState() {
+  getInstanciaInitialState() {
     return {
       "id": 0,
       "fecha_creacion": "",
       "fecha_recepcion": "",
       "fecha_final": "",
-      "expediente_id": {
-        "id": 0,
-        "numero_mesa_de_entrada": 0,
-        "anho": 0,
-        "descripcion": "",
-        "monto_currency": "",
-        "monto": "",
-        "fecha_creacion": "",
-        "fecha_actualizacion": "",
-        "fecha_mesa_entrada": "",
-        "tipo_de_expediente_id": {
-          "id": 0,
-          "descripcion": "",
-          "activo": false
-        },
-        "dependencia_origen_id": {
-          "id": 0,
-          "descripcion": "",
-          "activo": false
-        },
-        "dependencia_destino_id": {
-          "id": 0,
-          "descripcion": ""
-          , "activo": false
-        },
-        "objeto_de_gasto_id": {
-          "id": 0,
-          "descripcion": "",
-          "activo": false
-        },
-        "estado_id": {
-          "id": 0,
-          "descripcion": "",
-          "activo": false
-        },
-        "prioridad_id": {
-          "id": 0,
-          "descripcion": ""
-          , "activo": false
-        },
-        "lote_id": {
-          "id": 0,
-          "descripcion": "",
-          "fecha_creacion": "",
-          "activo": false,
-          "dependencia_destino_id": {
-            "id": 0,
-            "descripcion": ""
-            , "activo": false
-          }
-        }
-      },
+      "expediente_id": this.getExpedienteInitialState(),
       "dependencia_anterior_id": {
         "id": 0,
         "descripcion": "",
