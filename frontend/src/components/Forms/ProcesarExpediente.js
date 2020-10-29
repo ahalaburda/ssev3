@@ -6,36 +6,40 @@ import helper from "../../utils/helper";
 import Popups from "../Popups";
 import ExpedienteService from "../../services/Expedientes";
 import InstanciasService from "../../services/Instancias";
+import ComentariosService from "../../services/Comentarios";
 import moment from "moment";
 
+const initialState = {
+  instancia: {},
+  depPrev: {},
+  depNow: {},
+  depNext: {},
+  newEstado: {
+    id: 0,
+    value: '',
+    label: ''
+  },
+  newNumMesa: '',
+  comment: ''
+}
 
 class ProcesarExpediente extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      instancia: helper.getExpedienteInitialState(),
-      depPrev: {},
-      depNow: {},
-      depNext: {},
-      new_estado: {
-        id: 0,
-        value: '',
-        label: ''
-      },
-      comment: ''
-    }
+    this.state = initialState
     this.handleClose = this.handleClose.bind(this);
     this.handleEstadoChange = this.handleEstadoChange.bind(this);
     this.handleCommentChange = this.handleCommentChange.bind(this);
     this.handleProcess = this.handleProcess.bind(this);
   }
 
+  //reemplazo de funcion componentWillReceiveProps
   static getDerivedStateFromProps(nextProps) {
     return {
-      expediente: nextProps.expedienteData.expediente_id,
+      instancia: nextProps.expedienteData,
       depPrev: nextProps.expedienteData.dependencia_anterior_id,
       depNow: nextProps.expedienteData.dependencia_actual_id,
-      depNext: nextProps.expedienteData.dependencia_siguiente_id
+      depNext: nextProps.expedienteData.dependencia_siguiente_id,
     }
   }
 
@@ -43,22 +47,18 @@ class ProcesarExpediente extends Component {
    * Setea el props para que se cierre el modal y el 'state' vuelva a su estado inicial.
    */
   handleClose = () => {
-    this.setState({
-      expediente: helper.getExpedienteInitialState(),
-      new_estado: {
-        id: 0,
-        value: '',
-        label: ''
-      },
-      comment: ''
-    });
+    this.setState(initialState);
     this.props.setShow(false);
   }
 
   handleEstadoChange = value => {
     this.setState({
-      new_estado: value
+      newEstado: value
     });
+  }
+
+  handleNumMesaChange = e => {
+    this.setState({newNumMesa: e.target.value})
   }
 
   handleCommentChange = e => {
@@ -79,32 +79,19 @@ class ProcesarExpediente extends Component {
   }
 
   /**
-   * Guarda la nueva intancia
+   * Guarda la nueva intancia para los estados Recibido, Anulado y Pausado
    * @param userIdIn Usuario id
    * @returns {Promise<AxiosResponse<*>>}
    */
-  saveNewInstancia = userIdIn => {
+  saveInstanciaRecibidoAnuladoPausado = userIdIn => {
     return InstanciasService.create({
       expediente_id: this.state.instancia.expediente_id.id,
       dependencia_anterior_id: this.state.depPrev.id,
       dependencia_actual_id: this.state.depNow.id,
       dependencia_siguiente_id: this.state.depNext.id,
+      estado_id: this.state.newEstado.id,
       usuario_id_entrada: userIdIn
     });
-  }
-
-  /**
-   * Setea el nuevo estado y proporciona un numero de mesa de entrada al expediente procesado
-   * @param nroMesaEntrada Numero de mesa de entrada generada
-   * @returns {Promise<AxiosResponse<*>>}
-   */
-  setExpedienteMesaEntrada = nroMesaEntrada => {
-    return ExpedienteService.update(this.state.instancia.expediente_id.id,
-      {
-        numero_mesa_de_entraa: nroMesaEntrada,
-        estado_id: this.state.new_estado.id,
-        fecha_mesa_entrada: moment().toJSON()
-      });
   }
 
   /**
@@ -117,21 +104,69 @@ class ProcesarExpediente extends Component {
   }
 
   /**
+   * Setea el nuevo estado y proporciona un numero de mesa de entrada al expediente si este no lo tiene aun
+   * @param withMesaEntrada True generar nuevo numero mesa de entrada, False sin modificar numero.
+   * @returns {Promise<AxiosResponse<*>>}
+   */
+  setExpediente = withMesaEntrada => {
+    return withMesaEntrada ?
+      ExpedienteService.update(this.state.instancia.expediente_id.id,
+        {
+          numero_mesa_de_entrada: this.getNewMesaEntrada(),
+          estado_id: this.state.newEstado.id,
+          fecha_mesa_entrada: moment().toJSON()
+        }) :
+      ExpedienteService.update(this.state.instancia.expediente_id.id,
+        {
+          estado_id: this.state.newEstado.id
+        });
+  }
+
+  //TODO guardar comentario
+  saveComment = (instanciaId, userId) => {
+    ComentariosService.create({
+      descripcion: this.state.comment,
+      instancia_id: instanciaId,
+      usuario_id: userId
+    })
+      .then(() => {
+        console.log('comentario guardado');
+      })
+      .catch(e => {
+        console.log(`Error saveComment\n${e}`);
+      })
+  }
+
+  /**
    * Procesa los expedientes con estado RECIBIDO, ANULADO Y PAUSADO
    */
   processExpediente = () => {
     const userIdIn = helper.existToken() ? helper.getCurrentUserId() : null;
     if (this.state.depNow.descripcion === 'Mesa Entrada') {
       Promise.all([
-        this.setExpedienteMesaEntrada(this.getNewMesaEntrada()),
+        this.setExpediente(true),
         this.setInstanciaUserOut(userIdIn),
-        this.saveNewInstancia(userIdIn)
+        this.saveInstanciaRecibidoAnuladoPausado(userIdIn)
       ])
-        .then(() => {
-
+        .then(response => {
+          //this.saveComment(response[2].data.id, userIdIn);
+          Popups.success('Expediente procesado.');
         })
         .catch(e => {
-          console.log(e);
+          console.log(`Error processExpediente\n${e}`);
+        })
+    } else {
+      Promise.all([
+        this.setExpediente(false),
+        this.setInstanciaUserOut(userIdIn),
+        this.saveInstanciaRecibidoAnuladoPausado(userIdIn)
+      ])
+        .then(response => {
+          //this.saveComment(response[2].data.id, userIdIn);
+          Popups.success('Expediente procesado.');
+        })
+        .catch(e => {
+          console.log(`Error processExpediente\n${e}`);
         })
     }
   }
@@ -150,8 +185,14 @@ class ProcesarExpediente extends Component {
 
   handleProcess = () => {
     //TODO check valid
-    switch (this.state.new_estado.value) {
-      case helper.getEstado().RECIBIDO || helper.getEstado().ANULADO || helper.getEstado().PAUSADO:
+    switch (this.state.newEstado.value) {
+      case helper.getEstado().RECIBIDO:
+        this.processExpediente();
+        break;
+      case helper.getEstado().ANULADO:
+        this.processExpediente();
+        break;
+      case helper.getEstado().PAUSADO:
         this.processExpediente();
         break;
       case helper.getEstado().RECHAZADO:
@@ -167,37 +208,27 @@ class ProcesarExpediente extends Component {
         this.processExpediente();
     }
     //cierra modal
+    this.handleClose();
     this.props.setShow(false);
   }
 
   render() {
-    let numeroMesaComp, tipoExpediente, descripcion, depAnt, depAct, depSig;
-    //TODO determinar como asignar nuevo numero de mesa de entrada
+    let numMesaComp;
     if (this.state.instancia) {
-      // si no tiene mesa de entrada se habilita el campo para cargar el numero (posible autogenerado)
-      if (this.state.instancia.expediente_id.numero_mesa_de_entrada !== null) {
-        numeroMesaComp = <input
+      if (this.state.instancia.expediente_id.numero_mesa_de_entrada !== 0) {
+        numMesaComp = <input
           className="form-control"
           value={this.state.instancia.expediente_id.numero_mesa_de_entrada}
+          onChange={e => this.handleNumMesaChange(e)}
           disabled/>
       } else {
-        numeroMesaComp = <input className="form-control" value=""/>
-      }
-      tipoExpediente = this.state.instancia.expediente_id.tipo_de_expediente_id.descripcion;
-      descripcion = this.state.instancia.expediente_id.descripcion;
-      depAnt = this.state.depPrev.descripcion;
-      depAct = this.state.depNow.descripcion;
-      // si elige el estado rechazado y su dependencia anterior es origen, su dependencia siguiente no se modifica
-      if (this.state.new_estado.value === helper.getEstado().RECHAZADO && this.state.depPrev.descripcion === 'Origen') {
-        depSig = this.state.depNext.descripcion;
-        // si se elige rechazado y su dep anterior ya no es origen, su dependencia siguiente es el anterior
-      } else if (this.state.new_estado.value === helper.getEstado().RECHAZADO) {
-        depSig = this.state.depPrev.descripcion;
-      } else {
-        depSig = this.state.depNext.descripcion;
+        numMesaComp = <input
+          className="form-control"
+          placeholder="Ingresa n&uacute;mero de mesa."
+          value={this.state.newNumMesa}
+          onChange={e => this.handleNumMesaChange(e)}/>
       }
     }
-
     return (
       <Modal
         show={this.props.showModal}
@@ -214,7 +245,7 @@ class ProcesarExpediente extends Component {
                   <Form.Row>
                     <div className="form-group col">
                       <Form.Label>Numero de Expediente</Form.Label>
-                      {numeroMesaComp}
+                      {numMesaComp}
                     </div>
                   </Form.Row>
                   <Form.Row>
@@ -222,7 +253,7 @@ class ProcesarExpediente extends Component {
                       <Form.Label>Tipo de Expediente</Form.Label>
                       <input
                         className="form-control"
-                        value={tipoExpediente}
+                        value={this.state.instancia.expediente_id.tipo_de_expediente_id.descripcion}
                         disabled/>
                     </div>
                   </Form.Row>
@@ -232,7 +263,7 @@ class ProcesarExpediente extends Component {
                     <Form.Label>Descripci&oacute;n</Form.Label>
                     <Form.Control as="textarea" rows="5"
                                   name="description"
-                                  value={descripcion}
+                                  value={this.state.instancia.expediente_id.descripcion}
                                   disabled/>
                   </Form.Row>
                 </div>
@@ -242,14 +273,14 @@ class ProcesarExpediente extends Component {
                   <Form.Label>Dependencia Anterior</Form.Label>
                   <input
                     className="form-control"
-                    value={depAnt}
+                    value={this.state.depPrev.descripcion}
                     disabled/>
                 </div>
                 <div className="form-group col">
                   <Form.Label>Dependencia Actual</Form.Label>
                   <input
                     className="form-control"
-                    value={depAct}
+                    value={this.state.depNow.descripcion}
                     disabled/>
                 </div>
               </Form.Row>
@@ -267,7 +298,7 @@ class ProcesarExpediente extends Component {
                   <Form.Label>Dependencia Siguiente</Form.Label>
                   <input
                     className="form-control"
-                    value={depSig}
+                    value={this.state.depNext.descripcion}
                     disabled/>
                 </div>
               </Form.Row>
