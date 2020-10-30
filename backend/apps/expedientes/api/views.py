@@ -71,14 +71,26 @@ class InstanciaFilter(filters.FilterSet):
         fields = ('expediente_id', 'expediente_descripcion', 'expediente_anho', 'expediente_nro_mesa', 'estado',
                   'fecha_desde', 'fecha_hasta', 'actual', 'objeto_de_gasto', 'origen')
 
+def get_last_instancia_by_expediente_id(id):
+    """
+    Obtiene la ultima instancia por el id del expediente.
+    """
+    return Instancia.objects.filter(expediente_id=id).last()
+
 
 def get_last_instancias():
     """
     Obtener las ultimas instancias para cada expediente.
     """
-    return Instancia.objects.filter(id__in=[i.id for i in Instancia.objects.raw(
-        'select max(id) as id from expedientes_instancia group by expediente_id '
-    )])
+    # return Instancia.objects.filter(id__in=[i.id for i in Instancia.objects.raw(
+    #     'select max(id) as id from expedientes_instancia group by expediente_id '
+    # )])
+    expedientes = Expediente.objects.all()
+    instancias = []
+    for expediente in expedientes:
+            instancias.append(get_last_instancia_by_expediente_id(expediente.id))
+    return instancias
+
 
 
 class InstanciaListView(ListCreateAPIView):
