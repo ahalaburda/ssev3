@@ -11170,3 +11170,8 @@ footer.sticky-footer .copyright {
 body.sidebar-toggled footer.sticky-footer {
   width: 100%;
 }
+
+/* Cambia de color la cabecera de las tablas */
+.fNiPDu {
+  background-color: aliceblue;
+}

@@ -1,0 +1,46 @@
+[{
+	"model": "lotes.lote",
+	"pk": 1,
+	"fields": {
+		"descripcion": "Lote uno",
+		"fecha_creacion": "2020-08-12T09:46:00Z",
+		"dependencia_destino_id": 3,
+		"activo": true
+	}
+}, {
+	"model": "lotes.lote",
+	"pk": 2,
+	"fields": {
+		"descripcion": "Lote dos",
+		"fecha_creacion": "2020-08-12T09:46:00Z",
+		"dependencia_destino_id": 4,
+		"activo": true
+	}
+}, {
+	"model": "lotes.lote",
+	"pk": 3,
+	"fields": {
+		"descripcion": "Lote tres",
+		"fecha_creacion": "2020-08-12T09:46:00Z",
+		"dependencia_destino_id": 5,
+		"activo": true
+	}
+}, {
+	"model": "lotes.lote",
+	"pk": 4,
+	"fields": {
+		"descripcion": "Lote cuatro",
+		"fecha_creacion": "2020-08-12T09:46:00Z",
+		"dependencia_destino_id": 6,
+		"activo": true
+	}
+}, {
+	"model": "lotes.lote",
+	"pk": 5,
+	"fields": {
+		"descripcion": "Lote cinco",
+		"fecha_creacion": "2020-08-12T09:46:00Z",
+		"dependencia_destino_id": 7,
+		"activo": true
+	}
+}]

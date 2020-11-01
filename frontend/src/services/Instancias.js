@@ -10,7 +10,7 @@ class Instancias {
   getByExpedienteId(exp_id) {
     return http.get(`/instancias/?expediente_id=${exp_id}&format=json`);
   }
-
+  
   /**
    * Obtener una o varias instancias de acuerdo a una descripcion dada.
    * @param description Descripcion buscada
@@ -69,7 +69,7 @@ class Instancias {
   delete(id) {
     return http.delete(`/instancias/${id}`);
   }
-
+  
   /**
    * Actualiza X campo de la instancia
    * @param id ID de instancia
@@ -78,6 +78,24 @@ class Instancias {
    */
   update(id, data) {
     return http.patch(`/instancias/${id}`, data);
+  }
+
+ /**
+   * Obtiene una o varias instancias de acuerdo al estado dado.
+   * @param estado Estado de Expediente
+   * @returns {Promise<AxiosResponse<Instancia>>}
+   */
+  /**
+   * Obtiene un a o varias instancias de acuerdo a los filtros seleccionados
+   * @param {*} fecha_desde 
+   * @param {*} fecha_hasta 
+   * @param {*} origen 
+   * @param {*} objeto 
+   * @param {*} descripcion 
+   * @param {*} estado 
+   */
+  getExpForReportes(fecha_desde,fecha_hasta,origen,objeto,descripcion,estado){
+    return http.get(`/instancias/?fecha_desde=${fecha_desde}&fecha_hasta=${fecha_hasta}&origen=${origen}&objeto_de_gasto=${objeto}&expediente_descripcion=${descripcion}&estado=${estado}&format=json`)
   }
 }
 

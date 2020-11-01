@@ -58,24 +58,39 @@ class InstanciaFilter(filters.FilterSet):
     """
     expediente_descripcion = filters.CharFilter(field_name='expediente_id__descripcion', lookup_expr='icontains')
     estado = filters.CharFilter(field_name='estado_id__descripcion', lookup_expr='exact')
-    fecha_creacion = filters.DateFromToRangeFilter(field_name='fecha_creacion')
+    fecha_desde = filters.DateTimeFilter(field_name='expediente_id__fecha_creacion', lookup_expr='gte')
+    fecha_hasta = filters.DateTimeFilter(field_name='expediente_id__fecha_creacion', lookup_expr='lte')
     actual = filters.CharFilter(field_name='dependencia_actual_id__descripcion', lookup_expr='icontains')
     expediente_anho = filters.CharFilter(field_name='expediente_id__anho', lookup_expr='exact')
     expediente_nro_mesa = filters.CharFilter(field_name='expediente_id__numero_mesa_de_entrada', lookup_expr='exact')
+    objeto_de_gasto = filters.CharFilter(field_name='expediente_id__objeto_de_gasto_id__descripcion', lookup_expr='exact')
+    origen = filters.CharFilter(field_name='expediente_id__dependencia_origen_id__descripcion', lookup_expr='exact')
 
     class Meta:
         model = Instancia
         fields = ('expediente_id', 'expediente_descripcion', 'expediente_anho', 'expediente_nro_mesa', 'estado',
-                  'fecha_creacion', 'actual')
+                  'fecha_desde', 'fecha_hasta', 'actual', 'objeto_de_gasto', 'origen')
+
+def get_last_instancia_by_expediente_id(id):
+    """
+    Obtiene la ultima instancia por el id del expediente.
+    """
+    return Instancia.objects.filter(expediente_id=id).last()
 
 
 def get_last_instancias():
     """
     Obtener las ultimas instancias para cada expediente.
     """
-    return Instancia.objects.filter(id__in=[i.id for i in Instancia.objects.raw(
-        'select max(id) as id from expedientes_instancia group by expediente_id '
-    )])
+    # return Instancia.objects.filter(id__in=[i.id for i in Instancia.objects.raw(
+    #     'select max(id) as id from expedientes_instancia group by expediente_id '
+    # )])
+    expedientes = Expediente.objects.all()
+    instancias = []
+    for expediente in expedientes:
+            instancias.append(get_last_instancia_by_expediente_id(expediente.id))
+    return instancias
+
 
 
 class InstanciaListView(ListCreateAPIView):

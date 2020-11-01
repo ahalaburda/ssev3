@@ -1,10 +1,8 @@
 import React, {Component} from "react";
-import ExpedienteService from "../../services/Instancias";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import DataTable from "react-data-table-component";
-import moment from "moment";
-import Popups from "../Popups";
-
+import VerExpediente from "../Forms/VerExpediente";
+import InstanciasService from "../../services/Instancias";
 /**
  * Tabla para reportes
  */
@@ -13,59 +11,41 @@ class Reporte extends Component {
     super(props);
     this.state = {
       loading: false,
-      list: [],
+      data: [],
+      numero:'',
+      descripcion:'',
+      objetoDeGasto:'',
+      fecha:'',
+      estado:'',
+      origen:'',
+      dependenciaActual:'',
+      tipoDeExpediente:'',
       totalRows: 0
     };
-    this.retrieveExpedientes = this.retrieveExpedientes.bind(this);
   }
 
-  // Para la primera carga siempre trae la pagina 1 (uno)
-  componentDidMount() {
-    this.retrieveExpedientes();
+  //reemplazo de funcion componentWillReceiveProps
+  static getDerivedStateFromProps(nextProps) {
+    return {list: nextProps.data}
   }
 
-  setListFromResponse = response => {
-    this.setState({
-      list: response.data.results.map(exp => {
-        return {
-          id: exp.expediente_id.id,
-          numero: exp.expediente_id.numero_mesa_de_entrada + "/" + exp.expediente_id.anho,
-          fecha_me: moment(exp.expediente_id.fecha_mesa_entrada).isValid() ?
-            moment(exp.expediente_id.fecha_mesa_entrada).format('DD/MM/YYYY - kk:mm:ss') : 'Sin fecha',
-          origen: exp.expediente_id.dependencia_origen_id.descripcion,
-          tipo: exp.expediente_id.tipo_de_expediente_id.descripcion,
-          descripcion: exp.expediente_id.descripcion,
-          estado: exp.estado_id.descripcion,
-          dependencia: exp.dependencia_actual_id.descripcion
-        }
-      }),
-      loading: false
-    });
-  }
-
-  /**
-   * Obtener expedientes de la base de datos y cargarlos en la tabla
-   */
-  retrieveExpedientes() {
-    this.setState({loading: true});
-    ExpedienteService.getAll()
-      .then(response => {
-        if (response.data.count > 0) {
-          this.setListFromResponse(response);
-          this.setState({totalRows: response.data.count});
-        } else {
-          this.setState({loading: false});
-          Popups.error('No se encontro ningun expediente');
-        }
-      })
-      .catch(e => {
-        Popups.error('Ocurrio un error al obtener los expedientes.');
-        console.log(`Error retrieveExpedientes:\n${e}`);
-      })
-  }
-
-  handlePageChange = page => {
-    this.retrieveExpedientes(page);
+  handleViewExpediente =row=>{
+    InstanciasService.getByExpedienteId(row.id)
+    .then(response =>{
+      this.setState({
+        numero: row.numero,
+        descripcion: row.descripcion,
+        fecha: row.fecha_me,
+        estado: row.estado,
+        origen: row.origen,
+        dependenciaActual: row.dependencia,
+        tipoDeExpediente: row.tipo,
+        objetoDeGasto: response.data.results.map(exp =>{
+          return exp.expediente_id.objeto_de_gasto_id.descripcion
+        })
+      });
+    })
+    
   }
 
 
@@ -125,7 +105,7 @@ class Reporte extends Component {
             case "Finalizado":
               return <div className="badge badge-secondary">{row.estado}</div>
             default:
-              return <div className="badge badge-primary">{row.estado}</div>
+              return <div className="badge badge-dark">{row.estado}</div>
           }
         }
       },
@@ -141,7 +121,8 @@ class Reporte extends Component {
           <div>
             <button
               className="btn btn-sm btn-link text-primary"
-              data-toggle="modal" data-target="#viewTipoExpedienteModal">
+              onClick= {()=> this.handleViewExpediente(row)}
+              data-toggle="modal" data-target="#viewExpedienteModal">
               <FontAwesomeIcon icon="eye"/>
             </button>
             <button className="btn btn-sm btn-link text-primary">
@@ -179,6 +160,18 @@ class Reporte extends Component {
             className="table-responsive table-sm table-bordered"
           />
         </div>
+        
+        {/*Modal para ver tipo de expediente con sus rutas*/}
+        <VerExpediente
+          estado = {this.state.estado}
+          origen = {this.state.origen}
+          dependenciaActual = {this.state.dependenciaActual}
+          numero = {this.state.numero}
+          fecha = {this.state.fecha}
+          objetoDeGasto = {this.state.objetoDeGasto}
+          descripcion = {this.state.descripcion}
+          tipoDeExpediente = {this.state.tipoDeExpediente}
+          />
       </div>
     );
   }
