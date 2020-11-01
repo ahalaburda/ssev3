@@ -69,6 +69,16 @@ class Instancias {
   delete(id) {
     return http.delete(`/instancias/${id}`);
   }
+  
+  /**
+   * Actualiza X campo de la instancia
+   * @param id ID de instancia
+   * @param data Nuevos datos
+   * @returns {Promise<AxiosResponse<any>>}
+   */
+  update(id, data) {
+    return http.patch(`/instancias/${id}`, data);
+  }
 
  /**
    * Obtiene una o varias instancias de acuerdo al estado dado.
@@ -86,7 +96,6 @@ class Instancias {
    */
   getExpForReportes(fecha_desde,fecha_hasta,origen,objeto,descripcion,estado){
     return http.get(`/instancias/?fecha_desde=${fecha_desde}&fecha_hasta=${fecha_hasta}&origen=${origen}&objeto_de_gasto=${objeto}&expediente_descripcion=${descripcion}&estado=${estado}&format=json`)
-
   }
 }
 

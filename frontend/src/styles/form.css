@@ -1,0 +1,10 @@
+:root {
+    --form-font-size: 0.8em;
+}
+input.form-control {
+    font-size: var(--form-font-size);
+}
+
+textarea.form-control {
+    font-size: var(--form-font-size);
+}

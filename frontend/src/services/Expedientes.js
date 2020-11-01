@@ -18,6 +18,16 @@ class Expedientes {
   delete(id) {
     return http.delete(`/expedientes/${id}`);
   }
+
+  /**
+   * Actualiza X campo del expediente
+   * @param id ID del expediente
+   * @param data Nuevos datos
+   * @returns {Promise<AxiosResponse<any>>}
+   */
+  update(id, data) {
+    return http.patch(`/expedientes/${id}`, data);
+  }
 }
 
 export default new Expedientes();

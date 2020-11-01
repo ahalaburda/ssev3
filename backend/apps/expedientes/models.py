@@ -40,7 +40,7 @@ class Objeto_de_Gasto(models.Model):
 
 
 class Expediente(models.Model):
-    numero_mesa_de_entrada = models.IntegerField(blank=True, null=True)
+    numero_mesa_de_entrada = models.IntegerField(blank=True, null=False, default=0)
     anho = models.IntegerField(blank=True, null=True)
     descripcion = models.TextField(blank=False, null=False, max_length=300)
     tipo_de_expediente_id = models.ForeignKey(Tipo_de_expediente, db_column='tipo_de_expediente_id',  null=False,
@@ -51,7 +51,7 @@ class Expediente(models.Model):
     dependencia_destino_id = models.ForeignKey(Dependencia, db_column='dependencia_destino_id',
                                                related_name='dependencia_destino', null=False, blank=False,
                                                on_delete=models.CASCADE)
-    monto = MoneyField(max_digits=15, decimal_places=0, null=True, default_currency='PYG')
+    monto = MoneyField(max_digits=15, decimal_places=0, null=True, default_currency='PYG', default=0)
     objeto_de_gasto_id = models.ForeignKey(Objeto_de_Gasto, db_column='objeto_de_gasto_id',  null=True, blank=True,
                                            on_delete=models.CASCADE)
     estado_id = models.ForeignKey(Estado, db_column='estado_id',  related_name='estado_id', null=False, blank=False,
