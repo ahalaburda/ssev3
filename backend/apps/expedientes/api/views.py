@@ -2,6 +2,7 @@ from django_filters import rest_framework as filters
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from rest_framework.response import Response
 from .serializers import *
+import pandas
 
 
 class ExpedienteFilter(filters.FilterSet):
@@ -35,7 +36,6 @@ class ExpedienteListView(ListCreateAPIView):
         return ExpedienteSerializer
 
 
-
 class ExpedienteDetailView(RetrieveUpdateDestroyAPIView):
     """
     Vista para un expediente dado su ID, se permite actualizar y eliminar el expediente en la misma vista.
@@ -63,13 +63,15 @@ class InstanciaFilter(filters.FilterSet):
     actual = filters.CharFilter(field_name='dependencia_actual_id__descripcion', lookup_expr='icontains')
     expediente_anho = filters.CharFilter(field_name='expediente_id__anho', lookup_expr='exact')
     expediente_nro_mesa = filters.CharFilter(field_name='expediente_id__numero_mesa_de_entrada', lookup_expr='exact')
-    objeto_de_gasto = filters.CharFilter(field_name='expediente_id__objeto_de_gasto_id__descripcion', lookup_expr='exact')
+    objeto_de_gasto = filters.CharFilter(field_name='expediente_id__objeto_de_gasto_id__descripcion',
+                                         lookup_expr='exact')
     origen = filters.CharFilter(field_name='expediente_id__dependencia_origen_id__descripcion', lookup_expr='exact')
 
     class Meta:
         model = Instancia
         fields = ('expediente_id', 'expediente_descripcion', 'expediente_anho', 'expediente_nro_mesa', 'estado',
                   'fecha_desde', 'fecha_hasta', 'actual', 'objeto_de_gasto', 'origen')
+
 
 def get_last_instancia_by_expediente_id(id):
     """
@@ -81,16 +83,22 @@ def get_last_instancia_by_expediente_id(id):
 def get_last_instancias():
     """
     Obtener las ultimas instancias para cada expediente.
+    https://mode.com/blog/group-by-sql-python/
     """
-    # return Instancia.objects.filter(id__in=[i.id for i in Instancia.objects.raw(
-    #     'select max(id) as id from expedientes_instancia group by expediente_id '
-    # )])
-    expedientes = Expediente.objects.all()
-    instancias = []
-    for expediente in expedientes:
-            instancias.append(get_last_instancia_by_expediente_id(expediente.id))
-    return instancias
+    # inst_values = Instancia.objects.values('id', 'expediente_id')  # obtener los IDs de instancia y de expediente
+    # df = pandas.DataFrame(inst_values)  # hacer un DataFrame de la lista de IDs
+    # max_grouped = df.groupby('expediente_id').max()  # agrupar por expediente y tomar los maximos
+    # list_grouped = max_grouped.to_numpy().flatten()  # convertir a una lista
+    # return Instancia.objects.filter(id__in=list_grouped)  # filtrar las instancias
 
+    return Instancia.objects.filter(id__in=[i.id for i in Instancia.objects.raw(
+        'select max(id) as id from expedientes_instancia group by expediente_id '
+    )])
+    # expedientes = Expediente.objects.all()
+    # instancias = []
+    # for expediente in expedientes:
+    #         instancias.append(get_last_instancia_by_expediente_id(expediente.id))
+    # return instancias
 
 
 class InstanciaListView(ListCreateAPIView):
@@ -117,7 +125,7 @@ class InstanciaExpedienteList(ListAPIView):
     serializer_class = InstanciaSerializer
 
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()\
+        queryset = self.get_queryset() \
             .filter(dependencia_actual_id__dependencia_por_usuario__usuario_id=kwargs.get('user_id'))
         page = self.paginate_queryset(queryset)
         if page is not None:
