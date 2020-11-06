@@ -148,7 +148,7 @@ class ProcesarExpediente extends Component {
   processExpediente = () => {
     const userIdIn = helper.existToken() ? helper.getCurrentUserId() : null;
     const withMesaEntrada = this.state.depNow.descripcion === 'Mesa Entrada' &&
-      this.state.instancia.expediente_id.numero_mesa_de_entrada !== 0
+      this.state.instancia.expediente_id.numero_mesa_de_entrada === 0;
     Promise.all([
       this.setExpediente(withMesaEntrada),
       this.setInstanciaUserOut(userIdIn),
