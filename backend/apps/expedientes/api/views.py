@@ -83,22 +83,28 @@ def get_last_instancia_by_expediente_id(id):
 def get_last_instancias():
     """
     Obtener las ultimas instancias para cada expediente.
-    https://mode.com/blog/group-by-sql-python/
     """
+    # https://mode.com/blog/group-by-sql-python/
     # inst_values = Instancia.objects.values('id', 'expediente_id')  # obtener los IDs de instancia y de expediente
     # df = pandas.DataFrame(inst_values)  # hacer un DataFrame de la lista de IDs
     # max_grouped = df.groupby('expediente_id').max()  # agrupar por expediente y tomar los maximos
     # list_grouped = max_grouped.to_numpy().flatten()  # convertir a una lista
     # return Instancia.objects.filter(id__in=list_grouped)  # filtrar las instancias
 
-    return Instancia.objects.filter(id__in=[i.id for i in Instancia.objects.raw(
-        'select max(id) as id from expedientes_instancia group by expediente_id '
-    )])
+    # return Instancia.objects.filter(id__in=[i.id for i in Instancia.objects.raw(
+    #     'select max(id) as id from expedientes_instancia group by expediente_id '
+    # )])
+
     # expedientes = Expediente.objects.all()
     # instancias = []
     # for expediente in expedientes:
     #         instancias.append(get_last_instancia_by_expediente_id(expediente.id))
     # return instancias
+
+    from django.db.models import Max
+    return Instancia.objects.filter(
+        id__in=Instancia.objects.values('expediente_id').annotate(id=Max('id')).values('id')
+    )
 
 
 class InstanciaListView(ListCreateAPIView):
@@ -110,22 +116,33 @@ class InstanciaListView(ListCreateAPIView):
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = InstanciaFilter
 
+    # def list(self, request, *args, **kwargs):
+    #     queryset = get_last_instancias()
+    #     page = self.paginate_queryset(queryset)
+    #     if page is not None:
+    #         serializer = self.get_serializer(page, many=True)
+    #         return self.get_paginated_response(serializer.data)
+    #
+    #     serializer = self.get_serializer(queryset, many=True)
+    #     return Response(serializer.data)
+
     def get_serializer_class(self):
         if self.request.method in ['POST']:
             return InstanciaNewUpdateSerializer
         return InstanciaSerializer
 
 
+# TODO ordenar la lista
 class InstanciaExpedienteList(ListAPIView):
     """
     Vista para la lista de expedientes con respecto a la dependencia actual en la que se encuentra el usuario
     autenticado.
     """
-    queryset = Instancia.objects.all()
+    queryset = get_last_instancias()
     serializer_class = InstanciaSerializer
 
     def list(self, request, *args, **kwargs):
-        queryset = get_last_instancias() \
+        queryset = self.get_queryset() \
             .filter(dependencia_actual_id__dependencia_por_usuario__usuario_id=kwargs.get('user_id'))
         page = self.paginate_queryset(queryset)
         if page is not None:
