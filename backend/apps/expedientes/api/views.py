@@ -73,6 +73,24 @@ class InstanciaFilter(filters.FilterSet):
                   'fecha_desde', 'fecha_hasta', 'actual', 'objeto_de_gasto', 'origen')
 
 
+def list_to_queryset(model, data):
+    """
+        Pasa de lista a Queryset, verificando primero el Modelo y la lista a ser convertido
+        https://stackoverflow.com/questions/18607698/how-to-convert-a-list-in-to-queryset-django/18610447
+    """
+    from django.db.models.base import ModelBase
+    if not isinstance(model, ModelBase):
+        raise ValueError(
+            "%s must be Model" % model
+        )
+    if not isinstance(data, list):
+        raise ValueError(
+            "%s must be List Object" % data
+        )
+    pk_list = [obj.pk for obj in data]
+    return model.objects.filter(pk__in=pk_list)
+
+
 def get_last_instancia_by_expediente_id(id):
     """
     Obtiene la ultima instancia por el id del expediente.
@@ -106,13 +124,13 @@ def get_last_instancias():
         id__in=Instancia.objects.values('expediente_id').annotate(id=Max('id')).values('id')
     )
 
-
 class InstanciaListView(ListCreateAPIView):
     """
     Vista para lista de instancias, la lista utiliza la funcion de get_last_instancias para traer siempre las ultimas
      instancias. Se permite la creacion de una nueva instancia en la misma vista.
     """
-    queryset = get_last_instancias()
+    # queryset = get_last_instancias()
+    queryset = list_to_queryset(Instancia, get_last_instancias())
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = InstanciaFilter
 
@@ -138,7 +156,8 @@ class InstanciaExpedienteList(ListAPIView):
     Vista para la lista de expedientes con respecto a la dependencia actual en la que se encuentra el usuario
     autenticado.
     """
-    queryset = get_last_instancias()
+    # queryset = get_last_instancias()
+    queryset = list_to_queryset(Instancia, get_last_instancias())
     serializer_class = InstanciaSerializer
 
     def list(self, request, *args, **kwargs):
