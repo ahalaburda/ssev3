@@ -121,11 +121,11 @@ class InstanciaExpedienteList(ListAPIView):
     Vista para la lista de expedientes con respecto a la dependencia actual en la que se encuentra el usuario
     autenticado.
     """
-    queryset = get_last_instancias()
+    queryset = Instancia.objects.all()
     serializer_class = InstanciaSerializer
 
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset() \
+        queryset = get_last_instancias() \
             .filter(dependencia_actual_id__dependencia_por_usuario__usuario_id=kwargs.get('user_id'))
         page = self.paginate_queryset(queryset)
         if page is not None:
