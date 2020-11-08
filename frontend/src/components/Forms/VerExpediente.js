@@ -18,14 +18,14 @@ class VerExpediente extends Component {
   //reemplazo de funcion componentWillReceiveProps
   static getDerivedStateFromProps(nextProps) {
     return {
-        numero: nextProps.numero,
-        fecha: nextProps.fecha,
-        descripcion: nextProps.descripcion,
-        objetoDeGasto: nextProps.objetoDeGasto,
-        estado: nextProps.estado,
-        origen: nextProps.origen,
-        dependenciaActual: nextProps.dependenciaActual,
-        tipoDeExpediente: nextProps.tipoDeExpediente 
+        numero: nextProps.verNumero,
+        fecha: nextProps.verFecha,
+        descripcion: nextProps.verDescripcion,
+        objetoDeGasto: nextProps.verObjetoDeGasto,
+        estado: nextProps.verEstado,
+        origen: nextProps.verOrigen,
+        dependenciaActual: nextProps.verDependencia,
+        tipoDeExpediente: nextProps.verTipo
     }
   }
 
