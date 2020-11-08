@@ -45,12 +45,6 @@ class Reporte extends Component {
   }
 
 
-  //reemplazo de funcion componentWillReceiveProps
-  // static getDerivedStateFromProps(nextProps) {
-  //   return {data: nextProps.data}
-  // }
-
-
    /**
    * De acuerdo a los filtros aplicados, se encarga de cargar los expedientes a mostrar
    * @param  response 
