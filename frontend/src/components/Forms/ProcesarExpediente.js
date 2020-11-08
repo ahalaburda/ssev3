@@ -122,7 +122,11 @@ class ProcesarExpediente extends Component {
         });
   }
 
-  //TODO guardar comentario
+  /**
+   * Guarda el comentario, luego limpia el estado y cierra el modal
+   * @param instanciaId
+   * @param userId
+   */
   saveComment = (instanciaId, userId) => {
     ComentariosService.create({
       descripcion: this.state.comment,
@@ -130,7 +134,7 @@ class ProcesarExpediente extends Component {
       usuario_id: userId
     })
       .then(() => {
-        console.log('comentario guardado');
+        this.handleClose(); // limpiar el estado y cerrar el modal
       })
       .catch(e => {
         console.log(`Error saveComment\n${e}`);
@@ -140,47 +144,115 @@ class ProcesarExpediente extends Component {
   /**
    * Procesa los expedientes con estado RECIBIDO, ANULADO Y PAUSADO
    */
+    //TODO rollback en caso de errores
   processExpediente = () => {
     const userIdIn = helper.existToken() ? helper.getCurrentUserId() : null;
-    if (this.state.depNow.descripcion === 'Mesa Entrada') {
-      Promise.all([
-        this.setExpediente(true),
-        this.setInstanciaUserOut(userIdIn),
-        this.saveInstanciaRecibidoAnuladoPausado(userIdIn)
-      ])
-        .then(response => {
-          //this.saveComment(response[2].data.id, userIdIn);
-          Popups.success('Expediente procesado.');
-        })
-        .catch(e => {
-          console.log(`Error processExpediente\n${e}`);
-        })
-    } else {
-      Promise.all([
-        this.setExpediente(false),
-        this.setInstanciaUserOut(userIdIn),
-        this.saveInstanciaRecibidoAnuladoPausado(userIdIn)
-      ])
-        .then(response => {
-          //this.saveComment(response[2].data.id, userIdIn);
-          Popups.success('Expediente procesado.');
-        })
-        .catch(e => {
-          console.log(`Error processExpediente\n${e}`);
-        })
-    }
+    const withMesaEntrada = this.state.depNow.descripcion === 'Mesa Entrada' &&
+      this.state.instancia.expediente_id.numero_mesa_de_entrada === 0;
+    Promise.all([
+      this.setExpediente(withMesaEntrada),
+      this.setInstanciaUserOut(userIdIn),
+      this.saveInstanciaRecibidoAnuladoPausado(userIdIn)
+    ])
+      .then(response => {
+        this.saveComment(response[2].data.id, userIdIn);
+        Popups.success('Expediente procesado.');
+      })
+      .catch(e => {
+        console.log(`Error processExpediente\n${e}`);
+        Popups.error('Ocurrio un error al procesar expediente.');
+      })
+  }
+
+  //TODO dependencia anterior se obtendra de funcion en proceso (Adrian)
+  saveInstanciaRechazado = userIdIn => {
+    return InstanciasService.create({
+      expediente_id: this.state.instancia.expediente_id.id,
+      dependencia_anterior_id: 0,
+      dependencia_actual_id: this.state.depPrev.id,
+      dependencia_siguiente_id: this.state.depNow.id,
+      estado_id: this.state.newEstado.id,
+      usuario_id_entrada: userIdIn
+    });
   }
 
   processRechazado = () => {
+    const userIdIn = helper.existToken() ? helper.getCurrentUserId() : null;
+    Promise.all([
+      this.setExpediente(false),
+      this.setInstanciaUserOut(userIdIn),
+      this.saveInstanciaRechazado(userIdIn)
+    ])
+      .then(response => {
+        this.saveComment(response[2].data.id, userIdIn);
+        Popups.success('Expediente procesado.');
+      })
+      .catch(e => {
+        console.log(`Error processRechazado\n${e}`);
+        Popups.error('Ocurrio un error al procesar expediente.');
+      });
+  }
 
+  //TODO dependencia siguiente se obtendra de funcion en proceso (Adrian)
+  saveInstanciaDerivado = userIdIn => {
+    return InstanciasService.create({
+      expediente_id: this.state.instancia.expediente_id.id,
+      dependencia_anterior_id: this.state.depNow.id,
+      dependencia_actual_id: this.state.depNext.id,
+      dependencia_siguiente_id: 0,
+      estado_id: this.state.newEstado.id,
+      usuario_id_entrada: userIdIn
+    });
   }
 
   processDerivado = () => {
+    const userIdIn = helper.existToken() ? helper.getCurrentUserId() : null;
+    Promise.all([
+      this.setExpediente(false),
+      this.setInstanciaUserOut(userIdIn),
+      this.saveInstanciaDerivado(userIdIn)
+    ])
+      .then(response => {
+        this.saveComment(response[2].data.id, userIdIn);
+        Popups.success('Expediente procesado.');
+      })
+      .catch(e => {
+        console.log(`Error processDerivado\n${e}`);
+        Popups.error('Ocurrio un error al procesar expediente.');
+      })
+  }
 
+  /**
+   * Guarda una nueva instancia para el estado Finalizado
+   * @param userIdIn
+   * @returns {Promise<AxiosResponse<*>>}
+   */
+  saveInstanciaFinalizado = userIdIn => {
+    return InstanciasService.create({
+      expediente_id: this.state.instancia.expediente_id.id,
+      dependencia_anterior_id: this.state.depPrev.id,
+      dependencia_actual_id: this.state.depNow.id,
+      dependencia_siguiente_id: this.state.depNow.id,
+      estado_id: this.state.newEstado.id,
+      usuario_id_entrada: userIdIn
+    });
   }
 
   processFinalizado = () => {
-
+    const userIdIn = helper.existToken() ? helper.getCurrentUserId() : null;
+    Promise.all([
+      this.setExpediente(false),
+      this.setInstanciaUserOut(userIdIn),
+      this.saveInstanciaFinalizado(userIdIn)
+    ])
+      .then(response => {
+        this.saveComment(response[2].data.id, userIdIn);
+        Popups.success('Expediente procesado.');
+      })
+      .catch(e => {
+        console.log(`Error processFinalizado\n${e}`);
+        Popups.error('Ocurrio un error al procesar expediente.');
+      });
   }
 
   handleProcess = () => {
@@ -205,11 +277,9 @@ class ProcesarExpediente extends Component {
         this.processFinalizado();
         break;
       default:
-        this.processExpediente();
+        console.log('Error case: default');
+        break;
     }
-    //cierra modal
-    this.handleClose();
-    this.props.setShow(false);
   }
 
   render() {

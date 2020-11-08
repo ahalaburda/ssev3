@@ -90,7 +90,7 @@ class Instancia(models.Model):
                                                  on_delete=models.CASCADE)
     estado_id = models.ForeignKey(Estado, db_column='estado_id', related_name='estado', null=False, blank=False,
                                   on_delete=models.CASCADE, default=1)
-    fecha_creacion = models.DateTimeField(auto_now_add=True, blank=True)
+    fecha_creacion = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     fecha_recepcion = models.DateTimeField(blank=True, null=True)
     fecha_final = models.DateTimeField(blank=True, null=True)
     usuario_id_entrada = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='usuario_id_entrada', null=True,
