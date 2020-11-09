@@ -74,12 +74,12 @@ class InstanciaFilter(filters.FilterSet):
 
 def get_last_instancias():
     """
-    Obtener las ultimas instancias para cada expediente.
+    Obtener las ultimas instancias para cada expediente y ordenarlos de manera descendente con respecto al ID expediente
     """
     from django.db.models import Max
     return Instancia.objects.filter(
         id__in=Instancia.objects.values('expediente_id').annotate(id=Max('id')).values('id')
-    )
+    ).order_by('-expediente_id')
 
 
 class InstanciaListView(ListCreateAPIView):
