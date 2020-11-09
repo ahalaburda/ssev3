@@ -53,10 +53,10 @@ class Expediente extends Component {
           fecha_me: moment(inst.expediente_id.fecha_mesa_entrada).isValid() ?
             moment(inst.expediente_id.fecha_mesa_entrada).format('DD/MM/YYYY - kk:mm:ss') : 'Sin fecha',
           origen: inst.expediente_id.dependencia_origen_id.descripcion,
-          tipo: inst.expediente_id.tipo_de_expediente_id.descripcion,
+          tipoExpediente: inst.expediente_id.tipo_de_expediente_id.descripcion,
           descripcion: inst.expediente_id.descripcion,
           estado: inst.expediente_id.estado_id.descripcion,
-          dependencia: inst.dependencia_actual_id.descripcion
+          dependenciaActual: inst.dependencia_actual_id.descripcion
         }
       }),
       loading: false
@@ -153,6 +153,7 @@ class Expediente extends Component {
         name: 'Fecha Me',
         selector: 'fecha_me',
         sortable: true,
+        wrap: true
       },
       {
         name: 'Origen',
@@ -161,8 +162,8 @@ class Expediente extends Component {
         wrap: true
       },
       {
-        name: 'Tipo',
-        selector: 'tipo',
+        name: 'Tipo de expediente',
+        selector: 'tipoExpediente',
         sortable: true,
         grow: 2,
         wrap: true
@@ -190,14 +191,16 @@ class Expediente extends Component {
               return <div className="badge badge-danger">{row.estado}</div>
             case "Finalizado":
               return <div className="badge badge-secondary">{row.estado}</div>
+            case "Pausado":
+              return <div className="badge badge-dark">{row.estado}</div>
             default:
               return <div className="badge badge-primary">{row.estado}</div>
           }
         }
       },
       {
-        name: 'Dependencia',
-        selector: 'dependencia',
+        name: 'Dependencia actual',
+        selector: 'dependenciaActual',
         sortable: true,
         wrap: true
       },
@@ -215,11 +218,6 @@ class Expediente extends Component {
               className="btn btn-sm btn-link text-primary"
               title="Ver expediente">
               <FontAwesomeIcon icon="eye"/>
-            </button>
-            <button
-              className="btn btn-sm btn-link text-primary"
-              title="Comentar expediente">
-              <FontAwesomeIcon icon="comment"/>
             </button>
           </div>,
         button: true,
