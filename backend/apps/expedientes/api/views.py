@@ -108,7 +108,7 @@ class LastInstanciaListView(ListCreateAPIView):
 
 
 class InstanciaExpedienteFilter(filters.FilterSet):
-    estado = filters.CharFilter(field_name='expediente_id__estado_id__descripcion', lookup_expr='icontains')
+    estado = filters.CharFilter(field_name='expediente_id__estado_id__descripcion', lookup_expr='exact')
 
     class Meta:
         model: Instancia
