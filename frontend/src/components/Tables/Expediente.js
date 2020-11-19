@@ -7,6 +7,7 @@ import helper from "../../utils/helper";
 import moment from "moment";
 import Popups from "../Popups";
 import ProcesarExpediente from "../Forms/ProcesarExpediente";
+import "../../styles/table.css";
 
 /**
  * Tabla para expedientes
@@ -17,14 +18,14 @@ class Expediente extends Component {
     this.state = {
       loading: false,
       showNew: false,
-      showEdit: false,
       showProcess: false,
       expedienteData: helper.getInstanciaInitialState(),
       list: [],
-      totalRows: 0
+      totalRows: 0,
+      selectedOption: 'Todos'
     };
-    this.retrieveExpedientes = this.retrieveExpedientes.bind(this);
     this.setShowNew = this.setShowNew.bind(this);
+    this.handleOptionChange = this.handleOptionChange.bind(this);
     // this.interval = setInterval(() => {
     //   this.retrieveExpedientes(1);
     // }, 5000);
@@ -32,7 +33,7 @@ class Expediente extends Component {
 
   // Para la primera carga siempre trae la pagina 1 (uno)
   componentDidMount() {
-    this.retrieveExpedientes(1);
+    this.filterExpedientes(1, '');
   }
 
   // componentWillUnmount() {
@@ -53,10 +54,10 @@ class Expediente extends Component {
           fecha_me: moment(inst.expediente_id.fecha_mesa_entrada).isValid() ?
             moment(inst.expediente_id.fecha_mesa_entrada).format('DD/MM/YYYY - kk:mm:ss') : 'Sin fecha',
           origen: inst.expediente_id.dependencia_origen_id.descripcion,
-          tipo: inst.expediente_id.tipo_de_expediente_id.descripcion,
+          tipoExpediente: inst.expediente_id.tipo_de_expediente_id.descripcion,
           descripcion: inst.expediente_id.descripcion,
           estado: inst.expediente_id.estado_id.descripcion,
-          dependencia: inst.dependencia_actual_id.descripcion
+          dependenciaActual: inst.dependencia_actual_id.descripcion
         }
       }),
       loading: false
@@ -64,11 +65,76 @@ class Expediente extends Component {
   }
 
   /**
-   * Obtener expedientes de la base de datos y cargarlos en la tabla
+   * Servicio que llama a la API para traer las ultimas instancias de acuerdo al usuario logueado y el estado
+   * proporcionado.
+   * @param page Pagina
+   * @param state Estado del expediente
+   * @returns {Promise<AxiosResponse<Instancia>>}
    */
-  retrieveExpedientes() {
+  getInstanciasExpedientes = (page, state) => {
+    return InstanciaService.getInstanciaExpedienteEachUser(page, state);
+  }
+
+  /**
+   * Toma la pagina correspondiente de la tabla y llama al metodo filterExpedientes para traer los respectivos
+   * expedientes de acuerdo al estado seleccionado (todos, recibido, no recibido, pausado).
+   * @param page
+   */
+  handlePageChange = page => {
+    switch (this.state.selectedOption) {
+      case helper.getEstado().NORECIBIDO:
+        this.filterExpedientes(page, helper.getEstado().NORECIBIDO);
+        break;
+      case helper.getEstado().RECIBIDO:
+        this.filterExpedientes(page, helper.getEstado().RECIBIDO);
+        break;
+      case helper.getEstado().PAUSADO:
+        this.filterExpedientes(page, helper.getEstado().PAUSADO);
+        break;
+      case 'Todos':
+        this.filterExpedientes(page, '');
+        break;
+      default:
+        this.filterExpedientes(page, '');
+    }
+  }
+
+  handleProcessExpediente = expId => {
+    this.setShowProcess(true);
+    InstanciaService.getByExpedienteId(expId)
+      .then(response => {
+        this.setState({
+          expedienteData: response.data.results[0]
+        });
+      })
+      .catch(e => {
+        console.log(`Error handleProcessExpediente\n${e}`);
+      });
+  }
+
+  handleOptionChange = changeEvent => {
+    this.setState({selectedOption: changeEvent.target.value});
+    switch (changeEvent.target.value) {
+      case helper.getEstado().NORECIBIDO:
+        this.filterExpedientes(1, helper.getEstado().NORECIBIDO);
+        break;
+      case helper.getEstado().RECIBIDO:
+        this.filterExpedientes(1, helper.getEstado().RECIBIDO);
+        break;
+      case helper.getEstado().PAUSADO:
+        this.filterExpedientes(1, helper.getEstado().PAUSADO);
+        break;
+      case 'Todos':
+        this.filterExpedientes(1, '');
+        break;
+      default:
+        this.filterExpedientes(1, '');
+    }
+  }
+
+  filterExpedientes = (page, state) => {
     this.setState({loading: true});
-    InstanciaService.getInstanciaExpedienteEachUser(1)
+    this.getInstanciasExpedientes(page, state)
       .then(response => {
         if (response.data.count > 0) {
           this.setListFromResponse(response);
@@ -79,32 +145,14 @@ class Expediente extends Component {
         }
       })
       .catch(e => {
-        Popups.error('Ocurrio un error al obtener los expedientes.');
-        console.log(`Error retrieveExpedientes:\n${e}`);
+        console.log(`Error filterExpedientes:\n${e}`);
+        Popups.error('Ocurrio un error al obtener los expedientes');
       });
   }
 
   /**
-   * Toma la pagina correspondiente de la tabla y llama al metodo retrieveExpedientes para traer los respectivos
-   * expedientes.
-   * @param page
-   */
-  handlePageChange = page => {
-    this.retrieveExpedientes(page);
-  }
-
-  /**
-   * Agrega el nuevo expediente a la tabla
-   * @param newItem Nuevo expediente
-   */
-  addItem = newItem => {
-    this.setState({
-      list: [...this.state.list, newItem]
-    });
-  }
-
-  /**
-   * Setear el estado 'showNew' para mostrar u ocultar el modal de nuevo expediente
+   * Setear el estado 'showNew' para mostrar u ocultar el modal de nuevo expediente. Cuando se cierra el modal vuelve a
+   * llamar 'retrieveExpedientes' para que actualice la lista.
    */
   setShowNew = show => {
     this.setState({showNew: show});
@@ -119,19 +167,6 @@ class Expediente extends Component {
       showProcess: show,
       expedienteData: helper.getInstanciaInitialState()
     });
-  }
-
-  handleProcessExpediente = expId => {
-    this.setShowProcess(true);
-    InstanciaService.getByExpedienteId(expId)
-      .then(response => {
-        this.setState({
-          expedienteData: response.data.results[0]
-        });
-      })
-      .catch(e => {
-        console.log(`Error handleProcessExpediente\n${e}`);
-      });
   }
 
   render() {
@@ -153,6 +188,7 @@ class Expediente extends Component {
         name: 'Fecha Me',
         selector: 'fecha_me',
         sortable: true,
+        wrap: true
       },
       {
         name: 'Origen',
@@ -161,8 +197,8 @@ class Expediente extends Component {
         wrap: true
       },
       {
-        name: 'Tipo',
-        selector: 'tipo',
+        name: 'Tipo de expediente',
+        selector: 'tipoExpediente',
         sortable: true,
         grow: 2,
         wrap: true
@@ -190,14 +226,16 @@ class Expediente extends Component {
               return <div className="badge badge-danger">{row.estado}</div>
             case "Finalizado":
               return <div className="badge badge-secondary">{row.estado}</div>
+            case "Pausado":
+              return <div className="badge badge-dark">{row.estado}</div>
             default:
               return <div className="badge badge-primary">{row.estado}</div>
           }
         }
       },
       {
-        name: 'Dependencia',
-        selector: 'dependencia',
+        name: 'Dependencia actual',
+        selector: 'dependenciaActual',
         sortable: true,
         wrap: true
       },
@@ -216,11 +254,6 @@ class Expediente extends Component {
               title="Ver expediente">
               <FontAwesomeIcon icon="eye"/>
             </button>
-            <button
-              className="btn btn-sm btn-link text-primary"
-              title="Comentar expediente">
-              <FontAwesomeIcon icon="comment"/>
-            </button>
           </div>,
         button: true,
       }
@@ -235,15 +268,51 @@ class Expediente extends Component {
     };
     return (
       <div>
-        <div className="d-sm-flex align-items-center justify-content-between mb-4">
-          <h1 className="h3 mb-0 text-gray-800">Expedientes</h1>
-          <button className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
-                  onClick={() => this.setShowNew(true)}>
-            <FontAwesomeIcon icon="plus" size="sm" className="text-white-50"/>&nbsp;Nuevo
-          </button>
+        <div className="d-sm-flex align-items-center justify-content-between mb-2">
+          <h1 className="h3 text-gray-800">Expedientes</h1>
         </div>
-        <div>
+        <div className="btn-toolbar mb-2 justify-content-between">
+          <div className="btn-group mr-2">
+            <label className="btn btn-sm btn-secondary">
+              <input type="radio" id="todos" value="Todos" name="options"
+                     checked={this.state.selectedOption === 'Todos'} onChange={this.handleOptionChange}/>
+              {this.state.selectedOption === 'Todos' && <FontAwesomeIcon id="todosIcon" icon="check"/>}
+              &nbsp;Todos
+            </label>
+            <label className="btn btn-sm btn-warning">
+              <input type="radio" id="noRecibidos" value={helper.getEstado().NORECIBIDO} name="options"
+                     checked={this.state.selectedOption === helper.getEstado().NORECIBIDO}
+                     onChange={this.handleOptionChange}/>
+              {this.state.selectedOption === helper.getEstado().NORECIBIDO &&
+              <FontAwesomeIcon id="noRecibidosIcon" icon="check"/>}
+              &nbsp;No Recibidos
+            </label>
+            <label className="btn btn-sm btn-success">
+              <input type="radio" id="recibidos" value={helper.getEstado().RECIBIDO} name="options"
+                     checked={this.state.selectedOption === helper.getEstado().RECIBIDO}
+                     onChange={this.handleOptionChange}/>
+              {this.state.selectedOption === helper.getEstado().RECIBIDO &&
+              <FontAwesomeIcon id="recibidosIcon" icon="check"/>}
+              &nbsp;Recibidos
+            </label>
+            <label className="btn btn-sm btn-dark">
+              <input type="radio" id="pausados" value={helper.getEstado().PAUSADO} name="options"
+                     checked={this.state.selectedOption === helper.getEstado().PAUSADO}
+                     onChange={this.handleOptionChange}/>
+              {this.state.selectedOption === helper.getEstado().PAUSADO &&
+              <FontAwesomeIcon id="pausadosIcon" icon="check"/>}
+              &nbsp;Pausados
+            </label>
+          </div>
+          <div className="btn-group mb-2">
+            <button className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
+                    onClick={() => this.setShowNew(true)}>
+              <FontAwesomeIcon icon="plus" size="sm" className="text-white-50"/>&nbsp;Nuevo
+            </button>
+          </div>
+        </div>
 
+        <div>
           {/*Tabla de lista de expediente*/}
           <DataTable
             columns={columns}
@@ -264,7 +333,6 @@ class Expediente extends Component {
           <NuevoExpediente
             setShow={this.setShowNew}
             showModal={this.state.showNew}
-            newItem={this.addItem}
           />
           <ProcesarExpediente
             setShow={this.setShowProcess}

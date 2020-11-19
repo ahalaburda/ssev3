@@ -128,7 +128,7 @@ class Consultas extends Component {
             origen: ie.expediente_id.dependencia_origen_id.descripcion,
             destino: ie.expediente_id.dependencia_destino_id.descripcion,
             dependenciaActual: ie.dependencia_actual_id.descripcion,
-            estado: ie.estado_id.descripcion
+            estado: ie.expediente_id.estado_id.descripcion
           }
         })
       });

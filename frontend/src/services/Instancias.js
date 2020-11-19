@@ -10,7 +10,7 @@ class Instancias {
   getByExpedienteId(exp_id) {
     return http.get(`/instancias/?expediente_id=${exp_id}&format=json`);
   }
-  
+
   /**
    * Obtener una o varias instancias de acuerdo a una descripcion dada.
    * @param description Descripcion buscada
@@ -32,14 +32,15 @@ class Instancias {
 
   /**
    * Obtener las instancias de acuerdo a la dependencia actual en la que se encuentra el expediente y que
-   * dependencia asignada tiene el usuario.
+   * dependencia asignada tiene el usuario. Tambien se puede filtrar por estado de expediente
    * El usuario se obtiene del access token alojado en el localStorage.
    * @param page Pagina
+   * @param state Estado del expediente
    * @returns {Promise<AxiosResponse<Instancia>>}
    */
-  getInstanciaExpedienteEachUser(page) {
+  getInstanciaExpedienteEachUser(page, state) {
     if (helper.existToken()) {
-      return http.get(`/instancias/expedientes/${helper.getCurrentUserId()}?format=json&page=${page}`);
+      return http.get(`/instancias/expedientes/${helper.getCurrentUserId()}?estado=${state}&format=json&page=${page}`);
     }
     return http.get(`/instancias/expedientes/0?format=json&page=${page}`);
   }
@@ -69,7 +70,7 @@ class Instancias {
   delete(id) {
     return http.delete(`/instancias/${id}`);
   }
-  
+
   /**
    * Actualiza X campo de la instancia
    * @param id ID de instancia
@@ -80,21 +81,21 @@ class Instancias {
     return http.patch(`/instancias/${id}`, data);
   }
 
- /**
+  /**
    * Obtiene una o varias instancias de acuerdo al estado dado.
    * @param estado Estado de Expediente
    * @returns {Promise<AxiosResponse<Instancia>>}
    */
   /**
    * Obtiene un a o varias instancias de acuerdo a los filtros seleccionados
-   * @param {*} fecha_desde 
-   * @param {*} fecha_hasta 
-   * @param {*} origen 
-   * @param {*} objeto 
-   * @param {*} descripcion 
-   * @param {*} estado 
+   * @param {*} fecha_desde
+   * @param {*} fecha_hasta
+   * @param {*} origen
+   * @param {*} objeto
+   * @param {*} descripcion
+   * @param {*} estado
    */
-  getExpForReportes(fecha_desde,fecha_hasta,origen,objeto,descripcion,estado,page){
+  getExpForReportes( fecha_desde, fecha_hasta, origen, objeto, descripcion, estado, page){
     return http.get(`/instancias/?fecha_desde=${fecha_desde}&fecha_hasta=${fecha_hasta}&origen=${origen}&objeto_de_gasto=${objeto}&expediente_descripcion=${descripcion}&estado=${estado}&page=${page}&format=json`)
   }
 }

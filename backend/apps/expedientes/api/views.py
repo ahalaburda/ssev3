@@ -74,15 +74,15 @@ class InstanciaFilter(filters.FilterSet):
 
 def get_last_instancias():
     """
-    Obtener las ultimas instancias para cada expediente.
+    Obtener las ultimas instancias para cada expediente y ordenarlos de manera descendente con respecto al ID expediente
     """
     from django.db.models import Max
     return Instancia.objects.filter(
         id__in=Instancia.objects.values('expediente_id').annotate(id=Max('id')).values('id')
-    )
+    ).order_by('-expediente_id')
 
 
-class InstanciaListView(ListCreateAPIView):
+class LastInstanciaListView(ListCreateAPIView):
     """
     Vista para lista de instancias, la lista utiliza la funcion de get_last_instancias para traer siempre las ultimas
      instancias. Se permite la creacion de una nueva instancia en la misma vista.
@@ -96,25 +96,45 @@ class InstanciaListView(ListCreateAPIView):
             return InstanciaNewUpdateSerializer
         return InstanciaSerializer
 
-
-# TODO ordenar la lista
-class InstanciaExpedienteList(ListAPIView):
-    """
-    Vista para la lista de expedientes con respecto a la dependencia actual en la que se encuentra el usuario
-    autenticado.
-    """
-    queryset = get_last_instancias()
-    serializer_class = InstanciaSerializer
-
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset() \
-            .filter(dependencia_actual_id__dependencia_por_usuario__usuario_id=kwargs.get('user_id'))
-        page = self.paginate_queryset(queryset)
+        filtered_list = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(filtered_list)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
 
-        serializer = self.get_serializer(queryset, many=True)
+        serializer = self.get_serializer(filtered_list, many=True)
+        return Response(serializer.data)
+
+
+class InstanciaExpedienteFilter(filters.FilterSet):
+    estado = filters.CharFilter(field_name='expediente_id__estado_id__descripcion', lookup_expr='exact')
+
+    class Meta:
+        model: Instancia
+        fields = 'estado'
+
+
+class InstanciaExpedienteList(ListAPIView):
+    """
+    Vista para la lista de expedientes con respecto a la dependencia actual en la que se encuentra el usuario
+    autenticado. Se excluyen los expedientes 'finalizados'.
+    """
+    queryset = get_last_instancias().exclude(expediente_id__estado_id__descripcion='Finalizado')
+    serializer_class = InstanciaSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = InstanciaExpedienteFilter
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset() \
+            .filter(dependencia_actual_id__dependencia_por_usuario__usuario_id=kwargs.get('user_id'))
+        filtered_list = self.filter_queryset(queryset)
+        page = self.paginate_queryset(filtered_list)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(filtered_list, many=True)
         return Response(serializer.data)
 
 
