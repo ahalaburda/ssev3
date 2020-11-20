@@ -98,6 +98,16 @@ class Instancias {
   getExpForReportes( fecha_desde, fecha_hasta, origen, objeto, descripcion, estado, page){
     return http.get(`/instancias/?fecha_desde=${fecha_desde}&fecha_hasta=${fecha_hasta}&origen=${origen}&objeto_de_gasto=${objeto}&expediente_descripcion=${descripcion}&estado=${estado}&page=${page}&format=json`)
   }
+
+  /**
+   * Obtiene todas las instancias de un expediente
+   * @param {*} expediente_id 
+  */
+  getInstanciasPorExp(expediente_id){
+    return http.get(`/instancias_por_expediente/${expediente_id}`)
+  }
+
+
 }
 
 export default new Instancias();

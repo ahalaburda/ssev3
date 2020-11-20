@@ -137,6 +137,24 @@ class InstanciaExpedienteList(ListAPIView):
         serializer = self.get_serializer(filtered_list, many=True)
         return Response(serializer.data)
 
+class ExpedienteInstanciasList(ListAPIView):
+    """
+    Vista para la lista de todas las instancias de cada expediente con respecto a su ID
+    """
+    queryset = Instancia.objects.all().order_by('fecha_creacion')
+    serializer_class = InstanciaSerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset() \
+            .filter(expediente_id__id=kwargs.get('expediente_id'))
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
 
 class InstanciaDetailView(RetrieveUpdateDestroyAPIView):
     """
@@ -152,11 +170,24 @@ class InstanciaDetailView(RetrieveUpdateDestroyAPIView):
         return InstanciaSerializer
 
 
+class ComentarioFilter(filters.FilterSet):
+    """
+    Filtros para la lista de comentarios
+    """
+    comentario_instancia = filters.NumberFilter(field_name='instancia_id', lookup_expr='exact')
+
+    class Meta:
+        model = Comentario
+        fields = 'comentario_instancia',
+
+
 class ComentarioListView(ListCreateAPIView):
     """
     Vista para todos los comentarios, se permite agregar comentarios en la misma vista.
     """
     queryset = Comentario.objects.all()
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = ComentarioFilter
 
     def get_serializer_class(self):
         if self.request.method in ['POST']:

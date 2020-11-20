@@ -8,6 +8,7 @@ import moment from 'moment';
 import Select from "react-select";
 import DependenciasService from "../../services/Dependencias";
 import ObjetosDeGastosService from "../../services/ObjetosDeGastos";
+import ComentarioService from "../../services/Comentarios";
 import DatePicker, {registerLocale} from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import es from 'date-fns/locale/es';
@@ -33,6 +34,7 @@ class Reporte extends Component {
       objetoSelected: '',
       description: '',
       estado: '',
+      p: 'Hola'
     };
      
   }
@@ -76,6 +78,7 @@ class Reporte extends Component {
     };
   }
 
+  
 
   handleViewExpediente =row=>{
     InstanciaService.getByExpedienteId(row.id)
@@ -94,8 +97,46 @@ class Reporte extends Component {
       });
     })
     
+    InstanciaService.getInstanciasPorExp(row.id)
+    .then((response) =>{ 
+      this.setState({
+        instanciaIDList: response.data.results.map((instancia) =>{
+          return instancia.id
+        })
+      })
+      
+      this.setState({
+        historial: response.data.results.map((instancia) =>{
+          
+          
+          return{
+            fecha_creacion: moment(instancia.fecha_creacion).isValid() ?
+              moment(instancia.fecha_creacion).format('DD/MM/YYYY') : 'Sin fecha',
+            dependencia: instancia.dependencia_actual_id.descripcion,
+            comentario: this.getComentarioPorInstanciaID(instancia.id) 
+          }
+        })
+      })
+      console.log(this.state.historial)
+    });   
   }
 
+  //Obtiene los comentarios por cada id de instancia pasado
+  getComentarioPorInstanciaID = (instancia_id) =>{
+      ComentarioService.getComentarioPorInstancia(instancia_id)
+        .then((response) =>{
+           response.data.results.map((comentario) =>{
+             console.log(comentario.descripcion);
+            return comentario.descripcion
+          })
+          
+         
+        })   
+    
+  }
+  
+
+  
   /**
    * Obtiene todas las dependencias de la base de datos y los carga como opciones para el select
    */
@@ -245,6 +286,7 @@ class Reporte extends Component {
         name: 'Fecha Me',
         selector: 'fecha_me',
         sortable: true,
+        wrap: true
       },
       {
         name: 'Origen',
@@ -253,7 +295,7 @@ class Reporte extends Component {
         wrap: true
       },
       {
-        name: 'Tipo',
+        name: 'Tipo de Expediente',
         selector: 'tipo',
         sortable: true,
         grow: 2,
@@ -288,7 +330,7 @@ class Reporte extends Component {
         }
       },
       {
-        name: 'Dependencia',
+        name: 'Dependencia Actual',
         selector: 'dependencia',
         sortable: true,
         wrap: true
@@ -303,7 +345,7 @@ class Reporte extends Component {
               data-toggle="modal" data-target="#viewExpedienteModal">
               <FontAwesomeIcon icon="eye"/>
             </button>
-            <button className="btn btn-sm btn-link text-primary">
+            <button className="btn btn-sm btn-link text-info">
               <FontAwesomeIcon icon="print"/>
             </button>
           </div>,
@@ -432,6 +474,10 @@ class Reporte extends Component {
 
               <div className="py-3 col-md-3 text-right">
                 <button
+                  className="btn btn-sm btn-info"
+                > <FontAwesomeIcon icon="print"/>Imprimir
+                </button>
+                <button
                   className="btn btn-sm btn-primary"
                   onClick={estado => this.handleSearch('')}
                 > <FontAwesomeIcon icon="search"/>Buscar
@@ -462,7 +508,7 @@ class Reporte extends Component {
           />
         </div>
         
-        {/*Modal para ver tipo de expediente con sus rutas*/}
+        {/*Modal para ver el expediente con detalle*/}
         <VerExpediente
           verEstado = {this.state.verEstado}
           verOrigen = {this.state.verOrigen}
@@ -472,7 +518,10 @@ class Reporte extends Component {
           verObjetoDeGasto = {this.state.verObjetoDeGasto}
           verDescripcion = {this.state.verDescripcion}
           verTipo = {this.state.verTipo}
+          verMovimiento = {this.state.historial}
+          comentarios = {this.state.comentarios}
           />
+          
       </>
     );
   }
