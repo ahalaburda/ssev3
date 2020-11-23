@@ -94,22 +94,25 @@ class NuevoTipoExpediente extends Component {
    * @returns {boolean} True si se guardaron todos las dependencias, si no False
    */
   saveDetails = teId => {
-    this.state.selectedOptions.forEach((detail, idx) => {
-      TiposDeExpedientesService.createDetail({
-        orden: idx + 1,
-        tipo_de_expediente_id: teId,
-        dependencia_id: detail.id
-      })
-        .then(r => {
-          //si al menos uno de los detalles falla al guardar se retorna false y se borra la cabecera
-          if (r.status !== 201) return false //TODO agregar rollback de los detalles ya cargados si ocurre un error
+    if (!this.state.selectedOptions.length <= 0) {
+      this.state.selectedOptions.forEach((detail, idx) => {
+        TiposDeExpedientesService.createDetail({
+          orden: idx + 1,
+          tipo_de_expediente_id: teId,
+          dependencia_id: detail.id
         })
-        .catch(e => {
-          Popups.error('Ocurrió un error al procesar la información');
-          console.log(e);
-        })
-    })
-    return true;
+          .then(r => {
+            //si al menos uno de los detalles falla al guardar se retorna false y se borra la cabecera
+            if (r.status !== 201) return false
+          })
+          .catch(e => {
+            Popups.error('Ocurrió un error al procesar la información');
+            console.log(e);
+          })
+      });
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -126,9 +129,8 @@ class NuevoTipoExpediente extends Component {
               id: response.data.id,
               descripcion: response.data.descripcion,
               activo: response.data.activo ? "Activo" : "Inactivo"
-            })
+            });
             Popups.success("Guardado con éxito");
-            this.handleClose();
           } else {
             //si ocurrio algun error al guardar los detalles se borra la cabecera
             TiposDeExpedientesService.delete(response.data.id)
@@ -138,30 +140,38 @@ class NuevoTipoExpediente extends Component {
               .catch(e => {
                 Popups.error('Ocurrió un error al procesar la información');
                 console.log(e)
-              })
+              });
           }
         }
       })
       .catch(e => {
         Popups.error('Ocurrió un error al procesar la información');
         console.log(e)
-      })
+      });
   }
 
   /**
-   * Limpiar los campos cuando se cierra el modal.
+   * Limpiar el estado para cuando se abre el modal.
+   * Se limpia al abrir para que cuando se guarde no se eliminen los datos necesarios para la creacion del nuevo tipo
+   * de expediente.
    */
-  handleClose = () => {
+  clearState = () => {
     this.setState({
       description: '',
       selectedOptions: []
     });
+  }
+
+  /**
+   * Oculta los mensajes de validacion y cierra el modal.
+   */
+  handleClose = () => {
     this.validator.hideMessages();
     this.props.setShow(false);
   }
 
   /**
-   * Si todas las validaciones son validas, entonces guarda, si no muestran los mensajes de errores
+   * Si todas las validaciones son validas, entonces guarda, si no muestran los mensajes de errores.
    */
   handleSaveClick = () => {
     if (this.checkValid()) {
@@ -174,7 +184,7 @@ class NuevoTipoExpediente extends Component {
     return (
       <Modal
         show={this.props.showModal}
-        onHide={this.handleClose}
+        onShow={this.clearState}
         backdrop="static"
         size="lg"
         centered
