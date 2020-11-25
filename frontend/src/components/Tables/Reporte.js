@@ -34,7 +34,6 @@ class Reporte extends Component {
       objetoSelected: '',
       description: '',
       estado: '',
-      p: 'Hola'
     };
      
   }
@@ -43,7 +42,6 @@ class Reporte extends Component {
   componentDidMount() {
     this.retrieveDependencias();
     this.retrieveObjetosDeGastos();
-    this.findExp('','','','','','',1);
   }
 
 
@@ -78,8 +76,9 @@ class Reporte extends Component {
     };
   }
 
-  
-
+  /**
+   * Funcion para cargar los datos del expediente seleccionado al modal 
+   */
   handleViewExpediente =row=>{
     InstanciaService.getByExpedienteId(row.id)
     .then(response =>{
@@ -96,47 +95,50 @@ class Reporte extends Component {
         })
       });
     })
+    .catch((e) => {
+      Popups.error('Ocurrio un error durante la busqueda.');
+      console.log(`Error handleViewExpediente: InstanciaService\n${e}`);
+    }); 
     
     InstanciaService.getInstanciasPorExp(row.id)
-    .then((response) =>{ 
+    .then((response) =>{
       this.setState({
-        instanciaIDList: response.data.results.map((instancia) =>{
-          return instancia.id
-        })
-      })
-      
-      this.setState({
-        historial: response.data.results.map((instancia) =>{
-          
-          
-          return{
-            fecha_creacion: moment(instancia.fecha_creacion).isValid() ?
-              moment(instancia.fecha_creacion).format('DD/MM/YYYY') : 'Sin fecha',
-            dependencia: instancia.dependencia_actual_id.descripcion,
-            comentario: this.getComentarioPorInstanciaID(instancia.id) 
+        recorrido: response.data.results.map((instancia) =>{
+          return {
+            fecha_entrada: moment(instancia.fecha_recepcion).isValid() ?
+            moment(instancia.fecha_recepcion).format('DD/MM/YYYY') : 'Sin fecha',
+            fecha_salida: moment(instancia.fecha_final).isValid() ?
+            moment(instancia.fecha_final).format('DD/MM/YYYY') : 'Sin fecha',
+            dependencia: instancia.dependencia_actual_id.descripcion
           }
         })
-      })
-      console.log(this.state.historial)
+      }) 
+    }) 
+    .catch((e) => {
+      Popups.error('Ocurrio un error durante la busqueda.');
+      console.log(`Error handleViewExpediente: InstanciaService\n${e}`);
     });   
-  }
-
-  //Obtiene los comentarios por cada id de instancia pasado
-  getComentarioPorInstanciaID = (instancia_id) =>{
-      ComentarioService.getComentarioPorInstancia(instancia_id)
-        .then((response) =>{
-           response.data.results.map((comentario) =>{
-             console.log(comentario.descripcion);
-            return comentario.descripcion
+ 
+    ComentarioService.getComentarioPorExpedienteID(row.id)
+      .then((response) =>{
+        this.setState({
+          comentarios: response.data.results.map((comentario) =>{
+            return{
+              fecha_creacion: moment(comentario.fecha_creacion).isValid() ?
+                moment(comentario.fecha_creacion).format('DD/MM/YYYY') : 'Sin fecha',
+              dependencia: comentario.instancia.dependencia_actual_id.descripcion,
+              comentario: comentario.descripcion
+            }
           })
-          
-         
-        })   
-    
+        })  
+      })
+      .catch((e) => {
+        Popups.error('Ocurrio un error durante la busqueda.');
+        console.log(`Error handleViewExpediente: ComentarioService\n${e}`);
+      });      
   }
   
 
-  
   /**
    * Obtiene todas las dependencias de la base de datos y los carga como opciones para el select
    */
@@ -518,7 +520,7 @@ class Reporte extends Component {
           verObjetoDeGasto = {this.state.verObjetoDeGasto}
           verDescripcion = {this.state.verDescripcion}
           verTipo = {this.state.verTipo}
-          verMovimiento = {this.state.historial}
+          verRecorrido = {this.state.recorrido}
           comentarios = {this.state.comentarios}
           />
           

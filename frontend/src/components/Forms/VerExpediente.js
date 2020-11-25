@@ -15,11 +15,7 @@ class VerExpediente extends Component {
         origen:'',
         dependenciaActual:'',
         tipoDeExpediente:'',
-        movimiento:{
-          fecha_creacion:'',
-          dependencia:'',
-          comentario:'hola'
-        },
+        recorrido:[],
         comentarios: [],
         totalRows:0
     }
@@ -36,17 +32,64 @@ class VerExpediente extends Component {
         origen: nextProps.verOrigen,
         dependenciaActual: nextProps.verDependencia,
         tipoDeExpediente: nextProps.verTipo,
-        movimiento: nextProps.verMovimiento,
+        recorrido: nextProps.verRecorrido,
         comentarios: nextProps.comentarios,
         
     }
      
+  }
+  
+  
+  /**
+   *Funcion para ocultar/mostrar tabla de recorrido y comentario
+   y para cambiar el estado de los botones Mostrar/Ocultar 
+   * @param {*} table 
+   * @param {*} boton 
+   */
+  showTable = (table, boton) =>{
+    let tabla = document.getElementById(table);
+    if (tabla.style.display === "block") {
+      tabla.style.display = "none";
+    } else {
+      tabla.style.display = "block";
+    }
+    let cambiarTexto= document.getElementById(boton);
+    if (cambiarTexto.innerHTML == 'Ocultar'){ 
+      cambiarTexto.innerHTML = 'Mostrar';
+    }else {
+      cambiarTexto.innerHTML = 'Ocultar'; 
+  
+    }
   }
 
 
   render() {
    
   let columns = [
+    {
+      name: 'Fecha de Entrada',
+      selector: 'fecha_entrada',
+      sortable: true,
+      wrap: true,
+      grow:2
+    },
+    {
+      name: 'Fecha de Salida',
+      selector: 'fecha_salida',
+      sortable: true,
+      wrap: true,
+      grow:2
+    },
+    {
+      name: 'Dependencia',
+      selector: 'dependencia',
+      sortable: true,
+      wrap: true,
+      grow:4
+    }
+  ];
+
+  let commentsColumns = [
     {
       name: 'Fecha',
       selector: 'fecha_creacion',
@@ -55,24 +98,20 @@ class VerExpediente extends Component {
       grow:1
     },
     {
-      name: 'Dependencia',
-      selector: 'dependencia',
-      sortable: true,
-      wrap: true,
-      grow:3
-    },
-    {
       name: 'Comentario',
       selector: 'comentario',
       sortable: true,
       wrap: true,
       grow:3
+    },
+    {
+      name: 'Dependencia',
+      selector: 'dependencia',
+      sortable: true,
+      wrap: true,
+      grow:2
     }
-  ];
-  // if (this.state.comentarios !== undefined) {  
- 
-  //    console.log(this.state.comentarios);
-  //  }
+  ]; 
   
   const paginationOptions = {
     noRowsPerPage: true,
@@ -92,7 +131,7 @@ class VerExpediente extends Component {
               </button>
             </div>
             <div className="modal-body">
-              <div >
+              <div>
                 <div>
                     <label><strong>Tipo de Expediente:</strong> {this.state.tipoDeExpediente}</label>
                 </div>
@@ -114,34 +153,67 @@ class VerExpediente extends Component {
                 <div>
                     <label><strong>Estado:</strong> {this.state.estado}</label> 
                 </div>    
-                <div>
-                  <div className="text-center">
-                    <button onClick={()=>this.cargarDatos()}>Ver Historial</button>
-                  </div>
+                <div >
+                  <label>
+                    <strong>Recorrido:</strong>
+                    <button
+                    id= 'mostrarRecorrido'
+                    className="btn btn-sm btn-link text-primary"  
+                    onClick={()=>this.showTable('recorrido','mostrarRecorrido')}>
+                      Mostrar
+                    </button>
+                  </label>  
+                </div>
                 
-                  <div>
-                     {/* Tabla de historial de expediente */}
-                    <DataTable
-                      columns={columns}
-                      data={this.state.movimiento}
-                      defaultSortField="fecha_creacion"
-                      pagination
-                      paginationServer
-                      paginationPerPage={20}
-                      paginationTotalRows={this.state.totalRows}
-                      paginationComponentOptions={paginationOptions}
-                      onChangePage={this.handlePageChange}
-                      highlightOnHover={true}
-                      noHeader={true}
-                      dense={true}
-                      className="table-responsive table-sm table-bordered"
-                    /> 
-                  </div>          
-                  
-                </div>      
-                     
-              </div>
+                <div id = "recorrido" className='modal-table'>
+                    {/* Tabla de recorrido de expediente */}
+                  <DataTable
+                    columns={columns}
+                    data={this.state.recorrido}
+                    pagination
+                    paginationServer
+                    paginationPerPage={20}
+                    paginationTotalRows={this.state.totalRows}
+                    paginationComponentOptions={paginationOptions}
+                    onChangePage={this.handlePageChange}
+                    highlightOnHover={true}
+                    noHeader={true}
+                    dense={true}
+                    className="table-responsive table-sm table-bordered"
+                  /> 
+                </div>   
+
+                <div>
+                  <label>
+                    <strong>Comentarios:</strong>
+                    <button
+                    id= 'mostrarComentario'
+                    className="btn btn-sm btn-link text-primary"  
+                    onClick={()=>this.showTable('comentarios','mostrarComentario')}>
+                        Mostrar
+                    </button>
+                  </label>
+                </div>
+
+                <div id='comentarios' className='modal-table'>
+                    {/* Tabla de historial de expediente */}
+                  <DataTable
+                    columns={commentsColumns}
+                    data={this.state.comentarios}
+                    pagination
+                    paginationServer
+                    paginationPerPage={20}
+                    paginationTotalRows={this.state.totalRows}
+                    paginationComponentOptions={paginationOptions}
+                    onChangePage={this.handlePageChange}
+                    highlightOnHover={true}
+                    noHeader={true}
+                    dense={true}
+                    className="table-responsive table-sm table-bordered"
+                  /> 
+                </div>                     
             </div>
+            
             <div className="modal-footer">
               <button
                 type="button"
@@ -156,9 +228,10 @@ class VerExpediente extends Component {
                 <FontAwesomeIcon icon="print"/>
               </button>
             </div>
-          </div>
+          </div>    
         </div>
       </div>
+    </div>
     );
   }
 }

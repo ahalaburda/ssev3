@@ -11180,3 +11180,7 @@ body.sidebar-toggled footer.sticky-footer {
   background-color: #4e73df; 
   color: #fff;
 }
+
+.modal-table{
+  display: none;
+}

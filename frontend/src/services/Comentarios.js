@@ -6,11 +6,11 @@ class Comentarios {
   }
 
   /**
-   * Obtiene los comentarios de la instancia pasada por ID
-   * @param {*} instancia_id 
+   * Obtiene todos los comentarios de un expediente a traves de su ID
+   * @param {*} expediente_id 
    */
-  getComentarioPorInstancia(instancia_id){
-    return http.get(`/comentarios/?comentario_instancia=${instancia_id}`)
+  getComentarioPorExpedienteID(expediente_id){
+    return http.get(`/comentarios/?comentario_por_expediente_id=${expediente_id}`)
   }
 }
 

@@ -174,18 +174,17 @@ class ComentarioFilter(filters.FilterSet):
     """
     Filtros para la lista de comentarios
     """
-    comentario_instancia = filters.NumberFilter(field_name='instancia_id', lookup_expr='exact')
-
+    comentario_por_expediente_id = filters.NumberFilter(field_name='instancia_id__expediente_id', lookup_expr='exact')
     class Meta:
         model = Comentario
-        fields = 'comentario_instancia',
+        fields = 'comentario_por_expediente_id',
 
 
 class ComentarioListView(ListCreateAPIView):
     """
     Vista para todos los comentarios, se permite agregar comentarios en la misma vista.
     """
-    queryset = Comentario.objects.all()
+    queryset = Comentario.objects.all().order_by('fecha_creacion')
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = ComentarioFilter
 
