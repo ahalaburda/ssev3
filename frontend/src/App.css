@@ -11175,3 +11175,12 @@ body.sidebar-toggled footer.sticky-footer {
 .fNiPDu {
   background-color: aliceblue;
 }
+
+.modal-header-reportes{
+  background-color: #4e73df; 
+  color: #fff;
+}
+
+.modal-table{
+  display: none;
+}
