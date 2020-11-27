@@ -49,8 +49,8 @@ class Instancias {
    * Obtener todas las instancias.
    * @returns {Promise<AxiosResponse<Instancia>>}
    */
-  getAll() {
-    return http.get('/instancias/?format=json');
+  getAll(page) {
+    return http.get(`/instancias/?format=json&page=${page}`);
   }
 
   /**
@@ -95,9 +95,19 @@ class Instancias {
    * @param {*} descripcion
    * @param {*} estado
    */
-  getExpForReportes(fecha_desde, fecha_hasta, origen, objeto, descripcion, estado) {
-    return http.get(`/instancias/?fecha_desde=${fecha_desde}&fecha_hasta=${fecha_hasta}&origen=${origen}&objeto_de_gasto=${objeto}&expediente_descripcion=${descripcion}&estado=${estado}&format=json`)
+  getExpForReportes( fecha_desde, fecha_hasta, origen, objeto, descripcion, estado, page){
+    return http.get(`/instancias/?fecha_desde=${fecha_desde}&fecha_hasta=${fecha_hasta}&origen=${origen}&objeto_de_gasto=${objeto}&expediente_descripcion=${descripcion}&estado=${estado}&page=${page}&format=json`)
   }
+
+  /**
+   * Obtiene todas las instancias de un expediente
+   * @param {*} expediente_id 
+  */
+  getInstanciasPorExp(expediente_id){
+    return http.get(`/instancias_por_expediente/${expediente_id}`)
+  }
+
+
 }
 
 export default new Instancias();

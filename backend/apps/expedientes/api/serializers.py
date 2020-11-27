@@ -45,10 +45,10 @@ class ComentarioSerializer(serializers.ModelSerializer):
     Serializer para comentario, agregando el campo extra de nombre de usuario (nickname).
     """
     usuario = serializers.ReadOnlyField(source='usuario_id.username')
-
+    instancia = InstanciaSerializer(source='instancia_id')
     class Meta:
         model = Comentario
-        fields = ['id', 'usuario', 'descripcion', 'fecha_creacion', 'instancia_id']
+        fields = ['id', 'usuario', 'descripcion', 'fecha_creacion', 'instancia']
         depth = 1
 
 
