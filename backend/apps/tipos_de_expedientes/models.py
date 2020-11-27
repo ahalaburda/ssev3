@@ -5,6 +5,7 @@ from apps.dependencias.models import Dependencia
 class Tipo_de_expediente(models.Model):
     descripcion = models.CharField(null=False, blank=False, max_length=100)
     activo = models.BooleanField(default=True)
+    saltos = models.PositiveSmallIntegerField(default=0, blank=False)
 
     class Meta:
         verbose_name_plural = "Tipos de Expedientes"
