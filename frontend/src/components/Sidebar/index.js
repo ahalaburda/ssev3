@@ -49,8 +49,8 @@ class Sidebar extends Component {
           {/* Sidebar Toggler */}
           <div className="text-center">
             <button className="btn" onClick={this.toggleMenu}>
-              {this.state.toggle ? <FontAwesomeIcon icon="greater-than" className="text-white"/> :
-                <FontAwesomeIcon icon="less-than" className="text-white"/>}
+              {this.state.toggle ? <FontAwesomeIcon icon="less-than" className="text-white"/> :
+                <FontAwesomeIcon icon="greater-than" className="text-white"/>}
             </button>
           </div>
         </ul>
