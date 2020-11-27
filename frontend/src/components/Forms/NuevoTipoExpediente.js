@@ -5,6 +5,7 @@ import TiposDeExpedientesService from "../../services/TiposDeExpedientes";
 import Popups from "../Popups";
 import SimpleReactValidator from "simple-react-validator";
 import {Modal} from "react-bootstrap";
+import {Container, Draggable} from "react-smooth-dnd";
 
 /**
  * Modal para nuevo tipo de expediente
@@ -18,7 +19,9 @@ class NuevoTipoExpediente extends Component {
       selectedOptions: []
     };
     this.retrieveDependencias = this.retrieveDependencias.bind(this);
-    this.setOptions = this.setOptions.bind(this);
+    this.setOption = this.setOption.bind(this);
+    this.handleRemoveItem = this.handleRemoveItem.bind(this);
+    this.onDrop = this.onDrop.bind(this);
     this.setDescription = this.setDescription.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.handleSaveClick = this.handleSaveClick.bind(this);
@@ -59,13 +62,25 @@ class NuevoTipoExpediente extends Component {
   }
 
   /**
-   * Obtener las opciones seleccionadas del select de dependencias.
+   * Obtener la nueva opcion seleccionada del select de dependencias y las agrega a la lista de seleccionados.
    */
-  setOptions = values => {
+  setOption = value => {
     this.setState({
-      selectedOptions: values,
+      selectedOptions: [...this.state.selectedOptions, value],
     });
     this.checkValid();
+  }
+
+  /**
+   * Remover un item de la lista de dependencias
+   * @param idx
+   */
+  handleRemoveItem = idx => {
+    let newSelectedOptions = this.state.selectedOptions;
+    newSelectedOptions.splice(idx, 1);
+    this.setState({
+      selectedOptions: newSelectedOptions
+    });
   }
 
   /**
@@ -94,22 +109,25 @@ class NuevoTipoExpediente extends Component {
    * @returns {boolean} True si se guardaron todos las dependencias, si no False
    */
   saveDetails = teId => {
-    this.state.selectedOptions.forEach((detail, idx) => {
-      TiposDeExpedientesService.createDetail({
-        orden: idx + 1,
-        tipo_de_expediente_id: teId,
-        dependencia_id: detail.id
-      })
-        .then(r => {
-          //si al menos uno de los detalles falla al guardar se retorna false y se borra la cabecera
-          if (r.status !== 201) return false //TODO agregar rollback de los detalles ya cargados si ocurre un error
+    if (!this.state.selectedOptions.length <= 0) {
+      this.state.selectedOptions.forEach((detail, idx) => {
+        TiposDeExpedientesService.createDetail({
+          orden: idx + 1,
+          tipo_de_expediente_id: teId,
+          dependencia_id: detail.id
         })
-        .catch(e => {
-          Popups.error('Ocurrió un error al procesar la información');
-          console.log(e);
-        })
-    })
-    return true;
+          .then(r => {
+            //si al menos uno de los detalles falla al guardar se retorna false y se borra la cabecera
+            if (r.status !== 201) return false
+          })
+          .catch(e => {
+            Popups.error('Ocurrió un error al procesar la información');
+            console.log(e);
+          })
+      });
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -126,9 +144,8 @@ class NuevoTipoExpediente extends Component {
               id: response.data.id,
               descripcion: response.data.descripcion,
               activo: response.data.activo ? "Activo" : "Inactivo"
-            })
+            });
             Popups.success("Guardado con éxito");
-            this.handleClose();
           } else {
             //si ocurrio algun error al guardar los detalles se borra la cabecera
             TiposDeExpedientesService.delete(response.data.id)
@@ -138,30 +155,38 @@ class NuevoTipoExpediente extends Component {
               .catch(e => {
                 Popups.error('Ocurrió un error al procesar la información');
                 console.log(e)
-              })
+              });
           }
         }
       })
       .catch(e => {
         Popups.error('Ocurrió un error al procesar la información');
         console.log(e)
-      })
+      });
   }
 
   /**
-   * Limpiar los campos cuando se cierra el modal.
+   * Limpiar el estado para cuando se abre el modal.
+   * Se limpia al abrir para que cuando se guarde no se eliminen los datos necesarios para la creacion del nuevo tipo
+   * de expediente.
    */
-  handleClose = () => {
+  clearState = () => {
     this.setState({
       description: '',
       selectedOptions: []
     });
+  }
+
+  /**
+   * Oculta los mensajes de validacion y cierra el modal.
+   */
+  handleClose = () => {
     this.validator.hideMessages();
     this.props.setShow(false);
   }
 
   /**
-   * Si todas las validaciones son validas, entonces guarda, si no muestran los mensajes de errores
+   * Si todas las validaciones son validas, entonces guarda, si no muestran los mensajes de errores.
    */
   handleSaveClick = () => {
     if (this.checkValid()) {
@@ -170,11 +195,42 @@ class NuevoTipoExpediente extends Component {
     }
   }
 
+  /**
+   * Funcion para reordenar los items de la lista de dependencias
+   * https://github.com/kutlugsahin/smooth-dnd-demo/blob/master/src/demo/pages/utils.js#L2
+   * @param arr
+   * @param dragResult
+   * @returns {*[]|*}
+   */
+  reorder = (arr, dragResult) => {
+    const {removedIndex, addedIndex, payload} = dragResult;
+    if (removedIndex === null && addedIndex === null) return arr;
+
+    const result = [...arr];
+    let itemToAdd = payload;
+
+    if (removedIndex !== null) {
+      itemToAdd = result.splice(removedIndex, 1)[0];
+    }
+
+    if (addedIndex !== null) {
+      result.splice(addedIndex, 0, itemToAdd);
+    }
+
+    return result;
+  }
+
+  onDrop = element => {
+    this.setState({
+      selectedOptions: this.reorder(this.state.selectedOptions, element)
+    });
+  }
+
   render() {
     return (
       <Modal
         show={this.props.showModal}
-        onHide={this.handleClose}
+        onShow={this.clearState}
         backdrop="static"
         size="lg"
         centered
@@ -203,15 +259,38 @@ class NuevoTipoExpediente extends Component {
                 <div className="col">
                   <Select
                     options={this.state.dependencias}
-                    isMulti
                     placeholder="Selecciona..."
                     name="select"
-                    value={this.state.selectedOptions}
-                    onChange={(values) => this.setOptions(values)}
+                    value={this.state.selectedOptions.slice(-1)}
+                    onChange={value => this.setOption(value)}
                   />
                   {this.validator.message('select', this.state.dependencias, 'required')}
                 </div>
               </div>
+            </div>
+            <div>
+              <ul className="list-group">
+                <Container onDrop={e => {
+                  this.onDrop(e)
+                }}>
+                  {this.state.selectedOptions.map((d, idx) => {
+                    return (
+                      <Draggable key={idx}>
+                        <li className="list-group-item py-1">
+                          <div className="row align-content-between">
+                            <div className="col">{idx + 1}</div>
+                            <div className="col-10 text-left">{d.value}</div>
+                            <div className="col text-right">
+                              <span className="btn btn-danger badge badge-danger badge-pill"
+                                    onClick={() => this.handleRemoveItem(idx)}>x</span>
+                            </div>
+                          </div>
+                        </li>
+                      </Draggable>
+                    )
+                  })}
+                </Container>
+              </ul>
             </div>
           </form>
         </Modal.Body>

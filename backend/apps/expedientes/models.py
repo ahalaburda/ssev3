@@ -79,6 +79,7 @@ class Expediente(models.Model):
 class Instancia(models.Model):
     expediente_id = models.ForeignKey(Expediente, db_column='expediente_id', related_name='expediente', null=False,
                                       blank=False, on_delete=models.CASCADE)
+    orden_actual = models.IntegerField(blank=True, null=True)
     dependencia_anterior_id = models.ForeignKey(Dependencia, db_column='dependencia_anterior_id',
                                                 related_name='instancia_anterior', null=True, blank=True,
                                                 on_delete=models.CASCADE, default=1)

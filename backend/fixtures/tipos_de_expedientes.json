@@ -3,252 +3,288 @@
 	"pk": 1,
 	"fields": {
 		"descripcion": "Sin Ruta Predefinida",
-		"activo": true
+		"activo": true,
+		"saltos": 0
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 2,
 	"fields": {
 		"descripcion": "Pago de remuneraciones",
-		"activo": true
+		"activo": true,
+		"saltos": 10
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 3,
 	"fields": {
 		"descripcion": "Pago de Inversiones y Bienes (por Patrimonio)",
-		"activo": true
+		"activo": true,
+		"saltos": 10
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 4,
 	"fields": {
 		"descripcion": "Pago de viaticos  y movilidad facultades",
-		"activo": true
+		"activo": true,
+		"saltos": 8
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 5,
 	"fields": {
 		"descripcion": "Solicitud de concurso para selecci\u00f3n de personal (Form 001 A)",
-		"activo": true
+		"activo": true,
+		"saltos": 7
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 6,
 	"fields": {
 		"descripcion": "Nombramientos - remuneraciones (Form 001 B)",
-		"activo": true
+		"activo": true,
+		"saltos": 9
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 7,
 	"fields": {
 		"descripcion": "Contratos - remuneraciones (Form 001 B)",
-		"activo": true
+		"activo": true,
+		"saltos": 9
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 8,
 	"fields": {
 		"descripcion": "Pago de viaticos y movilidad rectorado",
-		"activo": true
+		"activo": true,
+		"saltos": 9
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 9,
 	"fields": {
 		"descripcion": "Pago de viaticos y movilidad al exterior",
-		"activo": true
+		"activo": true,
+		"saltos": 10
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 10,
 	"fields": {
 		"descripcion": "Informe de viaticos al exterior",
-		"activo": true
+		"activo": true,
+		"saltos": 6
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 11,
 	"fields": {
 		"descripcion": "Provisi\u00f3n de Fondo Fijo",
-		"activo": true
+		"activo": true,
+		"saltos": 7
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 12,
 	"fields": {
 		"descripcion": "Reposici\u00f3n de Fondo Fijo",
-		"activo": true
+		"activo": true,
+		"saltos": 9
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 13,
 	"fields": {
 		"descripcion": "Pago de bienes y servicios",
-		"activo": true
+		"activo": true,
+		"saltos": 9
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 14,
 	"fields": {
 		"descripcion": "Pago de Gastos Bancarios",
-		"activo": true
+		"activo": true,
+		"saltos": 9
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 15,
 	"fields": {
 		"descripcion": "Rendici\u00f3n de cuentas de viaticos",
-		"activo": true
+		"activo": true,
+		"saltos": 6
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 16,
 	"fields": {
 		"descripcion": "Devoluci\u00f3n de Retenci\u00f3n Causional",
-		"activo": true
+		"activo": true,
+		"saltos": 8
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 17,
 	"fields": {
 		"descripcion": "Pago de Obligaciones realizadas",
-		"activo": true
+		"activo": true,
+		"saltos": 7
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 18,
 	"fields": {
 		"descripcion": "Modificaci\u00f3n de Presupuesto (Plan Financiero)",
-		"activo": true
+		"activo": true,
+		"saltos": 4
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 19,
 	"fields": {
 		"descripcion": "Acuerdo entre Entidades",
-		"activo": true
+		"activo": true,
+		"saltos": 6
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 20,
 	"fields": {
 		"descripcion": "Contrataci\u00f3n Directa",
-		"activo": true
+		"activo": true,
+		"saltos": 12
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 21,
 	"fields": {
 		"descripcion": "Concurso de Oferta y Licitaci\u00f3n Publica",
-		"activo": true
+		"activo": true,
+		"saltos": 15
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 22,
 	"fields": {
 		"descripcion": "Concurso de Oferta y Licitaci\u00f3n Publica (Obras y Mantenimientos de Edificios)",
-		"activo": true
+		"activo": true,
+		"saltos": 17
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 23,
 	"fields": {
 		"descripcion": "Contrataci\u00f3n V\u00eda Excepci\u00f3n",
-		"activo": true
+		"activo": true,
+		"saltos": 15
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 24,
 	"fields": {
 		"descripcion": "Ampliaci\u00f3n de Contrato (Bienes y-o Servicios)",
-		"activo": true
+		"activo": true,
+		"saltos": 11
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 25,
 	"fields": {
 		"descripcion": "Pago de viaticos y movilidad al exterior facultades",
-		"activo": true
+		"activo": true,
+		"saltos": 9
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 26,
 	"fields": {
 		"descripcion": "Contrataci\u00f3n Directa (Ad Ref)",
-		"activo": true
+		"activo": true,
+		"saltos": 11
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 27,
 	"fields": {
 		"descripcion": "Concurso de Oferta y Licitaci\u00f3n Publica (Ad Ref)",
-		"activo": true
+		"activo": true,
+		"saltos": 13
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 28,
 	"fields": {
 		"descripcion": "Contrataci\u00f3n V\u00eda Excepci\u00f3n (Ad Ref)",
-		"activo": true
+		"activo": true,
+		"saltos": 13
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 29,
 	"fields": {
 		"descripcion": "Rendici\u00f3n de Becas de Apoyo Econ\u00f3mico - BAE",
-		"activo": true
+		"activo": true,
+		"saltos": 7
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 30,
 	"fields": {
 		"descripcion": "Rendici\u00f3n de Becas de Movilidad",
-		"activo": true
+		"activo": true,
+		"saltos": 6
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 31,
 	"fields": {
 		"descripcion": "Informes Finales de Misi\u00f3n (Sub Grupo 230)",
-		"activo": true
+		"activo": true,
+		"saltos": 4
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 32,
 	"fields": {
 		"descripcion": "Rendici\u00f3n de Becas de Capacitaci\u00f3n",
-		"activo": true
+		"activo": true,
+		"saltos": 6
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 33,
 	"fields": {
 		"descripcion": "Ampliacion de Plazos y o Montos de contratos de Construcciones",
-		"activo": true
+		"activo": true,
+		"saltos": 14
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 34,
 	"fields": {
 		"descripcion": "Rendici\u00f3n de Becas de Apoyo Econ\u00f3mico - BAE (2018)",
-		"activo": true
+		"activo": true,
+		"saltos": 6
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 35,
 	"fields": {
 		"descripcion": "Contratos Servicios Personales (Form 002-B)",
-		"activo": false
+		"activo": false,
+		"saltos": 9
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente",
 	"pk": 36,
 	"fields": {
 		"descripcion": "Solicitud de Contratos Servicios Personales Ob 144 Jornales",
-		"activo": true
+		"activo": true,
+		"saltos": 10
 	}
 }, {
 	"model": "tipos_de_expedientes.tipo_de_expediente_detalle",
