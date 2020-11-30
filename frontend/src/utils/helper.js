@@ -86,7 +86,8 @@ class Helper {
       "tipo_de_expediente_id": {
         "id": 0,
         "descripcion": "",
-        "activo": false
+        "activo": false,
+        "saltos": 0
       },
       "dependencia_origen_id": {
         "id": 0,

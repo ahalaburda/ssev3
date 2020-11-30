@@ -28,6 +28,16 @@ class TiposDeExpedientes {
   }
 
   /**
+   * Retorna la dependencia de acuerdo al tipo de expediente y orden proveidos
+   * @param id ID del tipo de expediente
+   * @param order Orden
+   * @returns {Promise<AxiosResponse<any>>}
+   */
+  getDetailByOrder(id, order) {
+    return http.get(`/tipos_de_expedientes_detalles/?format=json&orden=${order}&tipo_de_expediente_id=${id}`);
+  }
+
+  /**
    * Crea un nuevo tipo de expediente (cabecera).
    * @param tipoExpediente
    * @returns {Promise<AxiosResponse<any>>}

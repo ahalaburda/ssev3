@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Modal, Form} from "react-bootstrap";
+import {Form, Modal} from "react-bootstrap";
 import "../../styles/form.css";
 import Select from "react-select";
 import helper from "../../utils/helper";
@@ -7,6 +7,7 @@ import Popups from "../Popups";
 import ExpedienteService from "../../services/Expedientes";
 import InstanciasService from "../../services/Instancias";
 import ComentariosService from "../../services/Comentarios";
+import TipoDeExpedienteService from "../../services/TiposDeExpedientes";
 import moment from "moment";
 
 const initialState = {
@@ -14,6 +15,7 @@ const initialState = {
   depPrev: {},
   depNow: {},
   depNext: {},
+  expedienteType: {},
   newEstado: {
     id: 0,
     value: '',
@@ -40,6 +42,7 @@ class ProcesarExpediente extends Component {
       depPrev: nextProps.expedienteData.dependencia_anterior_id,
       depNow: nextProps.expedienteData.dependencia_actual_id,
       depNext: nextProps.expedienteData.dependencia_siguiente_id,
+      expedienteType: nextProps.expedienteData.expediente_id.tipo_de_expediente_id
     }
   }
 
@@ -90,7 +93,8 @@ class ProcesarExpediente extends Component {
       dependencia_actual_id: this.state.depNow.id,
       dependencia_siguiente_id: this.state.depNext.id,
       estado_id: this.state.newEstado.id,
-      usuario_id_entrada: userIdIn
+      usuario_id_entrada: userIdIn,
+      orden_actual: this.state.instancia.orden_actual
     });
   }
 
@@ -164,15 +168,45 @@ class ProcesarExpediente extends Component {
       })
   }
 
+  /**
+   * Dado un tipo de expediente y orden devuelve el ID de la dependencia anterior o siguiente
+   * @param tipoExpediente tipo de expediente
+   * @param ordenActual orden actual
+   * @param prevOrNext false: dependencia anterior, true: dependencia siguiente
+   * @returns {number}
+   */
+  getPrevOrNextDependenciaId = (tipoExpediente, ordenActual, prevOrNext) => {
+    // si es siguiente y el orden ya es el ultimo salto, retorna el ultimo salto
+    if (prevOrNext && ordenActual >= tipoExpediente.saltos) {
+      return tipoExpediente.saltos;
+    // si es anterior y el orden es el primero o menor retorna el primer salto
+    } else if (!prevOrNext && ordenActual <= 1) {
+      return 1;
+    }
+    // anterior: -1, siguiente +1
+    let orden = prevOrNext ? ordenActual + 1 : ordenActual - 1;
+    TipoDeExpedienteService.getDetailByOrder(tipoExpediente.id, orden)
+      .then(response => {
+        return response.data.results.dependencia_id.id
+      })
+      .catch(e => {
+        console.log(`Error getPrevDependenciaId\n${e}`);
+        Popups.error('Ocurrio un error al procesar expediente');
+        return 1;
+      });
+  }
+
   //TODO dependencia anterior se obtendra de funcion en proceso (Adrian)
   saveInstanciaRechazado = userIdIn => {
+    let prevDep = this.getPrevOrNextDependenciaId(this.state.expedienteType.id, this.state.instancia.orden_actual, false)
     return InstanciasService.create({
       expediente_id: this.state.instancia.expediente_id.id,
-      dependencia_anterior_id: 0,
+      dependencia_anterior_id: prevDep,
       dependencia_actual_id: this.state.depPrev.id,
       dependencia_siguiente_id: this.state.depNow.id,
       estado_id: this.state.newEstado.id,
-      usuario_id_entrada: userIdIn
+      usuario_id_entrada: userIdIn,
+      orden_actual: 0
     });
   }
 
@@ -201,7 +235,7 @@ class ProcesarExpediente extends Component {
       dependencia_actual_id: this.state.depNext.id,
       dependencia_siguiente_id: 0,
       estado_id: this.state.newEstado.id,
-      usuario_id_entrada: userIdIn
+      usuario_id_entrada: userIdIn,
     });
   }
 
