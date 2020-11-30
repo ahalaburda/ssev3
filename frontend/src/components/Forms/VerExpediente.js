@@ -35,14 +35,13 @@ class VerExpediente extends Component {
         recorrido: nextProps.verRecorrido,
         comentarios: nextProps.comentarios,
         
-    }
-     
+    }  
   }
   
   
   /**
    *Funcion para ocultar/mostrar tabla de recorrido y comentario
-   y para cambiar el estado de los botones Mostrar/Ocultar 
+   *y para cambiar el estado de los botones Mostrar/Ocultar 
    * @param {*} table 
    * @param {*} boton 
    */
@@ -54,7 +53,7 @@ class VerExpediente extends Component {
       tabla.style.display = "block";
     }
     let cambiarTexto= document.getElementById(boton);
-    if (cambiarTexto.innerHTML == 'Ocultar'){ 
+    if (cambiarTexto.innerHTML === 'Ocultar'){ 
       cambiarTexto.innerHTML = 'Mostrar';
     }else {
       cambiarTexto.innerHTML = 'Ocultar'; 
@@ -196,7 +195,7 @@ class VerExpediente extends Component {
                 </div>
 
                 <div id='comentarios' className='modal-table'>
-                    {/* Tabla de historial de expediente */}
+                    {/* Tabla de comentarios de expediente */}
                   <DataTable
                     columns={commentsColumns}
                     data={this.state.comentarios}
