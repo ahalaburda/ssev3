@@ -169,56 +169,59 @@ class ProcesarExpediente extends Component {
   }
 
   /**
-   * Dado un tipo de expediente y orden devuelve el ID de la dependencia anterior o siguiente
+   * Dado un tipo de expediente y orden devuelve una promesa de tipo de expediente con el orden solicitado
    * @param tipoExpediente tipo de expediente
    * @param ordenActual orden actual
    * @param prevOrNext false: dependencia anterior, true: dependencia siguiente
-   * @returns {number}
+   * @returns {Promise<AxiosResponse<*>>}
    */
   getPrevOrNextDependenciaId = (tipoExpediente, ordenActual, prevOrNext) => {
-    // si es siguiente y el orden ya es el ultimo salto, retorna el ultimo salto
-    if (prevOrNext && ordenActual >= tipoExpediente.saltos) {
-      return tipoExpediente.saltos;
-    // si es anterior y el orden es el primero o menor retorna el primer salto
-    } else if (!prevOrNext && ordenActual <= 1) {
-      return 1;
-    }
-    // anterior: -1, siguiente +1
     let orden = prevOrNext ? ordenActual + 1 : ordenActual - 1;
-    TipoDeExpedienteService.getDetailByOrder(tipoExpediente.id, orden)
-      .then(response => {
-        return response.data.results.dependencia_id.id
-      })
-      .catch(e => {
-        console.log(`Error getPrevDependenciaId\n${e}`);
-        Popups.error('Ocurrio un error al procesar expediente');
-        return 1;
-      });
+    return TipoDeExpedienteService.getDetailByOrder(tipoExpediente.id, orden)
   }
 
-  //TODO dependencia anterior se obtendra de funcion en proceso (Adrian)
-  saveInstanciaRechazado = userIdIn => {
-    let prevDep = this.getPrevOrNextDependenciaId(this.state.expedienteType.id, this.state.instancia.orden_actual, false)
+  /**
+   * Retorna una promesa de creacion de una instancia
+   * @param userIdIn usuario_entrada
+   * @param tdePrevDep datos de tipo de expediente y dependencia anterior
+   * @returns {*}
+   */
+  saveInstanciaRechazado = (userIdIn, tdePrevDep) => {
     return InstanciasService.create({
       expediente_id: this.state.instancia.expediente_id.id,
-      dependencia_anterior_id: prevDep,
+      dependencia_anterior_id: tdePrevDep.dependencia_id.id,
       dependencia_actual_id: this.state.depPrev.id,
       dependencia_siguiente_id: this.state.depNow.id,
       estado_id: this.state.newEstado.id,
       usuario_id_entrada: userIdIn,
-      orden_actual: 0
+      orden_actual: tdePrevDep.orden
     });
   }
 
+  /**
+   * Rechazar el expediente modificando el estado del expediente, agregando usuario_salida a la instancia actual,
+   * obteniendo la dependencia anterior al anterior. Luego guarda los datos de la nueva instancia y su respectivo
+   * comentario.
+   */
   processRechazado = () => {
     const userIdIn = helper.existToken() ? helper.getCurrentUserId() : null;
+    // setear el expediente, el usuarioSalida y obtener la dependencia anterior->anterior
     Promise.all([
       this.setExpediente(false),
       this.setInstanciaUserOut(userIdIn),
-      this.saveInstanciaRechazado(userIdIn)
+      this.getPrevOrNextDependenciaId(this.state.expedienteType, this.state.instancia.orden_actual, false)
     ])
       .then(response => {
-        this.saveComment(response[2].data.id, userIdIn);
+        // una vez terminados se guarda la nueva instancia
+        this.saveInstanciaRechazado(userIdIn, response[2].data.results.pop())
+          .then(resp => {
+            // si la instancia se guarda, entonces el comentario tambien
+            this.saveComment(resp.data.id, userIdIn);
+          })
+          .catch(err => {
+            console.log(`Error saveInstanciaRechazado\n${err}`);
+            Popups.error('Ocurrio un error al procesar expediente.');
+          });
         Popups.success('Expediente procesado.');
       })
       .catch(e => {
@@ -236,6 +239,7 @@ class ProcesarExpediente extends Component {
       dependencia_siguiente_id: 0,
       estado_id: this.state.newEstado.id,
       usuario_id_entrada: userIdIn,
+      orden_actual: 0
     });
   }
 
@@ -333,6 +337,19 @@ class ProcesarExpediente extends Component {
           onChange={e => this.handleNumMesaChange(e)}/>
       }
     }
+
+    let selectOptions;
+    if (this.state.instancia.orden_actual === this.state.expedienteType.saltos) {
+      // si la instancia esta en el ultimo salto, ya no se puede derivar
+      selectOptions = helper.getAllEstados().filter(o => o.value !== helper.getEstado().DERIVADO);
+    } else if (this.state.instancia.orden_actual <= 1) {
+      // si la instancia esta en el primer salto, no se puede rechazar, solo anular
+      selectOptions = helper.getAllEstados().filter(o => o.value !== helper.getEstado().RECHAZADO);
+    } else {
+      // de otra forma se permiten todos los posibles estados
+      selectOptions = helper.getAllEstados();
+    }
+
     return (
       <Modal
         show={this.props.showModal}
@@ -392,7 +409,7 @@ class ProcesarExpediente extends Component {
                 <div className="form-group col">
                   <Form.Label>Estado</Form.Label>
                   <Select
-                    options={helper.getAllEstados()}
+                    options={selectOptions}
                     placeholder="Selecciona..."
                     size="sm"
                     onChange={value => this.handleEstadoChange(value)}
