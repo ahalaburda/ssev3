@@ -8,6 +8,8 @@ import moment from "moment";
 import Popups from "../Popups";
 import ProcesarExpediente from "../Forms/ProcesarExpediente";
 import "../../styles/table.css";
+import VerExpediente from "../Forms/VerExpediente";
+import ComentarioService from "../../services/Comentarios";
 
 /**
  * Tabla para expedientes
@@ -151,6 +153,72 @@ class Expediente extends Component {
   }
 
   /**
+   * Funcion para cargar los datos del expediente seleccionado al modal 
+   */
+  handleViewExpediente =row=>{
+    //Se trae el expediente via ID y se muestra en pantalla los datos del mismo
+    InstanciaService.getByExpedienteId(row.id)
+    .then(response =>{
+      this.setState({
+        verNumero: row.numero,
+        verDescripcion: row.descripcion,
+        verFecha: row.fecha_me,
+        verEstado: row.estado,
+        verOrigen: row.origen,
+        verDependencia: row.dependenciaActual,
+        verTipo: row.tipoExpediente,
+        verObjetoDeGasto: response.data.results.map(exp =>{
+          return exp.expediente_id.objeto_de_gasto_id.descripcion
+        })
+       
+      });
+    })
+    .catch((e) => {
+      Popups.error('Ocurrio un error durante la busqueda.');
+      console.log(`Error handleViewExpediente: InstanciaService\n${e}`);
+    }); 
+    
+    //Obtiene todas las instancias del expediente a traves de su ID y las carga en una tabla
+    InstanciaService.getInstanciasPorExp(row.id)
+    .then((response) =>{
+      this.setState({
+        recorrido: response.data.results.map((instancia) =>{
+          return {
+            fecha_entrada: moment(instancia.fecha_recepcion).isValid() ?
+            moment(instancia.fecha_recepcion).format('DD/MM/YYYY') : 'Sin fecha',
+            fecha_salida: moment(instancia.fecha_final).isValid() ?
+            moment(instancia.fecha_final).format('DD/MM/YYYY') : 'Sin fecha',
+            dependencia: instancia.dependencia_actual_id.descripcion
+          }
+        })
+      }) 
+    }) 
+    .catch((e) => {
+      Popups.error('Ocurrio un error durante la busqueda.');
+      console.log(`Error handleViewExpediente: InstanciaService\n${e}`);
+    });   
+ 
+    //Obtiene todos los comentarios de un expediente a traves de su ID y lo muestra en una tabla
+    ComentarioService.getComentarioPorExpedienteID(row.id)
+      .then((response) =>{
+        this.setState({
+          comentarios: response.data.results.map((comentario) =>{
+            return{
+              fecha_creacion: moment(comentario.fecha_creacion).isValid() ?
+                moment(comentario.fecha_creacion).format('DD/MM/YYYY') : 'Sin fecha',
+              dependencia: comentario.instancia.dependencia_actual_id.descripcion,
+              comentario: comentario.descripcion
+            }
+          })
+        })  
+      })
+      .catch((e) => {
+        Popups.error('Ocurrio un error durante la busqueda.');
+        console.log(`Error handleViewExpediente: ComentarioService\n${e}`);
+      });      
+  }
+
+  /**
    * Setear el estado 'showNew' para mostrar u ocultar el modal de nuevo expediente. Cuando se cierra el modal vuelve a
    * llamar 'retrieveExpedientes' para que actualice la lista.
    */
@@ -251,7 +319,9 @@ class Expediente extends Component {
             </button>
             <button
               className="btn btn-sm btn-link text-primary"
-              title="Ver expediente">
+              title="Ver expediente"
+              onClick= {()=> this.handleViewExpediente(row)}
+              data-toggle="modal" data-target="#viewExpedienteModal">
               <FontAwesomeIcon icon="eye"/>
             </button>
           </div>,
@@ -338,6 +408,19 @@ class Expediente extends Component {
             setShow={this.setShowProcess}
             showModal={this.state.showProcess}
             expedienteData={this.state.expedienteData}
+          />
+           {/*Modal para ver el expediente con detalle*/}
+          <VerExpediente
+            verEstado = {this.state.verEstado}
+            verOrigen = {this.state.verOrigen}
+            verDependencia = {this.state.verDependencia}
+            verNumero = {this.state.verNumero}
+            verFecha = {this.state.verFecha}
+            verObjetoDeGasto = {this.state.verObjetoDeGasto}
+            verDescripcion = {this.state.verDescripcion}
+            verTipo = {this.state.verTipo}
+            verRecorrido = {this.state.recorrido}
+            comentarios = {this.state.comentarios}
           />
         </div>
       </div>
