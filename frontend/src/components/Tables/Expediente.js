@@ -24,7 +24,8 @@ class Expediente extends Component {
       expedienteData: helper.getInstanciaInitialState(),
       list: [],
       totalRows: 0,
-      selectedOption: 'Todos'
+      selectedOption: 'Todos',
+      recorrido:[]
     };
     this.setShowNew = this.setShowNew.bind(this);
     this.handleOptionChange = this.handleOptionChange.bind(this);
@@ -183,13 +184,13 @@ class Expediente extends Component {
     .then((response) =>{
       this.setState({
         recorrido: response.data.results.map((instancia) =>{
-          return {
-            fecha_entrada: moment(instancia.fecha_recepcion).isValid() ?
-            moment(instancia.fecha_recepcion).format('DD/MM/YYYY') : 'Sin fecha',
-            fecha_salida: moment(instancia.fecha_final).isValid() ?
-            moment(instancia.fecha_final).format('DD/MM/YYYY') : 'Sin fecha',
-            dependencia: instancia.dependencia_actual_id.descripcion
-          }
+          return  {
+            id: instancia.id,
+            fecha:moment(instancia.fecha_creacion).isValid() ?
+              moment(instancia.fecha_creacion).format('DD/MM/YYYY') : 'Sin fecha',
+            dependencia:instancia.dependencia_actual_id.descripcion
+          }  
+          
         })
       }) 
     }) 
@@ -336,6 +337,7 @@ class Expediente extends Component {
       selectAllRowsItem: true,
       selectAllRowsItemText: 'Todos'
     };
+   
     return (
       <div>
         <div className="d-sm-flex align-items-center justify-content-between mb-2">

@@ -17,12 +17,12 @@ class VerExpediente extends Component {
         tipoDeExpediente:'',
         recorrido:[],
         comentarios: [],
-        totalRows:0
+        totalRows:0,
     }
   }
 
   //reemplazo de funcion componentWillReceiveProps
-  static getDerivedStateFromProps(nextProps) {
+  static getDerivedStateFromProps(nextProps) { 
     return {
         numero: nextProps.verNumero,
         fecha: nextProps.verFecha,
@@ -34,11 +34,10 @@ class VerExpediente extends Component {
         tipoDeExpediente: nextProps.verTipo,
         recorrido: nextProps.verRecorrido,
         comentarios: nextProps.comentarios,
-        
+ 
     }  
   }
-  
-  
+
   /**
    *Funcion para ocultar/mostrar tabla de recorrido y comentario
    *y para cambiar el estado de los botones Mostrar/Ocultar 
@@ -63,69 +62,48 @@ class VerExpediente extends Component {
 
 
   render() {
-   
-  let columns = [
-    {
-      name: 'Fecha de Entrada',
-      selector: 'fecha_entrada',
-      sortable: true,
-      wrap: true,
-      grow:2
-    },
-    {
-      name: 'Fecha de Salida',
-      selector: 'fecha_salida',
-      sortable: true,
-      wrap: true,
-      grow:2
-    },
-    {
-      name: 'Dependencia',
-      selector: 'dependencia',
-      sortable: true,
-      wrap: true,
-      grow:4
-    }
-  ];
+    //desestructuracion de recorrido para poder mapearlo y mostrarolo en un timeline
+    const {recorrido}= this.state;
 
-  let commentsColumns = [
-    {
-      name: 'Fecha',
-      selector: 'fecha_creacion',
-      sortable: true,
-      wrap: true,
-      grow:1
-    },
-    {
-      name: 'Comentario',
-      selector: 'comentario',
-      sortable: true,
-      wrap: true,
-      grow:3
-    },
-    {
-      name: 'Dependencia',
-      selector: 'dependencia',
-      sortable: true,
-      wrap: true,
-      grow:2
-    }
-  ]; 
-  
-  const paginationOptions = {
-    noRowsPerPage: true,
-    rangeSeparatorText: 'de',
-    selectAllRowsItem: true,
-    selectAllRowsItemText: 'Todos'
-  };
+    let commentsColumns = [
+      {
+        name: 'Fecha',
+        selector: 'fecha_creacion',
+        sortable: true,
+        wrap: true,
+        grow:1
+      },
+      {
+        name: 'Comentario',
+        selector: 'comentario',
+        sortable: true,
+        wrap: true,
+        grow:3
+      },
+      {
+        name: 'Dependencia',
+        selector: 'dependencia',
+        sortable: true,
+        wrap: true,
+        grow:2
+      }
+    ]; 
     
+    const paginationOptions = {
+      noRowsPerPage: true,
+      rangeSeparatorText: 'de',
+      selectAllRowsItem: true,
+      selectAllRowsItemText: 'Todos'
+    };
+ 
     return (
-      <div className="modal fade" id="viewExpedienteModal" tabIndex="-1" role="dialog" aria-hidden="true">
+      
+      <div className="modal fade" id="viewExpedienteModal" tabIndex="-1" role="dialog" aria-hidden="true" >
         <div className="modal-dialog modal-lg modal-dialog-centered " role="document">
           <div className="modal-content ">
             <div className="modal-header modal-header-reportes">
                 <h5 className="modal-title"><strong>Expediente N°{this.state.numero}</strong></h5>
-              <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+              <button type="button" className="close oculto-impresion" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
@@ -151,7 +129,8 @@ class VerExpediente extends Component {
                 </div>
                 <div>
                     <label><strong>Estado:</strong> {this.state.estado}</label> 
-                </div>    
+                </div>
+              
                 <div >
                   <label>
                     <strong>Recorrido:</strong>
@@ -165,21 +144,14 @@ class VerExpediente extends Component {
                 </div>
                 
                 <div id = "recorrido" className='modal-table'>
-                    {/* Tabla de recorrido de expediente */}
-                  <DataTable
-                    columns={columns}
-                    data={this.state.recorrido}
-                    pagination
-                    paginationServer
-                    paginationPerPage={20}
-                    paginationTotalRows={this.state.totalRows}
-                    paginationComponentOptions={paginationOptions}
-                    onChangePage={this.handlePageChange}
-                    highlightOnHover={true}
-                    noHeader={true}
-                    dense={true}
-                    className="table-responsive table-sm table-bordered"
-                  /> 
+                  <div className="row">
+                    <div className="col-md-12">
+                      <ul className="timeline"> 
+                       
+                        {recorrido.map(rec => <li key={rec.id}>{rec.fecha}: {rec.dependencia} </li>)} 
+                      </ul>
+                    </div>
+                  </div>    
                 </div>   
 
                 <div>
@@ -213,7 +185,7 @@ class VerExpediente extends Component {
                 </div>                     
             </div>
             
-            <div className="modal-footer">
+            <div className="modal-footer oculto-impresion">
               <button
                 type="button"
                 className="btn btn-sm btn-secondary "
@@ -221,11 +193,12 @@ class VerExpediente extends Component {
                 Cerrar
               </button>
               <button
+                onClick={()=> this.printModal()}
                 type="button"
                 title="Imprimir"
                 className="btn btn-sm btn-info">
                 <FontAwesomeIcon icon="print"/>
-              </button>
+              </button>         
             </div>
           </div>    
         </div>

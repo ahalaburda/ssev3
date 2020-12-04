@@ -36,6 +36,7 @@ class Reporte extends Component {
       objetoSelected: '',
       description: '',
       estado: '',
+      recorrido:[]
     };
      
   }
@@ -109,10 +110,9 @@ class Reporte extends Component {
       this.setState({
         recorrido: response.data.results.map((instancia) =>{
           return {
-            fecha_entrada: moment(instancia.fecha_recepcion).isValid() ?
-            moment(instancia.fecha_recepcion).format('DD/MM/YYYY') : 'Sin fecha',
-            fecha_salida: moment(instancia.fecha_final).isValid() ?
-            moment(instancia.fecha_final).format('DD/MM/YYYY') : 'Sin fecha',
+            id: instancia.id,
+            fecha: moment(instancia.fecha_creacion).isValid() ?
+            moment(instancia.fecha_creacion).format('DD/MM/YYYY') : 'Sin fecha',
             dependencia: instancia.dependencia_actual_id.descripcion
           }
         })
