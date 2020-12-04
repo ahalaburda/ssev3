@@ -230,16 +230,21 @@ class ProcesarExpediente extends Component {
       });
   }
 
-  //TODO dependencia siguiente se obtendra de funcion en proceso (Adrian)
-  saveInstanciaDerivado = userIdIn => {
+  /**
+   * Retorna una poromesa de creacion de una instancia
+   * @param userIdIn usuario_entrada
+   * @param tdeNextDep datos de tipo de expediente y dependencia siguiente
+   * @returns {*}
+   */
+  saveInstanciaDerivado = (userIdIn, tdeNextDep) => {
     return InstanciasService.create({
       expediente_id: this.state.instancia.expediente_id.id,
       dependencia_anterior_id: this.state.depNow.id,
       dependencia_actual_id: this.state.depNext.id,
-      dependencia_siguiente_id: 0,
+      dependencia_siguiente_id: tdeNextDep.dependencia_id.id,
       estado_id: this.state.newEstado.id,
       usuario_id_entrada: userIdIn,
-      orden_actual: 0
+      orden_actual: tdeNextDep.orden
     });
   }
 
@@ -248,10 +253,17 @@ class ProcesarExpediente extends Component {
     Promise.all([
       this.setExpediente(false),
       this.setInstanciaUserOut(userIdIn),
-      this.saveInstanciaDerivado(userIdIn)
+      this.getPrevOrNextDependenciaId(this.state.expedienteType, this.state.instancia.orden_actual, true)
     ])
       .then(response => {
-        this.saveComment(response[2].data.id, userIdIn);
+        this.saveInstanciaDerivado(userIdIn, response[2].data.results.pop())
+          .then(resp => {
+            this.saveComment(resp.data.id, userIdIn);
+          })
+          .catch(err => {
+            console.log(`Error saveInstanciaDerivado\n${err}`);
+            Popups.error('Ocurrio un error al procesar expediente.');
+          });
         Popups.success('Expediente procesado.');
       })
       .catch(e => {
@@ -321,6 +333,7 @@ class ProcesarExpediente extends Component {
   }
 
   render() {
+    //TODO controlar que numero de mesa de entrada solo se pueda asignar en la dependencia Mesa de Entrada
     let numMesaComp;
     if (this.state.instancia) {
       if (this.state.instancia.expediente_id.numero_mesa_de_entrada !== 0) {
