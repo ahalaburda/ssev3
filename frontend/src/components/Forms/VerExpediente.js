@@ -59,11 +59,16 @@ class VerExpediente extends Component {
   
     }
   }
-
+  
 
   render() {
     //desestructuracion de recorrido para poder mapearlo y mostrarolo en un timeline
     const {recorrido}= this.state;
+   let className= 'ar';
+   if (this.props.isActive) {
+     className +='modal-text';
+   }
+
 
     let commentsColumns = [
       {
@@ -110,29 +115,29 @@ class VerExpediente extends Component {
             <div className="modal-body">
               <div>
                 <div>
-                    <label><strong>Tipo de Expediente:</strong> {this.state.tipoDeExpediente}</label>
+                    <label className='modal-text'><strong>Tipo de Expediente:</strong> {this.state.tipoDeExpediente}</label>
                 </div>
                 <div>
-                    <label><strong>Objeto:</strong> {this.state.objetoDeGasto}</label>
+                    <label className='modal-text'><strong>Objeto:</strong> {this.state.objetoDeGasto}</label>
                 </div>
                 <div>
-                    <label><strong>Origen:</strong> {this.state.origen}</label>
+                    <label className='modal-text'><strong>Origen:</strong> {this.state.origen}</label>
                 </div>
                 <div>
-                    <label><strong>Dependencia Actual:</strong> {this.state.dependenciaActual}</label>
+                    <label className='modal-text'><strong>Dependencia Actual:</strong> {this.state.dependenciaActual}</label>
                 </div>
                 <div>
-                    <label><strong>Fecha:</strong> {this.state.fecha}</label>
+                    <label className='modal-text'><strong>Fecha:</strong> {this.state.fecha}</label>
                 </div>
                 <div>
-                    <label><strong>Descripción:</strong> {this.state.descripcion}</label>
+                    <label className='modal-text'><strong>Descripción:</strong> {this.state.descripcion}</label>
                 </div>
                 <div>
-                    <label><strong>Estado:</strong> {this.state.estado}</label> 
+                    <label className='modal-text'><strong>Estado:</strong> {this.state.estado}</label> 
                 </div>
-              
+                <hr/>
                 <div >
-                  <label>
+                  <label className='modal-text'>
                     <strong>Recorrido:</strong>
                     <button
                     id= 'mostrarRecorrido'
@@ -142,20 +147,21 @@ class VerExpediente extends Component {
                     </button>
                   </label>  
                 </div>
+               
                 
                 <div id = "recorrido" className='modal-table'>
                   <div className="row">
                     <div className="col-md-12">
                       <ul className="timeline"> 
                        
-                        {recorrido.map(rec => <li key={rec.id}>{rec.fecha}: {rec.dependencia} </li>)} 
+                        {recorrido.map(rec => <li className='modal-text' key={rec.id}>{rec.fecha}: {rec.dependencia} </li>)} 
                       </ul>
                     </div>
                   </div>    
                 </div>   
 
                 <div>
-                  <label>
+                  <label className='modal-text'>
                     <strong>Comentarios:</strong>
                     <button
                     id= 'mostrarComentario'
