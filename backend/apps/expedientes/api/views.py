@@ -141,7 +141,7 @@ class ExpedienteInstanciasList(ListAPIView):
     """
     Vista para la lista de todas las instancias de cada expediente con respecto a su ID
     """
-    queryset = Instancia.objects.all().order_by('fecha_creacion')
+    queryset = Instancia.objects.all().order_by('-fecha_creacion')
     serializer_class = InstanciaSerializer
 
     def list(self, request, *args, **kwargs):

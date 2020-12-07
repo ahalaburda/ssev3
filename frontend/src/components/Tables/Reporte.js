@@ -9,10 +9,12 @@ import Select from "react-select";
 import DependenciasService from "../../services/Dependencias";
 import ObjetosDeGastosService from "../../services/ObjetosDeGastos";
 import ComentarioService from "../../services/Comentarios";
+import helper from "../../utils/helper";
 import DatePicker, {registerLocale} from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import es from 'date-fns/locale/es';
 registerLocale('es', es);
+
 
 /**
  * Tabla para reportes
@@ -34,6 +36,7 @@ class Reporte extends Component {
       objetoSelected: '',
       description: '',
       estado: '',
+      recorrido:[]
     };
      
   }
@@ -80,6 +83,7 @@ class Reporte extends Component {
    * Funcion para cargar los datos del expediente seleccionado al modal 
    */
   handleViewExpediente =row=>{
+    //Se trae el expediente via ID y se muestra en pantalla los datos del mismo
     InstanciaService.getByExpedienteId(row.id)
     .then(response =>{
       this.setState({
@@ -100,15 +104,15 @@ class Reporte extends Component {
       console.log(`Error handleViewExpediente: InstanciaService\n${e}`);
     }); 
     
+    //Obtiene todas las instancias del expediente a traves de su ID y las carga en una tabla
     InstanciaService.getInstanciasPorExp(row.id)
     .then((response) =>{
       this.setState({
         recorrido: response.data.results.map((instancia) =>{
           return {
-            fecha_entrada: moment(instancia.fecha_recepcion).isValid() ?
-            moment(instancia.fecha_recepcion).format('DD/MM/YYYY') : 'Sin fecha',
-            fecha_salida: moment(instancia.fecha_final).isValid() ?
-            moment(instancia.fecha_final).format('DD/MM/YYYY') : 'Sin fecha',
+            id: instancia.id,
+            fecha: moment(instancia.fecha_creacion).isValid() ?
+            moment(instancia.fecha_creacion).format('DD/MM/YYYY') : 'Sin fecha',
             dependencia: instancia.dependencia_actual_id.descripcion
           }
         })
@@ -119,6 +123,7 @@ class Reporte extends Component {
       console.log(`Error handleViewExpediente: InstanciaService\n${e}`);
     });   
  
+    //Obtiene todos los comentarios de un expediente a traves de su ID y lo muestra en una tabla
     ComentarioService.getComentarioPorExpedienteID(row.id)
       .then((response) =>{
         this.setState({
@@ -183,10 +188,11 @@ class Reporte extends Component {
       })
   }
 
-
+  //funcion para setear el estado 'description' con el valor ingresadoa traves del campo filtrar por descripcion
   handleDescriptionChange = e => {
     this.setState({description: e.target.value});
   }
+
   /**
    * Si el usuario selecciona algun origen lo almacena,
    * si no deja el campo vacio para la busqueda
@@ -212,17 +218,26 @@ class Reporte extends Component {
       this.setState({objetoSelected: ''})
     }
   }
-  
+
+  /**
+   * Toma la pagina de la tabla y llama a findExp para traer los expedientes,
+   * siempre teniendo en cuanta los filtros aplicados con anterioridad
+   * @param {*} page 
+   */
   handlePageChange= page =>{
     this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected, this.state.objetoSelected,
       this.state.description, this.state.estado,  page);
   }
+
   /**
-   * Toma el origen, objeto de gasto y descripcion pasada y 
-   * ejecuta el servicio de busqueda de reportes.
+   * Toma los valores de los parametros pasados y ejecuta el servicio de busqueda de Expedientes
+   * @param {*} fecha_desde 
+   * @param {*} fecha_hasta 
    * @param {*} origen 
    * @param {*} objeto 
    * @param {*} description 
+   * @param {*} estado 
+   * @param {*} page 
    */
   findExp = (fecha_desde,fecha_hasta,origen, objeto, description,estado,page) => {
     InstanciaService.getExpForReportes(fecha_desde, fecha_hasta, origen, objeto, description, estado,page)
@@ -239,18 +254,55 @@ class Reporte extends Component {
       });
   }
   
-  handleSearch = (estado) => { 
-    this.setState({estado: estado})
-    this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
-      this.state.objetoSelected, this.state.description, estado, 1);
-      
+  /**
+   * Metodo que ejecuta el servicio findExp teniendo en cuenta el estado que se solicita en el filtro,
+   * teniendo en cuenta los demas filtros si es que se utilizo alguno 
+   * @param {*} changeEvent 
+   */
+  handleSearch = changeEvent => { 
+    this.setState({estado: changeEvent.target.value});
+    switch (changeEvent.target.value) {
+      case helper.getEstado().RECIBIDO:
+        this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
+          this.state.objetoSelected, this.state.description, helper.getEstado().RECIBIDO, 1);
+        break;
+      case helper.getEstado().NORECIBIDO:
+        this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
+          this.state.objetoSelected, this.state.description, helper.getEstado().NORECIBIDO, 1);
+        break;  
+      case helper.getEstado().DERIVADO:
+        this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
+          this.state.objetoSelected, this.state.description, helper.getEstado().DERIVADO, 1);
+        break;
+      case helper.getEstado().PAUSADO:
+        this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
+          this.state.objetoSelected, this.state.description, helper.getEstado().PAUSADO, 1);
+        break;
+      case helper.getEstado().RECHAZADO:
+        this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
+          this.state.objetoSelected, this.state.description, helper.getEstado().RECHAZADO, 1);
+        break;
+      case helper.getEstado().FINALIZADO:   
+        this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
+          this.state.objetoSelected, this.state.description, helper.getEstado().FINALIZADO, 1);
+        break;
+      case 'Todos':
+        this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
+          this.state.objetoSelected, this.state.description, '', 1);
+        break;    
+      default:
+        this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
+          this.state.objetoSelected, this.state.description, '', 1);
+        break;
+    }   
   }
 
-  setDateFormat = () =>{
-    this.setState({formattedStartDate:`${this.state.startDate.getFullYear()}-
-    ${this.state.startDate.getMonth()+1}-${this.state.startDate.getDate()}`})
-  }
-
+  /**
+   * Funcion que toma la fecha pasada a traves del campo de filtra fecha desde y lo setea en el estado startDate
+   * para que funcione el filtro por rango de fecha y
+   * setea el estado formattedStartDate en un formato legible para la api
+   * @param {*} date 
+   */
   setStartDate = (date) =>{
     this.setState({startDate: date })
     if (date != null) { 
@@ -261,6 +313,12 @@ class Reporte extends Component {
     
   }
 
+  /**
+   * Funcion que toma la fecha pasada a traves del campo de filtr fecha hasta y lo setea en el estado endDate
+   * para que funcione el filtro por rango de fecha y
+   * setea el estado formattedEndtDate en un formato legible para la api
+   * @param {*} date 
+   */
   setEndDate = (date) =>{
     this.setState({endDate: date});
     if (date != null) { 
@@ -464,14 +522,51 @@ class Reporte extends Component {
           <div className='col-md-12'>   
             <div className='row'>  
               <div className='card-header py-3 col-md-9'>
-                <div className="btn-group ml-auto">
-                    <button type="button" className="btn btn-sm btn-success shadow-sm" onClick={val => this.handleSearch('recibido')}>Recibido</button>
-                    <button type="button" className="btn btn-sm btn-warning shadow-sm" onClick={val => this.handleSearch('no recibido')}>No Recibido</button>
-                    <button type="button" className="btn btn-sm btn-info shadow-sm" onClick={val => this.handleSearch('derivado')}>Derivado</button>
-                    <button type="button" className="btn btn-sm btn-dark shadow-sm" onClick={val => this.handleSearch('pausado')}>Pausado</button>
-                    <button type="button" className="btn btn-sm btn-danger shadow-sm" onClick={val => this.handleSearch('rechazado')}>Rechazado</button>
-                    <button type="button" className="btn btn-sm btn-secondary shadow-sm" onClick={val => this.handleSearch('finalizado')}>Finalizado</button>                       
-                </div>               
+              <div className="btn-group ml-auto">
+                  <label className="btn btn-sm btn-dark shadow-sm">
+                    <input type='radio' id='todos' value='' 
+                    name="options" checked={this.state.estado === ''} onChange={this.handleSearch} />
+                    {this.state.estado === '' && <FontAwesomeIcon id="todosIcon" icon="check"/>}
+                    &nbsp;Todos
+                  </label>
+                  <label className="btn btn-sm btn-success shadow-sm">
+                    <input type='radio' id='recibidos' value={helper.getEstado().RECIBIDO} 
+                    name="options" checked={this.state.estado === helper.getEstado().RECIBIDO} onChange={this.handleSearch} />
+                    {this.state.estado === helper.getEstado().RECIBIDO &&
+                      <FontAwesomeIcon id="recibidosIcon" icon="check"/>}&nbsp;Recibidos
+                  </label>
+                  <label className="btn btn-sm btn-warning shadow-sm">
+                    <input type='radio' id='noRecibidos' value={helper.getEstado().NORECIBIDO} 
+                    name="options" checked={this.state.estado === helper.getEstado().NORECIBIDO} onChange={this.handleSearch} />
+                     {this.state.estado === helper.getEstado().NORECIBIDO &&
+                    <FontAwesomeIcon id="noRecibidosIcon" icon="check"/>}&nbsp;No Recibidos
+                  </label>
+                  <label className="btn btn-sm btn-info shadow-sm">
+                    <input type='radio' id='derivados' value={helper.getEstado().DERIVADO} 
+                    name="options" checked={this.state.estado === helper.getEstado().DERIVADO} onChange={this.handleSearch} />
+                    {this.state.estado === helper.getEstado().DERIVADO &&
+                    <FontAwesomeIcon id="derivadosIcon" icon="check"/>}&nbsp;Derivados
+                  </label>
+                  <label className="btn btn-sm btn-dark shadow-sm">
+                    <input type='radio' id='pausados' value={helper.getEstado().PAUSADO} 
+                    name="options" checked={this.state.estado === helper.getEstado().PAUSADO} onChange={this.handleSearch} />
+                    {this.state.estado === helper.getEstado().PAUSADO &&
+                    <FontAwesomeIcon id="pausadosIcon" icon="check"/>}&nbsp;Pausados
+                  </label>
+                  <label className="btn btn-sm btn-danger shadow-sm">
+                    <input type='radio' id='rechazados' value={helper.getEstado().RECHAZADO} 
+                    name="options" checked={this.state.estado === helper.getEstado().RECHAZADO} onChange={this.handleSearch} />
+                     {this.state.estado === helper.getEstado().RECHAZADO &&
+                    <FontAwesomeIcon id="rechazadosIcon" icon="check"/>}&nbsp;Rechazados
+                  </label>
+                  <label className="btn btn-sm btn-secondary shadow-sm">
+                    <input type='radio' id='finalizados' value={helper.getEstado().FINALIZADO} 
+                    name="options" checked={this.state.estado === helper.getEstado().FINALIZADO} onChange={this.handleSearch} />
+                    {this.state.estado === helper.getEstado().FINALIZADO &&
+                    <FontAwesomeIcon id="finalizadosIcon" icon="check"/>}&nbsp;Finalizados
+                  </label>
+
+                </div>              
               </div>   
 
               <div className="py-3 col-md-3 text-right">
@@ -480,8 +575,9 @@ class Reporte extends Component {
                 > <FontAwesomeIcon icon="print"/>Imprimir
                 </button>
                 <button
+                  value=''
                   className="btn btn-sm btn-primary"
-                  onClick={estado => this.handleSearch('')}
+                  onClick={this.handleSearch}
                 > <FontAwesomeIcon icon="search"/>Buscar
                 </button>
               </div> 
@@ -495,7 +591,6 @@ class Reporte extends Component {
           <DataTable
             columns={columns}
             data={this.state.data}
-            defaultSortField="id"
             progressPending={this.state.loading}
             pagination
             paginationServer
