@@ -211,11 +211,14 @@ class NuevoExpediente extends Component {
     const user_in_id = helper.existToken() ? helper.getCurrentUserId() : null;
     // si next_id es igual a 0 (cero) es porque se selecciono Sin Ruta Predefinida y la siguiente instancia se setea al
     // procesar el expediente.
+    // Se asume que el expediente se crea en la dependencia correspondiente y por eso se asigna el 'orden_actual = 1',
+    // eso significa que ese tipo de expediente pertenece al usuario que esta creando
     const instancia = {
       expediente_id: expId,
       dependencia_actual_id: this.state.start.id,
       dependencia_siguiente_id: this.state.next_id !== 0 && this.state.next_id,
       usuario_id_entrada: user_in_id,
+      orden_actual: 1
     }
     // guardar la primera instancia del expediente
     InstanciasService.create(instancia)
@@ -276,6 +279,7 @@ class NuevoExpediente extends Component {
   /**
    * Si todas las validaciones estan correctas, guarda, si no muestran los mensajes de errores.
    */
+  //TODO checkValid deja pasar si hay errores
   handleSaveClick = () => {
     this.checkValid();
     this.save();

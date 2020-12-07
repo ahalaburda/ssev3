@@ -17,7 +17,7 @@ class VerExpediente extends Component {
         tipoDeExpediente:'',
         recorrido:[],
         comentarios: [],
-        totalRows:0,
+        totalRows:0
     }
   }
 
@@ -33,8 +33,7 @@ class VerExpediente extends Component {
         dependenciaActual: nextProps.verDependencia,
         tipoDeExpediente: nextProps.verTipo,
         recorrido: nextProps.verRecorrido,
-        comentarios: nextProps.comentarios,
- 
+        comentarios: nextProps.comentarios
     }  
   }
 
@@ -44,7 +43,7 @@ class VerExpediente extends Component {
    * @param {*} table 
    * @param {*} boton 
    */
-  showTable = (table, boton) =>{
+  showTable = (table, boton) => {
     let tabla = document.getElementById(table);
     if (tabla.style.display === "block") {
       tabla.style.display = "none";
@@ -54,9 +53,8 @@ class VerExpediente extends Component {
     let cambiarTexto= document.getElementById(boton);
     if (cambiarTexto.innerHTML === 'Ocultar'){ 
       cambiarTexto.innerHTML = 'Mostrar';
-    }else {
-      cambiarTexto.innerHTML = 'Ocultar'; 
-  
+    } else {
+      cambiarTexto.innerHTML = 'Ocultar';
     }
   }
   
@@ -69,6 +67,29 @@ class VerExpediente extends Component {
      className +='modal-text';
    }
 
+    let columns = [
+      {
+        name: 'Fecha de Entrada',
+        selector: 'fecha_entrada',
+        sortable: true,
+        wrap: true,
+        grow: 2
+      },
+      {
+        name: 'Fecha de Salida',
+        selector: 'fecha_salida',
+        sortable: true,
+        wrap: true,
+        grow: 2
+      },
+      {
+        name: 'Dependencia',
+        selector: 'dependencia',
+        sortable: true,
+        wrap: true,
+        grow: 4
+      }
+    ];
 
     let commentsColumns = [
       {
@@ -83,31 +104,30 @@ class VerExpediente extends Component {
         selector: 'comentario',
         sortable: true,
         wrap: true,
-        grow:3
+        grow: 3
       },
       {
         name: 'Dependencia',
         selector: 'dependencia',
         sortable: true,
         wrap: true,
-        grow:2
+        grow: 2
       }
-    ]; 
-    
+    ];
+
     const paginationOptions = {
       noRowsPerPage: true,
       rangeSeparatorText: 'de',
       selectAllRowsItem: true,
       selectAllRowsItemText: 'Todos'
     };
- 
+
     return (
-      
       <div className="modal fade" id="viewExpedienteModal" tabIndex="-1" role="dialog" aria-hidden="true" >
         <div className="modal-dialog modal-lg modal-dialog-centered " role="document">
           <div className="modal-content ">
             <div className="modal-header modal-header-reportes">
-                <h5 className="modal-title"><strong>Expediente N°{this.state.numero}</strong></h5>
+              <h5 className="modal-title"><strong>Expediente N°{this.state.numero}</strong></h5>
               <button type="button" className="close oculto-impresion" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -140,15 +160,13 @@ class VerExpediente extends Component {
                   <label className='modal-text'>
                     <strong>Recorrido:</strong>
                     <button
-                    id= 'mostrarRecorrido'
-                    className="btn btn-sm btn-link text-primary"  
-                    onClick={()=>this.showTable('recorrido','mostrarRecorrido')}>
+                      id='mostrarRecorrido'
+                      className="btn btn-sm btn-link text-primary"
+                      onClick={() => this.showTable('recorrido', 'mostrarRecorrido')}>
                       Mostrar
                     </button>
-                  </label>  
-                </div>
-               
-                
+                  </label>
+                </div> 
                 <div id = "recorrido" className='modal-table'>
                   <div className="row">
                     <div className="col-md-12">
@@ -158,22 +176,21 @@ class VerExpediente extends Component {
                       </ul>
                     </div>
                   </div>    
-                </div>   
-
+                </div>  
                 <div>
                   <label className='modal-text'>
                     <strong>Comentarios:</strong>
                     <button
-                    id= 'mostrarComentario'
-                    className="btn btn-sm btn-link text-primary"  
-                    onClick={()=>this.showTable('comentarios','mostrarComentario')}>
-                        Mostrar
+                      id='mostrarComentario'
+                      className="btn btn-sm btn-link text-primary"
+                      onClick={() => this.showTable('comentarios', 'mostrarComentario')}>
+                      Mostrar
                     </button>
                   </label>
                 </div>
 
                 <div id='comentarios' className='modal-table'>
-                    {/* Tabla de comentarios de expediente */}
+                  {/* Tabla de comentarios de expediente */}
                   <DataTable
                     columns={commentsColumns}
                     data={this.state.comentarios}
@@ -206,10 +223,9 @@ class VerExpediente extends Component {
                 <FontAwesomeIcon icon="print"/>
               </button>         
             </div>
-          </div>    
+          </div>
         </div>
       </div>
-    </div>
     );
   }
 }
