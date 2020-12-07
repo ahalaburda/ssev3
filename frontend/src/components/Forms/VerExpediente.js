@@ -6,42 +6,43 @@ class VerExpediente extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        data:[],
-        numero:'',
-        descripcion:'',
-        objetoDeGasto:'',
-        fecha:'',
-        estado:'',
-        origen:'',
-        dependenciaActual:'',
-        tipoDeExpediente:'',
-        recorrido:[],
-        comentarios: [],
-        totalRows:0
+      data: [],
+      numero: '',
+      descripcion: '',
+      objetoDeGasto: '',
+      fecha: '',
+      estado: '',
+      origen: '',
+      dependenciaActual: '',
+      tipoDeExpediente: '',
+      recorrido: [],
+      comentarios: [],
+      totalRows: 0,
     }
   }
 
   //reemplazo de funcion componentWillReceiveProps
-  static getDerivedStateFromProps(nextProps) { 
+  static getDerivedStateFromProps(nextProps) {
     return {
-        numero: nextProps.verNumero,
-        fecha: nextProps.verFecha,
-        descripcion: nextProps.verDescripcion,
-        objetoDeGasto: nextProps.verObjetoDeGasto,
-        estado: nextProps.verEstado,
-        origen: nextProps.verOrigen,
-        dependenciaActual: nextProps.verDependencia,
-        tipoDeExpediente: nextProps.verTipo,
-        recorrido: nextProps.verRecorrido,
-        comentarios: nextProps.comentarios
-    }  
+      numero: nextProps.verNumero,
+      fecha: nextProps.verFecha,
+      descripcion: nextProps.verDescripcion,
+      objetoDeGasto: nextProps.verObjetoDeGasto,
+      estado: nextProps.verEstado,
+      origen: nextProps.verOrigen,
+      dependenciaActual: nextProps.verDependencia,
+      tipoDeExpediente: nextProps.verTipo,
+      recorrido: nextProps.verRecorrido,
+      comentarios: nextProps.comentarios,
+
+    }
   }
 
   /**
    *Funcion para ocultar/mostrar tabla de recorrido y comentario
-   *y para cambiar el estado de los botones Mostrar/Ocultar 
-   * @param {*} table 
-   * @param {*} boton 
+   *y para cambiar el estado de los botones Mostrar/Ocultar
+   * @param {*} table
+   * @param {*} boton
    */
   showTable = (table, boton) => {
     let tabla = document.getElementById(table);
@@ -50,46 +51,24 @@ class VerExpediente extends Component {
     } else {
       tabla.style.display = "block";
     }
-    let cambiarTexto= document.getElementById(boton);
-    if (cambiarTexto.innerHTML === 'Ocultar'){ 
+    let cambiarTexto = document.getElementById(boton);
+    if (cambiarTexto.innerHTML === 'Ocultar') {
       cambiarTexto.innerHTML = 'Mostrar';
     } else {
       cambiarTexto.innerHTML = 'Ocultar';
+
     }
   }
-  
+
 
   render() {
     //desestructuracion de recorrido para poder mapearlo y mostrarolo en un timeline
-    const {recorrido}= this.state;
-   let className= 'ar';
-   if (this.props.isActive) {
-     className +='modal-text';
-   }
+    const {recorrido} = this.state;
+    let className = 'ar';
+    if (this.props.isActive) {
+      className += 'modal-text';
+    }
 
-    let columns = [
-      {
-        name: 'Fecha de Entrada',
-        selector: 'fecha_entrada',
-        sortable: true,
-        wrap: true,
-        grow: 2
-      },
-      {
-        name: 'Fecha de Salida',
-        selector: 'fecha_salida',
-        sortable: true,
-        wrap: true,
-        grow: 2
-      },
-      {
-        name: 'Dependencia',
-        selector: 'dependencia',
-        sortable: true,
-        wrap: true,
-        grow: 4
-      }
-    ];
 
     let commentsColumns = [
       {
@@ -97,7 +76,7 @@ class VerExpediente extends Component {
         selector: 'fecha_creacion',
         sortable: true,
         wrap: true,
-        grow:1
+        grow: 1
       },
       {
         name: 'Comentario',
@@ -123,7 +102,8 @@ class VerExpediente extends Component {
     };
 
     return (
-      <div className="modal fade" id="viewExpedienteModal" tabIndex="-1" role="dialog" aria-hidden="true" >
+
+      <div className="modal fade" id="viewExpedienteModal" tabIndex="-1" role="dialog" aria-hidden="true">
         <div className="modal-dialog modal-lg modal-dialog-centered " role="document">
           <div className="modal-content ">
             <div className="modal-header modal-header-reportes">
@@ -135,28 +115,30 @@ class VerExpediente extends Component {
             <div className="modal-body">
               <div>
                 <div>
-                    <label className='modal-text'><strong>Tipo de Expediente:</strong> {this.state.tipoDeExpediente}</label>
+                  <label className='modal-text'><strong>Tipo de Expediente:</strong> {this.state.tipoDeExpediente}
+                  </label>
                 </div>
                 <div>
-                    <label className='modal-text'><strong>Objeto:</strong> {this.state.objetoDeGasto}</label>
+                  <label className='modal-text'><strong>Objeto:</strong> {this.state.objetoDeGasto}</label>
                 </div>
                 <div>
-                    <label className='modal-text'><strong>Origen:</strong> {this.state.origen}</label>
+                  <label className='modal-text'><strong>Origen:</strong> {this.state.origen}</label>
                 </div>
                 <div>
-                    <label className='modal-text'><strong>Dependencia Actual:</strong> {this.state.dependenciaActual}</label>
+                  <label className='modal-text'><strong>Dependencia Actual:</strong> {this.state.dependenciaActual}
+                  </label>
                 </div>
                 <div>
-                    <label className='modal-text'><strong>Fecha:</strong> {this.state.fecha}</label>
+                  <label className='modal-text'><strong>Fecha:</strong> {this.state.fecha}</label>
                 </div>
                 <div>
-                    <label className='modal-text'><strong>Descripción:</strong> {this.state.descripcion}</label>
+                  <label className='modal-text'><strong>Descripción:</strong> {this.state.descripcion}</label>
                 </div>
                 <div>
-                    <label className='modal-text'><strong>Estado:</strong> {this.state.estado}</label> 
+                  <label className='modal-text'><strong>Estado:</strong> {this.state.estado}</label>
                 </div>
                 <hr/>
-                <div >
+                <div>
                   <label className='modal-text'>
                     <strong>Recorrido:</strong>
                     <button
@@ -166,17 +148,19 @@ class VerExpediente extends Component {
                       Mostrar
                     </button>
                   </label>
-                </div> 
-                <div id = "recorrido" className='modal-table'>
+                </div>
+
+                <div id="recorrido" className='modal-table'>
                   <div className="row">
                     <div className="col-md-12">
-                      <ul className="timeline"> 
-                       
-                        {recorrido.map(rec => <li className='modal-text' key={rec.id}>{rec.fecha}: {rec.dependencia} </li>)} 
+                      <ul className="timeline">
+                        {recorrido.map(rec => <li className='modal-text'
+                                                  key={rec.id}>{rec.fecha}: {rec.dependencia} </li>)}
                       </ul>
                     </div>
-                  </div>    
-                </div>  
+                  </div>
+                </div>
+
                 <div>
                   <label className='modal-text'>
                     <strong>Comentarios:</strong>
@@ -204,24 +188,25 @@ class VerExpediente extends Component {
                     noHeader={true}
                     dense={true}
                     className="table-responsive table-sm table-bordered"
-                  /> 
-                </div>                     
-            </div>
-            
-            <div className="modal-footer oculto-impresion">
-              <button
-                type="button"
-                className="btn btn-sm btn-secondary "
-                data-dismiss="modal">
-                Cerrar
-              </button>
-              <button
-                onClick={()=> this.printModal()}
-                type="button"
-                title="Imprimir"
-                className="btn btn-sm btn-info">
-                <FontAwesomeIcon icon="print"/>
-              </button>         
+                  />
+                </div>
+              </div>
+
+              <div className="modal-footer oculto-impresion">
+                <button
+                  type="button"
+                  className="btn btn-sm btn-secondary "
+                  data-dismiss="modal">
+                  Cerrar
+                </button>
+                <button
+                  onClick={() => this.printModal()}
+                  type="button"
+                  title="Imprimir"
+                  className="btn btn-sm btn-info">
+                  <FontAwesomeIcon icon="print"/>
+                </button>
+              </div>
             </div>
           </div>
         </div>
