@@ -176,7 +176,14 @@ class ProcesarExpediente extends Component {
    * @returns {Promise<AxiosResponse<*>>}
    */
   getPrevOrNextDependenciaId = (tipoExpediente, ordenActual, prevOrNext) => {
-    let orden = prevOrNext ? ordenActual + 1 : ordenActual - 1;
+    let orden = prevOrNext ? ordenActual + 2 : ordenActual - 2;
+    // si prevOrNext = true y se supero el maximo de saltos en la ruta se le resta 1 para no pedir con ID excedente
+    if (prevOrNext && orden > tipoExpediente.saltos) {
+      orden--;
+      // si prevOrNext = false y se esta al comienzo de la ruta se le resta 1 para no pedir con ID negativo
+    } else if (!prevOrNext && orden < 1) {
+      orden++
+    }
     return TipoDeExpedienteService.getDetailByOrder(tipoExpediente.id, orden)
   }
 
@@ -244,7 +251,7 @@ class ProcesarExpediente extends Component {
       dependencia_siguiente_id: tdeNextDep.dependencia_id.id,
       estado_id: this.state.newEstado.id,
       usuario_id_entrada: userIdIn,
-      orden_actual: tdeNextDep.orden
+      orden_actual: this.state.instancia.orden_actual + 1
     });
   }
 
@@ -274,7 +281,7 @@ class ProcesarExpediente extends Component {
 
   /**
    * Guarda una nueva instancia para el estado Finalizado
-   * @param userIdIn
+   * @param userIdIn Usuario de entrada y salida (el mismo porque se finaliza el expediente)
    * @returns {Promise<AxiosResponse<*>>}
    */
   saveInstanciaFinalizado = userIdIn => {
@@ -284,7 +291,10 @@ class ProcesarExpediente extends Component {
       dependencia_actual_id: this.state.depNow.id,
       dependencia_siguiente_id: this.state.depNow.id,
       estado_id: this.state.newEstado.id,
-      usuario_id_entrada: userIdIn
+      usuario_id_entrada: userIdIn,
+      usuario_id_salida: userIdIn,
+      fecha_final: moment().toJSON(),
+      orden_actual: this.state.instancia.orden_actual
     });
   }
 

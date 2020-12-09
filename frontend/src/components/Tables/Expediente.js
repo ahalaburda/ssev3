@@ -143,7 +143,11 @@ class Expediente extends Component {
           this.setListFromResponse(response);
           this.setState({totalRows: response.data.count});
         } else {
-          this.setState({loading: false});
+          // si no hay resultados se limpia la lista del estado
+          this.setState({
+            loading: false,
+            list: []
+          });
           Popups.error('No existen expedientes en su dependencia.');
         }
       })
