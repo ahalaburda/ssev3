@@ -82,11 +82,11 @@ class ProcesarExpediente extends Component {
   }
 
   /**
-   * Guarda la nueva intancia para los estados Recibido, Anulado y Pausado
+   * Guarda la nueva intancia para los estados Recibido y Pausado
    * @param userIdIn Usuario id
    * @returns {Promise<AxiosResponse<*>>}
    */
-  saveInstanciaRecibidoAnuladoPausado = userIdIn => {
+  saveInstanciaRecibidoPausado = userIdIn => {
     return InstanciasService.create({
       expediente_id: this.state.instancia.expediente_id.id,
       dependencia_anterior_id: this.state.depPrev.id,
@@ -156,7 +156,7 @@ class ProcesarExpediente extends Component {
     Promise.all([
       this.setExpediente(withMesaEntrada),
       this.setInstanciaUserOut(userIdIn),
-      this.saveInstanciaRecibidoAnuladoPausado(userIdIn)
+      this.saveInstanciaRecibidoPausado(userIdIn)
     ])
       .then(response => {
         this.saveComment(response[2].data.id, userIdIn);
@@ -176,6 +176,7 @@ class ProcesarExpediente extends Component {
    * @returns {Promise<AxiosResponse<*>>}
    */
   getPrevOrNextDependenciaId = (tipoExpediente, ordenActual, prevOrNext) => {
+    // se le suma 2 o resta dos porque se solicita la dependencia del siguiente del siguiente o el anterior del anterior
     let orden = prevOrNext ? ordenActual + 2 : ordenActual - 2;
     // si prevOrNext = true y se supero el maximo de saltos en la ruta se le resta 1 para no pedir con ID excedente
     if (prevOrNext && orden > tipoExpediente.saltos) {
@@ -280,11 +281,11 @@ class ProcesarExpediente extends Component {
   }
 
   /**
-   * Guarda una nueva instancia para el estado Finalizado
+   * Guarda una nueva instancia para el estado Finalizado y Anulado
    * @param userIdIn Usuario de entrada y salida (el mismo porque se finaliza el expediente)
    * @returns {Promise<AxiosResponse<*>>}
    */
-  saveInstanciaFinalizado = userIdIn => {
+  saveInstanciaFinalizadoAnulado = userIdIn => {
     return InstanciasService.create({
       expediente_id: this.state.instancia.expediente_id.id,
       dependencia_anterior_id: this.state.depPrev.id,
@@ -298,12 +299,12 @@ class ProcesarExpediente extends Component {
     });
   }
 
-  processFinalizado = () => {
+  processFinalizadoAnulado = () => {
     const userIdIn = helper.existToken() ? helper.getCurrentUserId() : null;
     Promise.all([
       this.setExpediente(false),
       this.setInstanciaUserOut(userIdIn),
-      this.saveInstanciaFinalizado(userIdIn)
+      this.saveInstanciaFinalizadoAnulado(userIdIn)
     ])
       .then(response => {
         this.saveComment(response[2].data.id, userIdIn);
@@ -322,7 +323,7 @@ class ProcesarExpediente extends Component {
         this.processExpediente();
         break;
       case helper.getEstado().ANULADO:
-        this.processExpediente();
+        this.processFinalizadoAnulado();
         break;
       case helper.getEstado().PAUSADO:
         this.processExpediente();
@@ -334,7 +335,7 @@ class ProcesarExpediente extends Component {
         this.processDerivado();
         break;
       case helper.getEstado().FINALIZADO:
-        this.processFinalizado();
+        this.processFinalizadoAnulado();
         break;
       default:
         console.log('Error case: default');
@@ -366,11 +367,15 @@ class ProcesarExpediente extends Component {
       // si la instancia esta en el ultimo salto, ya no se puede derivar
       selectOptions = helper.getAllEstados().filter(o => o.value !== helper.getEstado().DERIVADO);
     } else if (this.state.instancia.orden_actual <= 1) {
-      // si la instancia esta en el primer salto, no se puede rechazar, solo anular
+      // si la instancia esta en el primer salto, no se puede rechazar
       selectOptions = helper.getAllEstados().filter(o => o.value !== helper.getEstado().RECHAZADO);
     } else {
       // de otra forma se permiten todos los posibles estados
       selectOptions = helper.getAllEstados();
+    }
+    // si ya se recibio se remueve esa opcion
+    if (this.state.instancia.expediente_id.estado_id.descripcion === helper.getEstado().RECIBIDO) {
+      selectOptions = selectOptions.filter(o => o.value !== helper.getEstado().RECIBIDO);
     }
 
     return (
