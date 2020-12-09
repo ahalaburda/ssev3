@@ -189,6 +189,29 @@ class ProcesarExpediente extends Component {
   }
 
   /**
+   * Guarda una instancia extra para que al derivar o rechazar le aparezca como expediente no recibido en su
+   * dependencia, y guarda el comentario asignando a esa instancia
+   * @param savedInstancia Instancia guardada previamente
+   */
+  saveExtraInstancia = savedInstancia => {
+    InstanciasService.create({
+      expediente_id: savedInstancia.expediente_id,
+      dependencia_anterior_id: savedInstancia.dependencia_anterior_id,
+      dependencia_actual_id: savedInstancia.dependencia_actual_id,
+      dependencia_siguiente_id: savedInstancia.dependencia_siguiente_id,
+      estado_id: 1,
+      usuario_id_entrada: savedInstancia.usuario_id_entrada,
+      orden_actual: savedInstancia.orden_actual
+    })
+      .then(resp => {
+        this.saveComment(resp.data.id, savedInstancia.usuario_id_entrada);
+      })
+      .catch(e => {
+        console.log(`Error saveExtraInstancia\n${e}`);
+      })
+  }
+
+  /**
    * Retorna una promesa de creacion de una instancia
    * @param userIdIn usuario_entrada
    * @param tdePrevDep datos de tipo de expediente y dependencia anterior
@@ -223,8 +246,7 @@ class ProcesarExpediente extends Component {
         // una vez terminados se guarda la nueva instancia
         this.saveInstanciaRechazado(userIdIn, response[2].data.results.pop())
           .then(resp => {
-            // si la instancia se guarda, entonces el comentario tambien
-            this.saveComment(resp.data.id, userIdIn);
+            this.saveExtraInstancia(resp.data);
           })
           .catch(err => {
             console.log(`Error saveInstanciaRechazado\n${err}`);
@@ -256,6 +278,11 @@ class ProcesarExpediente extends Component {
     });
   }
 
+  /**
+   * Derivar el expediente modificando el estado del expediente, agregando usuario_salida a la instancia actual,
+   * obteniendo la dependencia siguiente al siguiente. Luego guarda los datos de la nueva instancia y su respectivo
+   * comentario.
+   */
   processDerivado = () => {
     const userIdIn = helper.existToken() ? helper.getCurrentUserId() : null;
     Promise.all([
@@ -266,7 +293,7 @@ class ProcesarExpediente extends Component {
       .then(response => {
         this.saveInstanciaDerivado(userIdIn, response[2].data.results.pop())
           .then(resp => {
-            this.saveComment(resp.data.id, userIdIn);
+            this.saveExtraInstancia(resp.data);
           })
           .catch(err => {
             console.log(`Error saveInstanciaDerivado\n${err}`);
@@ -347,6 +374,7 @@ class ProcesarExpediente extends Component {
     //TODO controlar que numero de mesa de entrada solo se pueda asignar en la dependencia Mesa de Entrada
     let numMesaComp;
     if (this.state.instancia) {
+      // si el expediente ya tiene mesa de entrada se bloquea el input
       if (this.state.instancia.expediente_id.numero_mesa_de_entrada !== 0) {
         numMesaComp = <input
           className="form-control"
@@ -354,6 +382,7 @@ class ProcesarExpediente extends Component {
           onChange={e => this.handleNumMesaChange(e)}
           disabled/>
       } else {
+        // si no se permite ingresar el numero (por ahora aunque ingreses el numero se genera de manera aleatoria)
         numMesaComp = <input
           className="form-control"
           placeholder="Ingresa n&uacute;mero de mesa."

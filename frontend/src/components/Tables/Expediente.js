@@ -59,7 +59,7 @@ class Expediente extends Component {
           origen: inst.expediente_id.dependencia_origen_id.descripcion,
           tipoExpediente: inst.expediente_id.tipo_de_expediente_id.descripcion,
           descripcion: inst.expediente_id.descripcion,
-          estado: inst.expediente_id.estado_id.descripcion,
+          estado: inst.estado_id.descripcion,
           dependenciaActual: inst.dependencia_actual_id.descripcion
         }
       }),
