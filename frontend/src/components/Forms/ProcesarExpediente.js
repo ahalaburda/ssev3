@@ -146,7 +146,7 @@ class ProcesarExpediente extends Component {
   }
 
   /**
-   * Procesa los expedientes con estado RECIBIDO, ANULADO Y PAUSADO
+   * Procesa los expedientes con estado RECIBIDO Y PAUSADO
    */
     //TODO rollback en caso de errores
   processExpediente = () => {
@@ -202,7 +202,7 @@ class ProcesarExpediente extends Component {
       dependencia_siguiente_id: this.state.depNow.id,
       estado_id: this.state.newEstado.id,
       usuario_id_entrada: userIdIn,
-      orden_actual: tdePrevDep.orden
+      orden_actual: this.state.instancia.orden_actual - 1
     });
   }
 
@@ -322,9 +322,6 @@ class ProcesarExpediente extends Component {
       case helper.getEstado().RECIBIDO:
         this.processExpediente();
         break;
-      case helper.getEstado().ANULADO:
-        this.processFinalizadoAnulado();
-        break;
       case helper.getEstado().PAUSADO:
         this.processExpediente();
         break;
@@ -333,6 +330,9 @@ class ProcesarExpediente extends Component {
         break;
       case helper.getEstado().DERIVADO:
         this.processDerivado();
+        break;
+      case helper.getEstado().ANULADO:
+        this.processFinalizadoAnulado();
         break;
       case helper.getEstado().FINALIZADO:
         this.processFinalizadoAnulado();
@@ -373,9 +373,18 @@ class ProcesarExpediente extends Component {
       // de otra forma se permiten todos los posibles estados
       selectOptions = helper.getAllEstados();
     }
+
     // si ya se recibio se remueve esa opcion
     if (this.state.instancia.expediente_id.estado_id.descripcion === helper.getEstado().RECIBIDO) {
       selectOptions = selectOptions.filter(o => o.value !== helper.getEstado().RECIBIDO);
+    }
+
+    let nextDependencia;
+    if (this.state.newEstado.value === helper.getEstado().RECHAZADO) {
+      // si se selecciona rechazar expediente, se muestra la dependencia anterior como la dependencia siguiente
+      nextDependencia = this.state.depPrev.descripcion;
+    } else {
+      nextDependencia = this.state.depNext.descripcion;
     }
 
     return (
@@ -447,7 +456,7 @@ class ProcesarExpediente extends Component {
                   <Form.Label>Dependencia Siguiente</Form.Label>
                   <input
                     className="form-control"
-                    value={this.state.depNext.descripcion}
+                    value={nextDependencia}
                     disabled/>
                 </div>
               </Form.Row>
