@@ -118,9 +118,10 @@ class InstanciaExpedienteFilter(filters.FilterSet):
 class InstanciaExpedienteList(ListAPIView):
     """
     Vista para la lista de expedientes con respecto a la dependencia actual en la que se encuentra el usuario
-    autenticado. Se excluyen los expedientes 'finalizados'.
+    autenticado. Se excluyen los expedientes 'finalizados y anulados'.
     """
-    queryset = get_last_instancias().exclude(expediente_id__estado_id__descripcion='Finalizado')
+    queryset = get_last_instancias().exclude(expediente_id__estado_id__descripcion='Finalizado')\
+        .exclude(expediente_id__estado_id__descripcion='Anulado')
     serializer_class = InstanciaSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = InstanciaExpedienteFilter
