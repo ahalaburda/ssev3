@@ -472,6 +472,14 @@
       }
    },
    {
+      "model":"expedientes.estado",
+      "pk":8,
+      "fields":{
+         "descripcion":"Reanudado",
+         "activo":true
+      }
+   },
+   {
       "model":"expedientes.prioridad",
       "pk":1,
       "fields":{

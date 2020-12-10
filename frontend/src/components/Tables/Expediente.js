@@ -59,7 +59,7 @@ class Expediente extends Component {
           origen: inst.expediente_id.dependencia_origen_id.descripcion,
           tipoExpediente: inst.expediente_id.tipo_de_expediente_id.descripcion,
           descripcion: inst.expediente_id.descripcion,
-          estado: inst.expediente_id.estado_id.descripcion,
+          estado: inst.estado_id.descripcion,
           dependenciaActual: inst.dependencia_actual_id.descripcion
         }
       }),
@@ -143,7 +143,11 @@ class Expediente extends Component {
           this.setListFromResponse(response);
           this.setState({totalRows: response.data.count});
         } else {
-          this.setState({loading: false});
+          // si no hay resultados se limpia la lista del estado
+          this.setState({
+            loading: false,
+            list: []
+          });
           Popups.error('No existen expedientes en su dependencia.');
         }
       })
@@ -289,14 +293,10 @@ class Expediente extends Component {
               return <div className="badge badge-success">{row.estado}</div>
             case "No Recibido":
               return <div className="badge badge-warning">{row.estado}</div>
-            case "Derivado":
-              return <div className="badge badge-primary">{row.estado}</div>
-            case "Rechazado":
-              return <div className="badge badge-danger">{row.estado}</div>
-            case "Finalizado":
-              return <div className="badge badge-secondary">{row.estado}</div>
             case "Pausado":
               return <div className="badge badge-dark">{row.estado}</div>
+            case "Reanudado":
+              return <div className="badge badge-success">{row.estado}</div>
             default:
               return <div className="badge badge-primary">{row.estado}</div>
           }
@@ -365,7 +365,7 @@ class Expediente extends Component {
                      onChange={this.handleOptionChange}/>
               {this.state.selectedOption === helper.getEstado().RECIBIDO &&
               <FontAwesomeIcon id="recibidosIcon" icon="check"/>}
-              &nbsp;Recibidos
+              &nbsp;Recibidos / Reanudados
             </label>
             <label className="btn btn-sm btn-dark">
               <input type="radio" id="pausados" value={helper.getEstado().PAUSADO} name="options"
