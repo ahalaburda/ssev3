@@ -293,14 +293,10 @@ class Expediente extends Component {
               return <div className="badge badge-success">{row.estado}</div>
             case "No Recibido":
               return <div className="badge badge-warning">{row.estado}</div>
-            case "Derivado":
-              return <div className="badge badge-primary">{row.estado}</div>
-            case "Rechazado":
-              return <div className="badge badge-danger">{row.estado}</div>
-            case "Finalizado":
-              return <div className="badge badge-secondary">{row.estado}</div>
             case "Pausado":
               return <div className="badge badge-dark">{row.estado}</div>
+            case "Reanudado":
+              return <div className="badge badge-success">{row.estado}</div>
             default:
               return <div className="badge badge-primary">{row.estado}</div>
           }
@@ -369,7 +365,7 @@ class Expediente extends Component {
                      onChange={this.handleOptionChange}/>
               {this.state.selectedOption === helper.getEstado().RECIBIDO &&
               <FontAwesomeIcon id="recibidosIcon" icon="check"/>}
-              &nbsp;Recibidos
+              &nbsp;Recibidos / Reanudados
             </label>
             <label className="btn btn-sm btn-dark">
               <input type="radio" id="pausados" value={helper.getEstado().PAUSADO} name="options"
