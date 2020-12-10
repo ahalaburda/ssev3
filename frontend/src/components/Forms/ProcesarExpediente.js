@@ -82,11 +82,11 @@ class ProcesarExpediente extends Component {
   }
 
   /**
-   * Guarda la nueva intancia para los estados Recibido y Pausado
+   * Guarda la nueva intancia para los estados Recibido, Pausado y Reanudado
    * @param userIdIn Usuario id
    * @returns {Promise<AxiosResponse<*>>}
    */
-  saveInstanciaRecibidoPausado = userIdIn => {
+  saveInstanciaRecibidoPausadoReanudado = userIdIn => {
     return InstanciasService.create({
       expediente_id: this.state.instancia.expediente_id.id,
       dependencia_anterior_id: this.state.depPrev.id,
@@ -146,7 +146,7 @@ class ProcesarExpediente extends Component {
   }
 
   /**
-   * Procesa los expedientes con estado RECIBIDO Y PAUSADO
+   * Procesa los expedientes con estado Recibido, Pausado y Reanudado
    */
     //TODO rollback en caso de errores
   processExpediente = () => {
@@ -156,7 +156,7 @@ class ProcesarExpediente extends Component {
     Promise.all([
       this.setExpediente(withMesaEntrada),
       this.setInstanciaUserOut(userIdIn),
-      this.saveInstanciaRecibidoPausado(userIdIn)
+      this.saveInstanciaRecibidoPausadoReanudado(userIdIn)
     ])
       .then(response => {
         this.saveComment(response[2].data.id, userIdIn);
@@ -343,6 +343,9 @@ class ProcesarExpediente extends Component {
       });
   }
 
+  /**
+   * De acuerdo al estado en el cual se quiere procesar el expediente selecciona su funcion correspondiente
+   */
   handleProcess = () => {
     //TODO check valid
     switch (this.state.newEstado.value) {
@@ -350,6 +353,9 @@ class ProcesarExpediente extends Component {
         this.processExpediente();
         break;
       case helper.getEstado().PAUSADO:
+        this.processExpediente();
+        break;
+      case helper.getEstado().REANUDADO:
         this.processExpediente();
         break;
       case helper.getEstado().RECHAZADO:
@@ -403,18 +409,23 @@ class ProcesarExpediente extends Component {
       selectOptions = helper.getAllEstados();
     }
 
-    // si ya se recibio se remueve esa opcion
-    if (this.state.instancia.expediente_id.estado_id.descripcion === helper.getEstado().RECIBIDO) {
-      selectOptions = selectOptions.filter(o => o.value !== helper.getEstado().RECIBIDO);
+    // si ya se recibio se remueve esa opcion y tambien la de reanudado
+    if (this.state.instancia.estado_id.descripcion === helper.getEstado().RECIBIDO ||
+      this.state.instancia.estado_id.descripcion === helper.getEstado().REANUDADO) {
+      selectOptions = selectOptions.filter(o => o.value !== helper.getEstado().RECIBIDO)
+        .filter(o => o.value !== helper.getEstado().REANUDADO);
+    } else if (this.state.instancia.estado_id.descripcion === helper.getEstado().PAUSADO) {
+      // si esta pausado solo se puede reanudar
+      selectOptions = selectOptions.filter(o => o.value === helper.getEstado().REANUDADO);
+    } else {
+      // si no se recibio, no puede realizar ninguna otra opcion
+      selectOptions = selectOptions.filter(o => o.value === helper.getEstado().RECIBIDO);
     }
 
     let nextDependencia;
-    if (this.state.newEstado.value === helper.getEstado().RECHAZADO) {
-      // si se selecciona rechazar expediente, se muestra la dependencia anterior como la dependencia siguiente
-      nextDependencia = this.state.depPrev.descripcion;
-    } else {
+    // si se selecciona rechazar expediente, se muestra la dependencia anterior como la dependencia siguiente
+    this.state.newEstado.value === helper.getEstado().RECHAZADO ? nextDependencia = this.state.depPrev.descripcion :
       nextDependencia = this.state.depNext.descripcion;
-    }
 
     return (
       <Modal

@@ -183,7 +183,8 @@ class Helper {
    *  NORECIBIDO: string,
    *  RECIBIDO: string,
    *  FINALIZADO: string,
-   *  PAUSADO: string
+   *  PAUSADO: string.
+   *  REANUDADO: string
    * }}
    */
   getEstado() {
@@ -194,7 +195,8 @@ class Helper {
       RECHAZADO: 'Rechazado',
       FINALIZADO: 'Finalizado',
       ANULADO: 'Anulado',
-      PAUSADO: 'Pausado'
+      PAUSADO: 'Pausado',
+      REANUDADO: 'Reanudado'
     }
   }
 
@@ -234,6 +236,11 @@ class Helper {
         id: 7,
         value: 'Pausado',
         label: 'Pausado'
+      },
+      {
+        id: 8,
+        value: 'Reanudado',
+        label: 'Reanudado'
       }
     ]
   }
