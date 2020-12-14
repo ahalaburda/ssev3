@@ -64,12 +64,7 @@ class VerExpediente extends Component {
   render() {
     //desestructuracion de recorrido para poder mapearlo y mostrarolo en un timeline
     const {recorrido} = this.state;
-    let className = 'ar';
-    if (this.props.isActive) {
-      className += 'modal-text';
-    }
-
-
+   
     let commentsColumns = [
       {
         name: 'Fecha',
@@ -108,7 +103,7 @@ class VerExpediente extends Component {
           <div className="modal-content ">
             <div className="modal-header modal-header-reportes">
               <h5 className="modal-title"><strong>Expediente N°{this.state.numero}</strong></h5>
-              <button type="button" className="close oculto-impresion" data-dismiss="modal" aria-label="Close">
+              <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
@@ -155,7 +150,7 @@ class VerExpediente extends Component {
                     <div className="col-md-12">
                       <ul className="timeline">
                         {recorrido.map(rec => <li className='modal-text'
-                                                  key={rec.id}>{rec.fecha}: {rec.dependencia} </li>)}
+                        key={rec.id}>{rec.fecha}: {rec.dependencia} </li>)}
                       </ul>
                     </div>
                   </div>
