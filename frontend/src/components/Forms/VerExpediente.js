@@ -1,6 +1,8 @@
 import React, {Component} from "react";
 import DataTable from "react-data-table-component";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {Timeline, TimelineEvent} from 'react-event-timeline';
+
 
 class VerExpediente extends Component {
   constructor(props) {
@@ -60,11 +62,32 @@ class VerExpediente extends Component {
     }
   }
 
-
+   /**
+   * Retorna el codigo del color dependiendo del estado 
+   * en el que se encuentra el expediente en esa instancia
+   * @param {*} estado 
+   */
+  selectColor =(estado)=>{
+    switch (estado) {
+      case 1:
+        return '#f6c23e';
+      case 2:
+        return '#1cc88a';
+      case 3:
+        return '#36b9cc';
+      case 4:
+        return '#e74a3b';
+      case 5:
+        return '#858796';
+      default:
+        return '#5a5c69';
+    } 
+  }
+  
   render() {
     //desestructuracion de recorrido para poder mapearlo y mostrarolo en un timeline
     const {recorrido} = this.state;
-   
+
     let commentsColumns = [
       {
         name: 'Fecha',
@@ -148,10 +171,21 @@ class VerExpediente extends Component {
                 <div id="recorrido" className='modal-table'>
                   <div className="row">
                     <div className="col-md-12">
-                      <ul className="timeline">
-                        {recorrido.map(rec => <li className='modal-text'
-                        key={rec.id}>{rec.fecha}: {rec.dependencia} </li>)}
-                      </ul>
+                      
+                        <Timeline lineColor={'#8f8b8b'}>
+                        {recorrido.map(rec =>
+                            <TimelineEvent 
+                            key= {rec.id}
+                            title= {rec.dependencia}
+                            titleStyle={{color:'#000'}}
+                            createdAt={rec.fecha}
+                            icon={<FontAwesomeIcon icon='check'/>}
+                            iconColor= {this.selectColor(rec.estado)}
+                            bubbleStyle={{borderColor: this.selectColor(rec.estado), backgroundColor: '#fff'}}
+                            >
+                            </TimelineEvent>
+                          )}
+                      </Timeline>
                     </div>
                   </div>
                 </div>

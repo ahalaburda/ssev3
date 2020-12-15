@@ -93,7 +93,7 @@ class Reporte extends Component {
       verDependencia: '',
       verTipo: '',
       recorrido: [],
-      comentarios: '',
+      comentarios: [],
     })
   }
 
@@ -133,7 +133,8 @@ class Reporte extends Component {
             id: instancia.id,
             fecha: moment(instancia.fecha_creacion).isValid() ?
             moment(instancia.fecha_creacion).format('DD/MM/YYYY') : 'Sin fecha',
-            dependencia: instancia.dependencia_actual_id.descripcion
+            dependencia: instancia.dependencia_actual_id.descripcion,
+            estado: instancia.estado_id.id
           }
         })
       }) 
