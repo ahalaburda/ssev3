@@ -1,18 +1,12 @@
 from rest_framework import serializers
 from apps.expedientes.models import Expediente, Instancia, Estado, Comentario, Objeto_de_Gasto, Prioridad
+from apps.dependencias.api.serializers import DependenciaSerializer
 
 
 class Objeto_de_GastoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Objeto_de_Gasto
         fields = '__all__'
-
-
-class InstanciaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Instancia
-        fields = '__all__'
-        depth = 3
 
 
 class ExpedienteSerializer(serializers.ModelSerializer):
@@ -34,6 +28,19 @@ class EstadoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class InstanciaSerializer(serializers.ModelSerializer):
+    expediente_id = ExpedienteSerializer()
+    dependencia_anterior_id = DependenciaSerializer()
+    dependencia_actual_id = DependenciaSerializer()
+    dependencia_siguiente_id = DependenciaSerializer()
+    estado_id = EstadoSerializer()
+
+    class Meta:
+        model = Instancia
+        fields = '__all__'
+        # depth = 3
+
+
 class InstanciaNewUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Instancia
@@ -46,6 +53,7 @@ class ComentarioSerializer(serializers.ModelSerializer):
     """
     usuario = serializers.ReadOnlyField(source='usuario_id.username')
     instancia = InstanciaSerializer(source='instancia_id')
+
     class Meta:
         model = Comentario
         fields = ['id', 'usuario', 'descripcion', 'fecha_creacion', 'instancia']
