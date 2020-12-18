@@ -79,10 +79,29 @@ class Reporte extends Component {
     };
   }
 
+    /**
+   * Setea los estados utilizados para mostrar los datos en el modal de Ver Expediente
+   */
+  cleanModal= ()=> {
+    this.setState({
+      verNumero: '',
+      verFecha: '',
+      verDescripcion: '',
+      verObjetoDeGasto: '',
+      verEstado: '',
+      verOrigen: '',
+      verDependencia: '',
+      verTipo: '',
+      recorrido: [],
+      comentarios: [],
+    })
+  }
+
   /**
    * Funcion para cargar los datos del expediente seleccionado al modal 
    */
   handleViewExpediente =row=>{
+    this.cleanModal();
     //Se trae el expediente via ID y se muestra en pantalla los datos del mismo
     InstanciaService.getByExpedienteId(row.id)
     .then(response =>{
@@ -95,8 +114,9 @@ class Reporte extends Component {
         verDependencia: row.dependencia,
         verTipo: row.tipo,
         verObjetoDeGasto: response.data.results.map(exp =>{
-          return exp.expediente_id.objeto_de_gasto_id.descripcion
-        })
+          return ( exp.expediente_id.objeto_de_gasto_id  ?
+            exp.expediente_id.objeto_de_gasto_id.descripcion : 'Sin Objeto de Gasto')
+        }) 
       });
     })
     .catch((e) => {
@@ -113,7 +133,8 @@ class Reporte extends Component {
             id: instancia.id,
             fecha: moment(instancia.fecha_creacion).isValid() ?
             moment(instancia.fecha_creacion).format('DD/MM/YYYY') : 'Sin fecha',
-            dependencia: instancia.dependencia_actual_id.descripcion
+            dependencia: instancia.dependencia_actual_id.descripcion,
+            estado: instancia.estado_id.id
           }
         })
       }) 
