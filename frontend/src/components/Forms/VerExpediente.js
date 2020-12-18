@@ -122,126 +122,124 @@ class VerExpediente extends Component {
     return (
 
       <div className="modal fade" id="viewExpedienteModal" tabIndex="-1" role="dialog" aria-hidden="true">
-        <div className="modal-dialog modal-lg modal-dialog-centered " role="document">
+        <div className="modal-dialog modal-lg modal-dialog-centered "  role="document">
           <div className="modal-content ">
-            <div className="modal-header modal-header-reportes">
-              <h5 className="modal-title"><strong>Expediente N°{this.state.numero}</strong></h5>
-              <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div className="modal-body">
-              <div>
+            {/* <div ref={ref}> */}
+              <div className="modal-header modal-header-reportes">
+                <h5 className="modal-title"><strong>Expediente N°{this.state.numero}</strong></h5>
+                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
                 <div>
-                  <label className='modal-text'><strong>Tipo de Expediente:</strong> {this.state.tipoDeExpediente}
-                  </label>
-                </div>
-                <div>
-                  <label className='modal-text'><strong>Objeto:</strong> {this.state.objetoDeGasto}</label>
-                </div>
-                <div>
-                  <label className='modal-text'><strong>Origen:</strong> {this.state.origen}</label>
-                </div>
-                <div>
-                  <label className='modal-text'><strong>Dependencia Actual:</strong> {this.state.dependenciaActual}
-                  </label>
-                </div>
-                <div>
-                  <label className='modal-text'><strong>Fecha:</strong> {this.state.fecha}</label>
-                </div>
-                <div>
-                  <label className='modal-text'><strong>Descripción:</strong> {this.state.descripcion}</label>
-                </div>
-                <div>
-                  <label className='modal-text'><strong>Estado:</strong> {this.state.estado}</label>
-                </div>
-                <hr/>
-                <div>
-                  <label className='modal-text'>
-                    <strong>Recorrido:</strong>
-                    <button
-                      id='mostrarRecorrido'
-                      className="btn btn-sm btn-link text-primary"
-                      onClick={() => this.showTable('recorrido', 'mostrarRecorrido')}>
-                      Mostrar
-                    </button>
-                  </label>
-                </div>
+                  <div>
+                    <label className='modal-text'><strong>Tipo de Expediente:</strong> {this.state.tipoDeExpediente}
+                    </label>
+                  </div>
+                  <div>
+                    <label className='modal-text'><strong>Objeto:</strong> {this.state.objetoDeGasto}</label>
+                  </div>
+                  <div>
+                    <label className='modal-text'><strong>Origen:</strong> {this.state.origen}</label>
+                  </div>
+                  <div>
+                    <label className='modal-text'><strong>Dependencia Actual:</strong> {this.state.dependenciaActual}
+                    </label>
+                  </div>
+                  <div>
+                    <label className='modal-text'><strong>Fecha:</strong> {this.state.fecha}</label>
+                  </div>
+                  <div>
+                    <label className='modal-text'><strong>Descripción:</strong> {this.state.descripcion}</label>
+                  </div>
+                  <div>
+                    <label className='modal-text'><strong>Estado:</strong> {this.state.estado}</label>
+                  </div>
+                  <hr/>
+                  <div>
+                    <label className='modal-text'>
+                      <strong>Recorrido:</strong>
+                      <button
+                        id='mostrarRecorrido'
+                        className="btn btn-sm btn-link text-primary"
+                        onClick={() => this.showTable('recorrido', 'mostrarRecorrido')}>
+                        Mostrar
+                      </button>
+                    </label>
+                  </div>
 
-                <div id="recorrido" className='modal-table'>
-                  <div className="row">
-                    <div className="col-md-12">
-                      
-                        <Timeline lineColor={'#8f8b8b'}>
-                        {recorrido.map(rec =>
-                            <TimelineEvent 
-                            key= {rec.id}
-                            title= {rec.dependencia}
-                            titleStyle={{color:'#000'}}
-                            createdAt={rec.fecha}
-                            icon={<FontAwesomeIcon icon='check'/>}
-                            iconColor= {this.selectColor(rec.estado)}
-                            bubbleStyle={{borderColor: this.selectColor(rec.estado), backgroundColor: '#fff'}}
-                            >
-                            </TimelineEvent>
-                          )}
-                      </Timeline>
+                  <div id="recorrido" className='modal-table'>
+                    <div className="row">
+                      <div className="col-md-12">
+                          <Timeline lineColor={'#8f8b8b'}>
+                            {recorrido.map(rec =>
+                              <TimelineEvent 
+                              key= {rec.id}
+                              title= {rec.dependencia}
+                              titleStyle={{color:'#000'}}
+                              createdAt={rec.fecha}
+                              icon={<FontAwesomeIcon icon='check'/>}
+                              iconColor= {this.selectColor(rec.estado)}
+                              bubbleStyle={{borderColor: this.selectColor(rec.estado), backgroundColor: '#fff'}}
+                              >
+                              </TimelineEvent>
+                            )}
+                          </Timeline>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div>
-                  <label className='modal-text'>
-                    <strong>Comentarios:</strong>
-                    <button
-                      id='mostrarComentario'
-                      className="btn btn-sm btn-link text-primary"
-                      onClick={() => this.showTable('comentarios', 'mostrarComentario')}>
-                      Mostrar
-                    </button>
-                  </label>
-                </div>
+                  <div>
+                    <label className='modal-text'>
+                      <strong>Comentarios:</strong>
+                      <button
+                        id='mostrarComentario'
+                        className="btn btn-sm btn-link text-primary"
+                        onClick={() => this.showTable('comentarios', 'mostrarComentario')}>
+                        Mostrar
+                      </button>
+                    </label>
+                  </div>
 
-                <div id='comentarios' className='modal-table'>
-                  {/* Tabla de comentarios de expediente */}
-                  <DataTable
-                    columns={commentsColumns}
-                    data={this.state.comentarios}
-                    pagination
-                    paginationServer
-                    paginationPerPage={20}
-                    paginationTotalRows={this.state.totalRows}
-                    paginationComponentOptions={paginationOptions}
-                    onChangePage={this.handlePageChange}
-                    highlightOnHover={true}
-                    noHeader={true}
-                    dense={true}
-                    className="table-responsive table-sm table-bordered"
-                  />
+                  <div id='comentarios' className='modal-table'>
+                    {/* Tabla de comentarios de expediente */}
+                    <DataTable
+                      columns={commentsColumns}
+                      data={this.state.comentarios}
+                      pagination
+                      paginationServer
+                      paginationPerPage={20}
+                      paginationTotalRows={this.state.totalRows}
+                      paginationComponentOptions={paginationOptions}
+                      onChangePage={this.handlePageChange}
+                      highlightOnHover={true}
+                      noHeader={true}
+                      dense={true}
+                      className="table-responsive table-sm table-bordered"
+                    />
+                  </div>
                 </div>
               </div>
-
-              <div className="modal-footer oculto-impresion">
-                <button
-                  type="button"
-                  className="btn btn-sm btn-secondary "
-                  data-dismiss="modal">
-                  Cerrar
-                </button>
-                <button
-                  onClick={() => this.printModal()}
+            {/* </div> */}
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-sm btn-secondary "
+                data-dismiss="modal">
+                Cerrar
+              </button>
+              <button
                   type="button"
                   title="Imprimir"
                   className="btn btn-sm btn-info">
                   <FontAwesomeIcon icon="print"/>
-                </button>
-              </div>
-            </div>
+              </button>
+            </div>           
           </div>
         </div>
       </div>
     );
   }
 }
-
 export default VerExpediente;
