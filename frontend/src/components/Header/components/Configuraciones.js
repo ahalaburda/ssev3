@@ -1,53 +1,74 @@
 import React, {Component} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import moment from "moment";
 import DatePicker from "react-datepicker";
+import {Popover, OverlayTrigger} from "react-bootstrap";
+import helper from "../../../utils/helper";
+import moment from "moment";
 
 class Configuraciones extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedDate: moment().toDate()
+      show: false,
+      selectedDate: moment(helper.getCurrentYearSetting()).toDate()
     }
+  }
+
+  handleShowChange = () => {
+    this.setState({show: !this.state.show});
   }
 
   setStartDate = date => {
     this.setState({selectedDate: date});
   }
 
+  /**
+   * Limpia el session storage y setea la nueva configuracion de anho
+   */
+  handleSaveClick = () => {
+    sessionStorage.clear();
+    sessionStorage.setItem('year_setting', moment(this.state.selectedDate).format('YYYY-MM-DD'));
+    this.handleShowChange();
+  }
+
   render() {
-    return (
-      <li className="nav-item dropdown no-arrow">
-        <div className="nav-link dropdown-toggle" id="yearDropdown" role="button" data-toggle="dropdown"
-             aria-haspopup="true" aria-expanded="false">
-          <FontAwesomeIcon icon="cogs" size="sm"/>
-        </div>
-        {/* Dropdown - Year picker */}
-        <div className="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-             aria-labelledby="yearDropdown">
-          <h6 className="dropdown-header">
-            Selecciona un año
-          </h6>
-          <div className="dropdown-body">
-            <div className="container-fluid">
-              <div className="row">
-                <div className="col align-self-center">
-                  <DatePicker
-                    className="form-control"
-                    locale="es"
-                    dateFormat="yyyy"
-                    selected={moment().toDate()}
-                    onChange={date => this.setStartDate(date)}
-                    showYearPicker
-                    value={this.state.selectedDate}
-                    inline
-                  />
-                </div>
+    const popover = (
+      <Popover id="yearSelector-popover">
+        <Popover.Title className="text-center">Selecciona el año</Popover.Title>
+        <Popover.Content>
+          <div className="container">
+            <div className="row justify-content-center">
+              <div className="col">
+                <DatePicker
+                  className="form-control"
+                  locale="es"
+                  dateFormat="yyyy"
+                  selected={this.state.selectedDate}
+                  onChange={date => this.setStartDate(date)}
+                  showYearPicker
+                  value={this.state.selectedDate}
+                  inline
+                />
               </div>
             </div>
           </div>
-        </div>
-      </li>
+          <div className="row">
+            <div className="col text-center">
+              <button className="btn btn-sm btn-primary" onClick={this.handleSaveClick}>Guardar</button>
+            </div>
+          </div>
+        </Popover.Content>
+      </Popover>
+    )
+    return (
+      <OverlayTrigger trigger='click' show={this.state.show} onToggle={this.handleShowChange} placement="bottom"
+                      overlay={popover}>
+        <li className="nav-item">
+          <div className="nav-link" role="button">
+            <FontAwesomeIcon icon="cogs" size="sm"/>
+          </div>
+        </li>
+      </OverlayTrigger>
     );
   }
 }

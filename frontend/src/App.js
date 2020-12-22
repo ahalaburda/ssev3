@@ -30,6 +30,7 @@ import {
 } from "react-router-dom";
 import axiosBase from "./services/http-common";
 import Popups from "./components/Popups";
+import moment from "moment";
 
 class App extends Component {
   constructor(props) {
@@ -53,9 +54,12 @@ class App extends Component {
             const now = Math.ceil(Date.now() / 1000);
             if (tokenParts.exp < now) {
               this.setState({loggedIn: false});
-              localStorage.removeItem('access_token');
-              localStorage.removeItem('refresh_token');
-              localStorage.removeItem('username');
+              localStorage.clear();
+              // localStorage.removeItem('access_token');
+              // localStorage.removeItem('refresh_token');
+              // localStorage.removeItem('username');
+              sessionStorage.clear();
+              // sessionStorage.removeItem('year_setting');
               Popups.error('Debes iniciar sesión.');
             }
           }
@@ -82,6 +86,7 @@ class App extends Component {
       localStorage.setItem('access_token', response.data.access);
       localStorage.setItem('refresh_token', response.data.refresh);
       localStorage.setItem('username', data.username);
+      sessionStorage.setItem('year_setting', moment().startOf('year').format('YYYY-MM-DD'));
       Popups.success('Sesión iniciada correctamente.');
       this.setState({
         loggedIn: true,
@@ -105,6 +110,7 @@ class App extends Component {
   /**
    * Agregar a la blacklist el token utilizado
    * Borrar el access y refresh token del local storage
+   * Borrar la configuracion del anho del session storage
    * Setear el estado 'loggedIn' a false
    */
   handleLogout = () => {
@@ -112,9 +118,11 @@ class App extends Component {
       "refresh_token": localStorage.getItem('refresh_token')
     }).then(response => {
       if (response.status === 205) {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        localStorage.removeItem('username');
+        localStorage.clear();
+        // localStorage.removeItem('access_token');
+        // localStorage.removeItem('refresh_token');
+        // localStorage.removeItem('username');
+        sessionStorage.clear();
         axiosBase.defaults.headers['Authorization'] = null;
         this.setState({
           loggedIn: false,
