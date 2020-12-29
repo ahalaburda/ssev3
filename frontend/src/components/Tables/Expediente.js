@@ -25,7 +25,8 @@ class Expediente extends Component {
       list: [],
       totalRows: 0,
       selectedOption: 'Todos',
-      recorrido:[]
+      recorrido:[],
+      comentarios:[]
     };
     this.setShowNew = this.setShowNew.bind(this);
     this.handleOptionChange = this.handleOptionChange.bind(this);
@@ -229,7 +230,9 @@ class Expediente extends Component {
         this.setState({
           comentarios: response.data.results.map((comentario) =>{
             return{
-              fecha_creacion: moment(comentario.fecha_creacion).isValid() ?
+              id: comentario.id,
+              estado: comentario.instancia.estado_id.id,
+              fecha: moment(comentario.fecha_creacion).isValid() ?
                 moment(comentario.fecha_creacion).format('DD/MM/YYYY') : 'Sin fecha',
               dependencia: comentario.instancia.dependencia_actual_id.descripcion,
               comentario: comentario.descripcion
@@ -241,7 +244,6 @@ class Expediente extends Component {
         Popups.error('Ocurrio un error durante la busqueda.');
         console.log(`Error handleViewExpediente: ComentarioService\n${e}`);
       });  
-      
   }
 
   /**

@@ -36,11 +36,11 @@ class Reporte extends Component {
       objetoSelected: '',
       description: '',
       estado: '',
-      recorrido:[]
+      recorrido:[],
+      comentarios: []
     };
      
   }
-
 
   componentDidMount() {
     this.retrieveDependencias();
@@ -150,7 +150,9 @@ class Reporte extends Component {
         this.setState({
           comentarios: response.data.results.map((comentario) =>{
             return{
-              fecha_creacion: moment(comentario.fecha_creacion).isValid() ?
+              id: comentario.id,
+              estado: comentario.instancia.estado_id.id,
+              fecha: moment(comentario.fecha_creacion).isValid() ?
                 moment(comentario.fecha_creacion).format('DD/MM/YYYY') : 'Sin fecha',
               dependencia: comentario.instancia.dependencia_actual_id.descripcion,
               comentario: comentario.descripcion
