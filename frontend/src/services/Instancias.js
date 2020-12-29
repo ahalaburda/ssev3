@@ -34,13 +34,14 @@ class Instancias {
    * Obtener las instancias de acuerdo a la dependencia actual en la que se encuentra el expediente y que
    * dependencia asignada tiene el usuario. Tambien se puede filtrar por estado de expediente
    * El usuario se obtiene del access token alojado en el localStorage.
+   * La configuracion de anho lo obtiene del session storage.
    * @param page Pagina
    * @param state Estado del expediente
    * @returns {Promise<AxiosResponse<Instancia>>}
    */
   getInstanciaExpedienteEachUser(page, state) {
-    if (helper.existToken()) {
-      return http.get(`/instancias/expedientes/${helper.getCurrentUserId()}?estado=${state}&format=json&page=${page}`);
+    if (helper.existToken() && helper.existYearSetting()) {
+      return http.get(`/instancias/expedientes/${helper.getCurrentUserId()}?anho=${helper.getCurrentYearSetting()}&estado=${state}&format=json&page=${page}`);
     }
     return http.get(`/instancias/expedientes/0?format=json&page=${page}`);
   }
@@ -95,15 +96,15 @@ class Instancias {
    * @param {*} descripcion
    * @param {*} estado
    */
-  getExpForReportes( fecha_desde, fecha_hasta, origen, objeto, descripcion, estado, page){
+  getExpForReportes(fecha_desde, fecha_hasta, origen, objeto, descripcion, estado, page) {
     return http.get(`/instancias/?fecha_desde=${fecha_desde}&fecha_hasta=${fecha_hasta}&origen=${origen}&objeto_de_gasto=${objeto}&expediente_descripcion=${descripcion}&estado=${estado}&page=${page}&format=json`)
   }
 
   /**
    * Obtiene todas las instancias de un expediente
-   * @param {*} expediente_id 
-  */
-  getInstanciasPorExp(expediente_id){
+   * @param {*} expediente_id
+   */
+  getInstanciasPorExp(expediente_id) {
     return http.get(`/instancias_por_expediente/${expediente_id}`)
   }
 
