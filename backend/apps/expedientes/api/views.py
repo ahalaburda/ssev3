@@ -109,6 +109,7 @@ class LastInstanciaListView(ListCreateAPIView):
 
 class InstanciaExpedienteFilter(filters.FilterSet):
     estado = filters.CharFilter(field_name='estado_id__descripcion', lookup_expr='exact')
+    anho = filters.DateTimeFilter(field_name='expediente_id__fecha_creacion', lookup_expr='gte')
 
     class Meta:
         model: Instancia

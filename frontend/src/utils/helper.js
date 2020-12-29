@@ -1,7 +1,7 @@
 class Helper {
 
   /**
-   * Determinar si esta logeado con respecto al access_token. True existe el token, si no false.
+   * Determinar si existe o no el token en el local storage.
    * @returns {boolean}
    */
   existToken() {
@@ -9,12 +9,29 @@ class Helper {
   }
 
   /**
+   * Determinar si existe la configuracion de anho en el session storage.
+   * @returns {boolean}
+   */
+  existYearSetting() {
+    return !!sessionStorage.getItem('year_setting')
+  }
+
+  /**
    * Obtener el ID del usuario logeado actualmente.
    * @returns {number}
    */
   getCurrentUserId() {
-    const token_parts = JSON.parse(atob(localStorage.getItem('access_token').split('.')[1]));
+    const token_parts = this.existToken() &&
+      JSON.parse(atob(localStorage.getItem('access_token').split('.')[1]));
     return token_parts.user_id;
+  }
+
+  /**
+   * Si existe la configuracion de anho en el session storage, la retorna, sino por defecto 2020.
+   * @returns {string|string}
+   */
+  getCurrentYearSetting() {
+    return this.existYearSetting() ? sessionStorage.getItem('year_setting') : '2020';
   }
 
   /**
