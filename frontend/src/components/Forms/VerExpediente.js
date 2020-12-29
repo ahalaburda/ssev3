@@ -69,7 +69,7 @@ class VerExpediente extends Component {
     let expData = document.getElementById("expData").innerHTML;
     let expRec = document.getElementById("recorrido").innerHTML;
     let expCom = document.getElementById("comentarios").innerHTML;
-    let printDoc = document.getElementById("ifmcontentstoprintnt").contentWindow;
+    let printDoc = document.getElementById("ifmcontentstoprint").contentWindow;
     printDoc.document.open();
     printDoc.document.write(expNum);
     printDoc.document.write(expData);
@@ -110,7 +110,7 @@ class VerExpediente extends Component {
 
     return (
       <>
-        <iframe id="ifmcontentstoprint" style={{display:'none'}}></iframe>
+        <iframe title='conToPrint' id="ifmcontentstoprint" style={{display:'none'}}></iframe>
         <div className="modal fade" id="viewExpedienteModal"  role="dialog" aria-hidden="true">
           <div className="modal-dialog modal-lg modal-dialog-centered "  role="document">
             <div className="modal-content ">
@@ -212,24 +212,23 @@ class VerExpediente extends Component {
                   </div>
                 </div>
               <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-sm btn-secondary "
-                  data-dismiss="modal">
-                  Cerrar
-                </button>
-                <button
-                  onClick={()=>this.printModal()}
-                  type="button"
-                  title="Imprimir"
-                  className="btn btn-sm btn-info">
-                  <FontAwesomeIcon icon="print"/>
-                </button>
+                  <button
+                    onClick={()=>this.printModal()}
+                    type="button"
+                    title="Imprimir"
+                    className="btn btn-sm btn-info mr-auto">
+                    <FontAwesomeIcon icon="print"/>
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-secondary "
+                    data-dismiss="modal">
+                    Cerrar
+                  </button>
               </div>           
             </div>
           </div>
         </div>
-        
       </>
     );
   }

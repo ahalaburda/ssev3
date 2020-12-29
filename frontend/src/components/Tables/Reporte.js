@@ -350,6 +350,15 @@ class Reporte extends Component {
       this.setState({formattedEndDate:''});
     }
   }
+
+  //Funcion para imprimir la tabla
+  printTable = () =>{
+    window.print();
+  }
+ 
+  printExp = (row) =>{  
+   
+  }
   
   render() {
     let columns = [
@@ -421,14 +430,16 @@ class Reporte extends Component {
       {
         name: 'Acciones',
         cell: row =>
-          <div>
+          <div className='oculto-impresion'>
             <button
               className="btn btn-sm btn-link text-primary"
               onClick= {()=> this.handleViewExpediente(row)}
               data-toggle="modal" data-target="#viewExpedienteModal">
               <FontAwesomeIcon icon="eye"/>
             </button>
-            <button className="btn btn-sm btn-link text-info">
+            <button
+            onClick = {()=>this.printExp(row)}   
+            className="btn btn-sm btn-link text-info">
               <FontAwesomeIcon icon="print"/>
             </button>
           </div>,
@@ -446,7 +457,7 @@ class Reporte extends Component {
         <div className="d-sm-flex align-items-center justify-content-between mb-4">
           <h1 className="h3 mb-0 text-gray-800">Reportes</h1>
         </div>
-          <div className= "col-12">
+          <div className= "col-12 oculto-impresion">
             <div className='row'>
               <div className= "col-md-4">
                 <div className="row">
@@ -594,6 +605,7 @@ class Reporte extends Component {
 
               <div className="py-3 col-md-3 text-right">
                 <button
+                  onClick= {()=>this.printTable()}
                   className="btn btn-sm btn-info"
                 > <FontAwesomeIcon icon="print"/>Imprimir
                 </button>
@@ -640,8 +652,7 @@ class Reporte extends Component {
           verTipo = {this.state.verTipo}
           verRecorrido = {this.state.recorrido}
           comentarios = {this.state.comentarios}
-          />
-          
+          />   
       </>
     );
   }
