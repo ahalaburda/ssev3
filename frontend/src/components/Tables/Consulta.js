@@ -18,6 +18,27 @@ class Consulta extends Component {
   static getDerivedStateFromProps(nextProps) {
     return {list: nextProps.data}
   }
+   
+  /**
+   * Obtiene los datos de la fila de la tabla a traves de row y luego
+   * los escribe en un frameContent para poder imprimirlos
+   * @param {*} row 
+   */
+  printExp = (row) =>{  
+    let printDoc = document.getElementById("consultasContentsToPrint").contentWindow;
+    printDoc.document.open();
+    printDoc.document.write(`<Strong>Expediente N°${row.numero}</Strong><br>`);
+    printDoc.document.write(`<Strong>ID:</Strong> ${row.id}<br>`);
+    printDoc.document.write(`<Strong>Fecha:</Strong> ${row.fechaMe}<br>`);
+    printDoc.document.write(`<Strong>Origen:</Strong> ${row.origen}<br>`);
+    printDoc.document.write(`<Strong>Destino:</Strong> ${row.destino}<br>`);
+    printDoc.document.write(`<Strong>Descripción:</Strong> ${row.descripcion}<br>`);
+    printDoc.document.write(`<Strong>Estado:</Strong> ${row.estado}<br>`);
+    printDoc.document.write(`<Strong>Dependencia Actual:</Strong> ${row.dependenciaActual}<hr>`);
+    printDoc.document.close();
+    printDoc.focus();
+    printDoc.print();
+  }
 
   render() {
     // columnas para la tabla
@@ -84,9 +105,11 @@ class Consulta extends Component {
       },
       {
         name: 'Acciones',
-        cell: () =>
+        cell: (row) =>
           <div>
-            <button className="btn btn-sm btn-link text-primary">
+            <button 
+            onClick= {()=> this.printExp(row)}
+            className="btn btn-sm btn-link text-primary">
               <FontAwesomeIcon icon="print"/>
             </button>
           </div>,

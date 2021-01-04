@@ -355,10 +355,28 @@ class Reporte extends Component {
   printTable = () =>{
     window.print();
   }
- 
+  
+  /**
+   * Obtiene los datos de la fila de la tabla a traves de row y luego
+   * los escribe en un frameContent para poder imprimirlos
+   * @param {*} row 
+   */
   printExp = (row) =>{  
-   
+    let printDoc = document.getElementById("ifmcontentstoprint").contentWindow;
+    printDoc.document.open();
+    printDoc.document.write(`<Strong>Expediente N°${row.numero}</Strong><br>`);
+    printDoc.document.write(`<Strong>ID:</Strong> ${row.id}<br>`);
+    printDoc.document.write(`<Strong>Fecha:</Strong> ${row.fecha_me}<br>`);
+    printDoc.document.write(`<Strong>Origen:</Strong> ${row.origen}<br>`);
+    printDoc.document.write(`<Strong>Tipo de Expediente:</Strong> ${row.tipo}<br>`);
+    printDoc.document.write(`<Strong>Descripción:</Strong> ${row.descripcion}<br>`);
+    printDoc.document.write(`<Strong>Estado:</Strong> ${row.estado}<br>`);
+    printDoc.document.write(`<Strong>Dependencia Actual:</Strong> ${row.dependencia}<hr>`);
+    printDoc.document.close();
+    printDoc.focus();
+    printDoc.print();
   }
+
   
   render() {
     let columns = [

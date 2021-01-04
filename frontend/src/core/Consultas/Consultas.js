@@ -121,7 +121,7 @@ class Consultas extends Component {
         data: response.data.results.map(ie => {
           return {
             id: ie.expediente_id.id,
-            numero: ie.expediente_id.numero_mesa_de_entrada,
+            numero: ie.expediente_id.numero_mesa_de_entrada + "/" + ie.expediente_id.anho,
             fechaMe: moment(ie.expediente_id.fecha_mesa_entrada) ?
               moment(ie.expediente_id.fecha_mesa_entrada).format('DD/MM/YYYY - kk:mm:ss') : 'Sin fecha',
             descripcion: ie.expediente_id.descripcion,
@@ -195,6 +195,7 @@ class Consultas extends Component {
   render() {
     return (
       <>
+        <iframe title='conToPrint' id="consultasContentsToPrint" style={{display:'none'}}></iframe>
         <div className="d-sm-flex align-items-center justify-content-between mb-4">
           <h1 className="h3 mb-0 text-gray-800">Consultas</h1>
         </div>
