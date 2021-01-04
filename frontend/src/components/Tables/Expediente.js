@@ -316,12 +316,14 @@ class Expediente extends Component {
               return <div className="badge badge-success">{row.estado}</div>
             case "No Recibido":
               return <div className="badge badge-warning">{row.estado}</div>
-            case "Pausado":
-              return <div className="badge badge-dark">{row.estado}</div>
-            case "Reanudado":
-              return <div className="badge badge-success">{row.estado}</div>
+            case "Derivado":
+              return <div className="badge badge-info">{row.estado}</div>
+            case "Rechazado":
+              return <div className="badge badge-danger">{row.estado}</div>
+            case "Finalizado":
+              return <div className="badge badge-secondary">{row.estado}</div>
             default:
-              return <div className="badge badge-primary">{row.estado}</div>
+              return <div className="badge badge-dark">{row.estado}</div>
           }
         }
       },
