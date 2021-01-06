@@ -36,11 +36,11 @@ class Reporte extends Component {
       objetoSelected: '',
       description: '',
       estado: '',
-      recorrido:[]
+      recorrido:[],
+      comentarios: []
     };
      
   }
-
 
   componentDidMount() {
     this.retrieveDependencias();
@@ -150,7 +150,9 @@ class Reporte extends Component {
         this.setState({
           comentarios: response.data.results.map((comentario) =>{
             return{
-              fecha_creacion: moment(comentario.fecha_creacion).isValid() ?
+              id: comentario.id,
+              estado: comentario.instancia.estado_id.id,
+              fecha: moment(comentario.fecha_creacion).isValid() ?
                 moment(comentario.fecha_creacion).format('DD/MM/YYYY') : 'Sin fecha',
               dependencia: comentario.instancia.dependencia_actual_id.descripcion,
               comentario: comentario.descripcion
@@ -348,6 +350,33 @@ class Reporte extends Component {
       this.setState({formattedEndDate:''});
     }
   }
+
+  //Funcion para imprimir la tabla
+  printTable = () =>{
+    window.print();
+  }
+  
+  /**
+   * Obtiene los datos de la fila de la tabla a traves de row y luego
+   * los escribe en un frameContent para poder imprimirlos
+   * @param {*} row 
+   */
+  printExp = (row) =>{  
+    let printDoc = document.getElementById("ifmcontentstoprint").contentWindow;
+    printDoc.document.open();
+    printDoc.document.write(`<Strong>Expediente N°${row.numero}</Strong><br>`);
+    printDoc.document.write(`<Strong>ID:</Strong> ${row.id}<br>`);
+    printDoc.document.write(`<Strong>Fecha:</Strong> ${row.fecha_me}<br>`);
+    printDoc.document.write(`<Strong>Origen:</Strong> ${row.origen}<br>`);
+    printDoc.document.write(`<Strong>Tipo de Expediente:</Strong> ${row.tipo}<br>`);
+    printDoc.document.write(`<Strong>Descripción:</Strong> ${row.descripcion}<br>`);
+    printDoc.document.write(`<Strong>Estado:</Strong> ${row.estado}<br>`);
+    printDoc.document.write(`<Strong>Dependencia Actual:</Strong> ${row.dependencia}<hr>`);
+    printDoc.document.close();
+    printDoc.focus();
+    printDoc.print();
+  }
+
   
   render() {
     let columns = [
@@ -419,14 +448,16 @@ class Reporte extends Component {
       {
         name: 'Acciones',
         cell: row =>
-          <div>
+          <div className='oculto-impresion'>
             <button
               className="btn btn-sm btn-link text-primary"
               onClick= {()=> this.handleViewExpediente(row)}
               data-toggle="modal" data-target="#viewExpedienteModal">
               <FontAwesomeIcon icon="eye"/>
             </button>
-            <button className="btn btn-sm btn-link text-info">
+            <button
+            onClick = {()=>this.printExp(row)}   
+            className="btn btn-sm btn-link text-info">
               <FontAwesomeIcon icon="print"/>
             </button>
           </div>,
@@ -444,7 +475,7 @@ class Reporte extends Component {
         <div className="d-sm-flex align-items-center justify-content-between mb-4">
           <h1 className="h3 mb-0 text-gray-800">Reportes</h1>
         </div>
-          <div className= "col-12">
+          <div className= "col-12 oculto-impresion">
             <div className='row'>
               <div className= "col-md-4">
                 <div className="row">
@@ -592,6 +623,7 @@ class Reporte extends Component {
 
               <div className="py-3 col-md-3 text-right">
                 <button
+                  onClick= {()=>this.printTable()}
                   className="btn btn-sm btn-info"
                 > <FontAwesomeIcon icon="print"/>Imprimir
                 </button>
@@ -638,8 +670,7 @@ class Reporte extends Component {
           verTipo = {this.state.verTipo}
           verRecorrido = {this.state.recorrido}
           comentarios = {this.state.comentarios}
-          />
-          
+          />   
       </>
     );
   }

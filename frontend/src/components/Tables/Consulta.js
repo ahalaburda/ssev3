@@ -18,6 +18,27 @@ class Consulta extends Component {
   static getDerivedStateFromProps(nextProps) {
     return {list: nextProps.data}
   }
+   
+  /**
+   * Obtiene los datos de la fila de la tabla a traves de row y luego
+   * los escribe en un frameContent para poder imprimirlos
+   * @param {*} row 
+   */
+  printExp = (row) =>{  
+    let printDoc = document.getElementById("consultasContentsToPrint").contentWindow;
+    printDoc.document.open();
+    printDoc.document.write(`<Strong>Expediente N°${row.numero}</Strong><br>`);
+    printDoc.document.write(`<Strong>ID:</Strong> ${row.id}<br>`);
+    printDoc.document.write(`<Strong>Fecha:</Strong> ${row.fechaMe}<br>`);
+    printDoc.document.write(`<Strong>Origen:</Strong> ${row.origen}<br>`);
+    printDoc.document.write(`<Strong>Destino:</Strong> ${row.destino}<br>`);
+    printDoc.document.write(`<Strong>Descripción:</Strong> ${row.descripcion}<br>`);
+    printDoc.document.write(`<Strong>Estado:</Strong> ${row.estado}<br>`);
+    printDoc.document.write(`<Strong>Dependencia Actual:</Strong> ${row.dependenciaActual}<hr>`);
+    printDoc.document.close();
+    printDoc.focus();
+    printDoc.print();
+  }
 
   render() {
     // columnas para la tabla
@@ -64,16 +85,14 @@ class Consulta extends Component {
               return <div className="badge badge-success">{row.estado}</div>
             case "No Recibido":
               return <div className="badge badge-warning">{row.estado}</div>
+            case "Derivado":
+              return <div className="badge badge-info">{row.estado}</div>
+            case "Rechazado":
+              return <div className="badge badge-danger">{row.estado}</div>
             case "Finalizado":
-              return <div className="badge badge-primary">{row.estado}</div>
-            case "Anulado":
               return <div className="badge badge-secondary">{row.estado}</div>
-            case "Pausado":
-              return <div className="badge badge-dark">{row.estado}</div>
-            case "Reanudado":
-              return <div className="badge badge-success">{row.estado}</div>
             default:
-              return <div className="badge badge-primary">{row.estado}</div>
+              return <div className="badge badge-dark">{row.estado}</div>
           }
         }
       },
@@ -84,9 +103,11 @@ class Consulta extends Component {
       },
       {
         name: 'Acciones',
-        cell: () =>
+        cell: (row) =>
           <div>
-            <button className="btn btn-sm btn-link text-primary">
+            <button 
+            onClick= {()=> this.printExp(row)}
+            className="btn btn-sm btn-link text-info">
               <FontAwesomeIcon icon="print"/>
             </button>
           </div>,

@@ -25,7 +25,8 @@ class Expediente extends Component {
       list: [],
       totalRows: 0,
       selectedOption: 'Todos',
-      recorrido:[]
+      recorrido:[],
+      comentarios:[]
     };
     this.setShowNew = this.setShowNew.bind(this);
     this.handleOptionChange = this.handleOptionChange.bind(this);
@@ -229,7 +230,9 @@ class Expediente extends Component {
         this.setState({
           comentarios: response.data.results.map((comentario) =>{
             return{
-              fecha_creacion: moment(comentario.fecha_creacion).isValid() ?
+              id: comentario.id,
+              estado: comentario.instancia.estado_id.id,
+              fecha: moment(comentario.fecha_creacion).isValid() ?
                 moment(comentario.fecha_creacion).format('DD/MM/YYYY') : 'Sin fecha',
               dependencia: comentario.instancia.dependencia_actual_id.descripcion,
               comentario: comentario.descripcion
@@ -241,7 +244,6 @@ class Expediente extends Component {
         Popups.error('Ocurrio un error durante la busqueda.');
         console.log(`Error handleViewExpediente: ComentarioService\n${e}`);
       });  
-      
   }
 
   /**
@@ -314,12 +316,14 @@ class Expediente extends Component {
               return <div className="badge badge-success">{row.estado}</div>
             case "No Recibido":
               return <div className="badge badge-warning">{row.estado}</div>
-            case "Pausado":
-              return <div className="badge badge-dark">{row.estado}</div>
-            case "Reanudado":
-              return <div className="badge badge-success">{row.estado}</div>
+            case "Derivado":
+              return <div className="badge badge-info">{row.estado}</div>
+            case "Rechazado":
+              return <div className="badge badge-danger">{row.estado}</div>
+            case "Finalizado":
+              return <div className="badge badge-secondary">{row.estado}</div>
             default:
-              return <div className="badge badge-primary">{row.estado}</div>
+              return <div className="badge badge-dark">{row.estado}</div>
           }
         }
       },

@@ -22,7 +22,7 @@ class Sidebar extends Component {
   render() {
     return (
       <>
-        <ul className="navbar-nav bg-gradient-primary sidebar active sidebar-dark" id="sidebar">
+        <ul className="navbar-nav bg-gradient-primary sidebar active sidebar-dark oculto-impresion" id="sidebar">
           <Logo toggleIcon={this.state.toggle}/>
           {/* Divider */}
           <hr className="sidebar-divider my-0"/>

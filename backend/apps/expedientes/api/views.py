@@ -186,7 +186,7 @@ class ComentarioListView(ListCreateAPIView):
     """
     Vista para todos los comentarios, se permite agregar comentarios en la misma vista.
     """
-    queryset = Comentario.objects.all().order_by('fecha_creacion')
+    queryset = Comentario.objects.all().order_by('-fecha_creacion')
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = ComentarioFilter
 

@@ -1,10 +1,9 @@
 import React, {Component} from "react";
-import DataTable from "react-data-table-component";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Timeline, TimelineEvent} from 'react-event-timeline';
 
-
 class VerExpediente extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -22,7 +21,7 @@ class VerExpediente extends Component {
       totalRows: 0,
     }
   }
-
+  
   //reemplazo de funcion componentWillReceiveProps
   static getDerivedStateFromProps(nextProps) {
     return {
@@ -62,6 +61,27 @@ class VerExpediente extends Component {
     }
   }
 
+  /**
+   * Funcion utilizada para imprimir el modal
+   */
+  printModal =()=>{
+    let expNum = document.getElementById("expNum").innerHTML;
+    let expData = document.getElementById("expData").innerHTML;
+    let expRec = document.getElementById("recorrido").innerHTML;
+    let expCom = document.getElementById("comentarios").innerHTML;
+    let printDoc = document.getElementById("ifmcontentstoprint").contentWindow;
+    printDoc.document.open();
+    printDoc.document.write(expNum);
+    printDoc.document.write(expData);
+    printDoc.document.write("<Strong>Recorrido:</Strong>");
+    printDoc.document.write(expRec);
+    printDoc.document.write("<Strong>Comentarios:</Strong>");
+    printDoc.document.write(expCom);
+    printDoc.document.close();
+    printDoc.focus();
+    printDoc.print();
+  }
+
    /**
    * Retorna el codigo del color dependiendo del estado 
    * en el que se encuentra el expediente en esa instancia
@@ -85,88 +105,59 @@ class VerExpediente extends Component {
   }
   
   render() {
-    //desestructuracion de recorrido para poder mapearlo y mostrarolo en un timeline
-    const {recorrido} = this.state;
-
-    let commentsColumns = [
-      {
-        name: 'Fecha',
-        selector: 'fecha_creacion',
-        sortable: true,
-        wrap: true,
-        grow: 1
-      },
-      {
-        name: 'Comentario',
-        selector: 'comentario',
-        sortable: true,
-        wrap: true,
-        grow: 3
-      },
-      {
-        name: 'Dependencia',
-        selector: 'dependencia',
-        sortable: true,
-        wrap: true,
-        grow: 2
-      }
-    ];
-
-    const paginationOptions = {
-      noRowsPerPage: true,
-      rangeSeparatorText: 'de',
-      selectAllRowsItem: true,
-      selectAllRowsItemText: 'Todos'
-    };
+    //desestructuracion de recorrido y comentarios para poder mapearlo y mostrarlos en un timeline
+    const {recorrido, comentarios} = this.state;
 
     return (
-
-      <div className="modal fade" id="viewExpedienteModal" tabIndex="-1" role="dialog" aria-hidden="true">
-        <div className="modal-dialog modal-lg modal-dialog-centered "  role="document">
-          <div className="modal-content ">
-            {/* <div ref={ref}> */}
-              <div className="modal-header modal-header-reportes">
-                <h5 className="modal-title"><strong>Expediente N°{this.state.numero}</strong></h5>
-                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div className="modal-body">
-                <div>
-                  <div>
-                    <label className='modal-text'><strong>Tipo de Expediente:</strong> {this.state.tipoDeExpediente}
-                    </label>
+      <>
+        <iframe title='conToPrint' id="ifmcontentstoprint" style={{display:'none'}}></iframe>
+        <div className="modal fade" id="viewExpedienteModal"  role="dialog" aria-hidden="true">
+          <div className="modal-dialog modal-lg modal-dialog-centered "  role="document">
+            <div className="modal-content ">
+                <div className="modal-header modal-header-reportes">
+                  <h5 className="modal-title" id='expNum'><strong>Expediente N°{this.state.numero}</strong></h5>
+                  <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div className="modal-body">
+                  <div id='expData'>
+                    <div>
+                      <label className='modal-text '><strong>Tipo de Expediente:</strong> {this.state.tipoDeExpediente}
+                      </label>
+                    </div>
+                    <div>
+                      <label className='modal-text'><strong>Objeto:</strong> {this.state.objetoDeGasto}</label>
+                    </div>
+                    <div>
+                      <label className='modal-text'><strong>Origen:</strong> {this.state.origen}</label>
+                    </div>
+                    <div>
+                      <label className='modal-text'><strong>Dependencia Actual:</strong> {this.state.dependenciaActual}
+                      </label>
+                    </div>
+                    <div>
+                      <label className='modal-text'><strong>Fecha:</strong> {this.state.fecha}</label>
+                    </div>
+                    <div>
+                      <label className='modal-text'><strong>Descripción:</strong> {this.state.descripcion}</label>
+                    </div>
+                    <div>
+                      <label className='modal-text'><strong>Estado:</strong> {this.state.estado}</label>
+                    </div>  
+                    <hr/>
                   </div>
-                  <div>
-                    <label className='modal-text'><strong>Objeto:</strong> {this.state.objetoDeGasto}</label>
-                  </div>
-                  <div>
-                    <label className='modal-text'><strong>Origen:</strong> {this.state.origen}</label>
-                  </div>
-                  <div>
-                    <label className='modal-text'><strong>Dependencia Actual:</strong> {this.state.dependenciaActual}
-                    </label>
-                  </div>
-                  <div>
-                    <label className='modal-text'><strong>Fecha:</strong> {this.state.fecha}</label>
-                  </div>
-                  <div>
-                    <label className='modal-text'><strong>Descripción:</strong> {this.state.descripcion}</label>
-                  </div>
-                  <div>
-                    <label className='modal-text'><strong>Estado:</strong> {this.state.estado}</label>
-                  </div>
-                  <hr/>
                   <div>
                     <label className='modal-text'>
                       <strong>Recorrido:</strong>
-                      <button
-                        id='mostrarRecorrido'
-                        className="btn btn-sm btn-link text-primary"
-                        onClick={() => this.showTable('recorrido', 'mostrarRecorrido')}>
-                        Mostrar
-                      </button>
-                    </label>
+                    </label>  
+                    <button
+                      id='mostrarRecorrido'
+                      className="btn btn-sm btn-link text-primary"
+                      onClick={() => this.showTable('recorrido', 'mostrarRecorrido')}>
+                      Mostrar
+                    </button>
+                    
                   </div>
 
                   <div id="recorrido" className='modal-table'>
@@ -179,7 +170,7 @@ class VerExpediente extends Component {
                               title= {rec.dependencia}
                               titleStyle={{color:'#000'}}
                               createdAt={rec.fecha}
-                              icon={<FontAwesomeIcon icon='check'/>}
+                              icon={<FontAwesomeIcon icon='calendar-check'/>}
                               iconColor= {this.selectColor(rec.estado)}
                               bubbleStyle={{borderColor: this.selectColor(rec.estado), backgroundColor: '#fff'}}
                               >
@@ -193,53 +184,54 @@ class VerExpediente extends Component {
                   <div>
                     <label className='modal-text'>
                       <strong>Comentarios:</strong>
-                      <button
-                        id='mostrarComentario'
-                        className="btn btn-sm btn-link text-primary"
-                        onClick={() => this.showTable('comentarios', 'mostrarComentario')}>
-                        Mostrar
-                      </button>
                     </label>
+                    <button
+                      id='mostrarComentario'
+                      className="btn btn-sm btn-link text-primary"
+                      onClick={() => this.showTable('comentarios', 'mostrarComentario')}>
+                      Mostrar
+                    </button>
                   </div>
 
                   <div id='comentarios' className='modal-table'>
-                    {/* Tabla de comentarios de expediente */}
-                    <DataTable
-                      columns={commentsColumns}
-                      data={this.state.comentarios}
-                      pagination
-                      paginationServer
-                      paginationPerPage={20}
-                      paginationTotalRows={this.state.totalRows}
-                      paginationComponentOptions={paginationOptions}
-                      onChangePage={this.handlePageChange}
-                      highlightOnHover={true}
-                      noHeader={true}
-                      dense={true}
-                      className="table-responsive table-sm table-bordered"
-                    />
+                    <Timeline lineColor={'#8f8b8b'}>
+                      {comentarios.map(com =>
+                        <TimelineEvent 
+                        key= {com.id}
+                        title= {com.dependencia}
+                        titleStyle={{color:'#000'}}
+                        createdAt={com.fecha}
+                        icon={<FontAwesomeIcon icon='comment-alt'/>}
+                        iconColor= {this.selectColor(com.estado)}
+                        bubbleStyle={{borderColor: this.selectColor(com.estado), backgroundColor: '#fff'}}
+                        >
+                          {com.comentario}
+                        </TimelineEvent>
+                      )}
+                    </Timeline>
                   </div>
                 </div>
-              </div>
-            {/* </div> */}
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-sm btn-secondary "
-                data-dismiss="modal">
-                Cerrar
-              </button>
-              <button
-                  type="button"
-                  title="Imprimir"
-                  className="btn btn-sm btn-info">
-                  <FontAwesomeIcon icon="print"/>
-              </button>
-            </div>           
+              <div className="modal-footer">
+                  <button
+                    onClick={()=>this.printModal()}
+                    type="button"
+                    title="Imprimir"
+                    className="btn btn-sm btn-info mr-auto">
+                    <FontAwesomeIcon icon="print"/>
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-secondary "
+                    data-dismiss="modal">
+                    Cerrar
+                  </button>
+              </div>           
+            </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 }
+
 export default VerExpediente;
