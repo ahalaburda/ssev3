@@ -1,0 +1,152 @@
+[
+  {
+    "model": "dependencias.dependencia",
+    "pk": 1,
+    "fields": {
+      "descripcion": "Origen",
+      "activo": true
+    }
+  },
+  {
+    "model": "dependencias.dependencia",
+    "pk": 2,
+    "fields": {
+      "descripcion": "Gabinete Rector",
+      "activo": true
+    }
+  },
+  {
+    "model": "dependencias.dependencia",
+    "pk": 3,
+    "fields": {
+      "descripcion": "Direccion Gral de Administracion y Finanzas",
+      "activo": true
+    }
+  },
+  {
+    "model": "expedientes.estado",
+    "pk": 1,
+    "fields": {
+      "descripcion": "No Recibido",
+      "activo": true
+    }
+  },
+  {
+    "model": "expedientes.prioridad",
+    "pk": 1,
+    "fields": {
+      "descripcion": "Baja",
+      "activo": false
+    }
+  },
+  {
+    "model": "tipos_de_expedientes.tipo_de_expediente",
+    "pk": 1,
+    "fields": {
+      "descripcion": "Sin Ruta Predefinida",
+      "activo": true
+    }
+  },
+  {
+    "model": "tipos_de_expedientes.tipo_de_expediente_detalle",
+    "pk": 1,
+    "fields": {
+      "orden": 1,
+      "tipo_de_expediente_id": 1,
+      "dependencia_id": 1
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$180000$8tNXevT00AnP$td/Hq+ljYJYtqZtR2EZlBo0F2IqfUaNR94DfH5FJIeA=",
+      "last_login": "2020-06-11T14:45:41.161Z",
+      "is_superuser": true,
+      "username": "admin",
+      "first_name": "",
+      "last_name": "",
+      "email": "informatica@uni.edu.py",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2020-06-10T16:00:33.729Z",
+      "groups": [
+      ],
+      "user_permissions": [
+      ]
+    }
+  },
+  {
+    "model": "dependencias.dependencia_por_usuario",
+    "pk": 1,
+    "fields": {
+      "dependencia_id": 1,
+      "usuario_id": 1
+    }
+  },
+  {
+    "model": "expedientes.objeto_de_gasto",
+    "pk": 1,
+    "fields": {
+      "descripcion": "Sueldos",
+      "activo": true
+    }
+  },
+  {
+    "model": "lotes.lote",
+    "pk": 1,
+    "fields": {
+      "descripcion": "Lote uno",
+      "fecha_creacion": "2020-08-12T09:46:00Z",
+      "dependencia_destino_id": 3,
+      "activo": true
+    }
+  },
+  {
+    "model": "expedientes.expediente",
+    "pk": 1,
+    "fields": {
+      "numero_mesa_de_entrada": 1234,
+      "anho": 2020,
+      "descripcion": "Expediente para testeo",
+      "monto_currency": "PYG",
+      "monto": "550000",
+      "fecha_creacion": "2020-12-30T20:25:45.474Z",
+      "fecha_actualizacion": "2020-12-30T20:25:45.474Z",
+      "fecha_mesa_entrada": "2020-12-30T20:25:45.474Z",
+      "tipo_de_expediente_id": 1,
+      "dependencia_origen_id": 1,
+      "dependencia_destino_id": 3,
+      "objeto_de_gasto_id": 1,
+      "estado_id": 1,
+      "prioridad_id": 1,
+      "lote_id": 1
+    }
+  },
+  {
+    "model": "expedientes.instancia",
+    "pk": 1,
+    "fields": {
+      "orden_actual": 1,
+      "fecha_recepcion": "2020-12-30T20:25:45.474Z",
+      "fecha_final": "2020-12-30T20:25:45.474Z",
+      "expediente_id": 1,
+      "dependencia_anterior_id": 1,
+      "dependencia_actual_id": 2,
+      "dependencia_siguiente_id": 3,
+      "estado_id": 1,
+      "usuario_id_entrada": 1,
+      "usuario_id_salida": null
+    }
+  },
+  {
+    "model": "expedientes.comentario",
+    "pk": 1,
+    "fields": {
+      "fecha_creacion": "2020-12-30T20:25:45.474Z",
+      "descripcion": "comentario de testeo",
+      "instancia_id": 1,
+      "usuario_id": 1
+    }
+  }
+]
