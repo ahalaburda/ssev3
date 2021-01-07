@@ -10,7 +10,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'sse_api_dev',
-        'USER': 'root',
+        'USER': 'daniel',
         'PASSWORD': '123456',
         'HOST': 'localhost',
         'PORT': '3306',

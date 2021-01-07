@@ -36,6 +36,13 @@ class TipoDeExpediente extends Component {
     this.updateItem = this.updateItem.bind(this);
   }
 
+  componentWillUnmount() {
+    // fix Warning: Can't perform a React state update on an unmounted component
+    this.setState = (state,callback)=>{
+        return;
+    };
+  }
+  
   /**
    * Obtener los tipos de expedientes de la base de datos y cargarlos en la tabla
    */

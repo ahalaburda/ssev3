@@ -31,6 +31,13 @@ class ObjetoDeGasto extends Component {
     this.handleDeleteClick = this.handleDeleteClick.bind(this);
   }
 
+  componentWillUnmount() {
+    // fix Warning: Can't perform a React state update on an unmounted component
+    this.setState = (state,callback)=>{
+        return;
+    };
+  }
+
   setListFromResponse = response => {
     this.setState({
       list: response.data.results.map(odg => {
