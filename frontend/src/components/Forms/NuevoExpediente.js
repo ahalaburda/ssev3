@@ -216,7 +216,7 @@ class NuevoExpediente extends Component {
     const instancia = {
       expediente_id: expId,
       dependencia_actual_id: this.state.start.id,
-      dependencia_siguiente_id: this.state.next_id !== 0 && this.state.next_id,
+      dependencia_siguiente_id: this.state.next_id !== 0 ? this.state.next_id : this.state.end.id,
       usuario_id_entrada: user_in_id,
       orden_actual: 1
     }

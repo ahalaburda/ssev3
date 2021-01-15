@@ -22,9 +22,10 @@ const initialState = {
     label: ''
   },
   newNumMesa: '',
-  comment: ''
+  comment: '',
+  sig_dependencias: '',
+  dependenciaSigSelected:'',
 }
-
 class ProcesarExpediente extends Component {
   constructor(props) {
     super(props);
@@ -42,9 +43,11 @@ class ProcesarExpediente extends Component {
       depPrev: nextProps.expedienteData.dependencia_anterior_id,
       depNow: nextProps.expedienteData.dependencia_actual_id,
       depNext: nextProps.expedienteData.dependencia_siguiente_id,
-      expedienteType: nextProps.expedienteData.expediente_id.tipo_de_expediente_id
+      expedienteType: nextProps.expedienteData.expediente_id.tipo_de_expediente_id,
+      sig_dependencias: nextProps.sig_dependencias
     }
   }
+
 
   /**
    * Setea el props para que se cierre el modal y el 'state' vuelva a su estado inicial.
@@ -278,6 +281,17 @@ class ProcesarExpediente extends Component {
     });
   }
 
+  saveInstanciaDerivadoSinRuta = (userIdIn) =>{
+    console.log(this.state.dependenciaSigSelected);
+    return InstanciasService.create({
+      expediente_id: this.state.instancia.expediente_id.id,
+      dependencia_anterior_id: this.state.depNow.id,
+      dependencia_actual_id: this.state.dependenciaSigSelected,
+      dependencia_siguiente_id:this.state.dependenciaSigSelected,
+      estado_id: this.state.newEstado.id,
+      usuario_id_entrada: userIdIn
+    });
+  }
   /**
    * Derivar el expediente modificando el estado del expediente, agregando usuario_salida a la instancia actual,
    * obteniendo la dependencia siguiente al siguiente. Luego guarda los datos de la nueva instancia y su respectivo
@@ -291,15 +305,30 @@ class ProcesarExpediente extends Component {
       this.getPrevOrNextDependenciaId(this.state.expedienteType, this.state.instancia.orden_actual, true)
     ])
       .then(response => {
-        this.saveInstanciaDerivado(userIdIn, response[2].data.results.pop())
+        if (this.state.instancia.expediente_id.tipo_de_expediente_id.id === 1) {
+          this.saveInstanciaDerivadoSinRuta(userIdIn)
+          .then(r => {
+            console.log(r.data);
+            this.saveExtraInstancia(r.data)
+            Popups.success('Expediente procesado.');
+          })
+          .catch(err => {
+            console.log(`Error saveInstanciaDerivadoSinRuta\n${err}`);
+            Popups.error('Ocurrio un error al procesar expediente.');
+          });  
+          
+        } else {
+          this.saveInstanciaDerivado(userIdIn, response[2].data.results.pop())
           .then(resp => {
+             console.log(resp.data);
             this.saveExtraInstancia(resp.data);
+            Popups.success('Expediente procesado.');
           })
           .catch(err => {
             console.log(`Error saveInstanciaDerivado\n${err}`);
             Popups.error('Ocurrio un error al procesar expediente.');
-          });
-        Popups.success('Expediente procesado.');
+          });  
+        }
       })
       .catch(e => {
         console.log(`Error processDerivado\n${e}`);
@@ -341,6 +370,14 @@ class ProcesarExpediente extends Component {
         console.log(`Error processFinalizado\n${e}`);
         Popups.error('Ocurrio un error al procesar expediente.');
       });
+  }
+
+  setDependenciaSiguiente = dependencia_sig => {
+    if (dependencia_sig != null) {
+      this.setState({dependenciaSigSelected: dependencia_sig.id});  
+    }  else {
+      this.setState({dependenciaSigSelected: ''})
+    }
   }
 
   /**
@@ -426,110 +463,120 @@ class ProcesarExpediente extends Component {
     // si se selecciona rechazar expediente, se muestra la dependencia anterior como la dependencia siguiente
     this.state.newEstado.value === helper.getEstado().RECHAZADO ? nextDependencia = this.state.depPrev.descripcion :
       nextDependencia = this.state.depNext.descripcion;
-
-    return (
-      <Modal
-        show={this.props.showModal}
-        backdrop="static"
-        centered>
-        <Modal.Header>
-          <Modal.Title>Procesar Expediente</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group>
-              <Form.Row>
-                <div className="form-group col">
-                  <Form.Row>
-                    <div className="form-group col">
-                      <Form.Label>Numero de Expediente</Form.Label>
-                      {numMesaComp}
-                    </div>
-                  </Form.Row>
-                  <Form.Row>
-                    <div className="form-group col">
-                      <Form.Label>Tipo de Expediente</Form.Label>
-                      <input
+    
+    let tipoExpediente=this.state.instancia.expediente_id.tipo_de_expediente_id.id 
+      return (
+        <Modal
+          show={this.props.showModal}
+          backdrop="static"
+          centered>
+          <Modal.Header>
+            <Modal.Title>Procesar Expediente</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Form.Group>
+                <Form.Row>
+                  <div className="form-group col">
+                    <Form.Row>
+                      <div className="form-group col">
+                        <Form.Label>Numero de Expediente</Form.Label>
+                        {numMesaComp}
+                      </div>
+                    </Form.Row>
+                    <Form.Row>
+                      <div className="form-group col">
+                        <Form.Label>Tipo de Expediente</Form.Label>
+                        <input
+                          className="form-control"
+                          value={this.state.instancia.expediente_id.tipo_de_expediente_id.descripcion}
+                          disabled/>
+                      </div>
+                    </Form.Row>
+                  </div>
+                  <div className="form-group col">
+                    <Form.Row>
+                      <Form.Label>Descripci&oacute;n</Form.Label>
+                      <Form.Control as="textarea" rows="5"
+                                    name="description"
+                                    value={this.state.instancia.expediente_id.descripcion}
+                                    disabled/>
+                    </Form.Row>
+                  </div>
+                </Form.Row>
+                <Form.Row>
+                  <div className="form-group col">
+                    <Form.Label>Dependencia Anterior</Form.Label>
+                    <input
+                      className="form-control"
+                      value={this.state.depPrev.descripcion}
+                      disabled/>
+                  </div>
+                  <div className="form-group col">
+                    <Form.Label>Dependencia Actual</Form.Label>
+                    <input
+                      className="form-control"
+                      value={this.state.depNow.descripcion}
+                      disabled/>
+                  </div>
+                </Form.Row>
+                <Form.Row>
+                  <div className="form-group col">
+                    <Form.Label>Estado</Form.Label>
+                    <Select
+                      options={selectOptions}
+                      placeholder="Selecciona..."
+                      size="sm"
+                      onChange={value => this.handleEstadoChange(value)}
+                      name="select"/>
+                  </div>
+                  <div className="form-group col">
+                    <Form.Label>Dependencia Siguiente</Form.Label>   
+                       {this.state.newEstado.value === 'Derivado' && tipoExpediente === 1 ?
+                        <Select
+                        options={this.state.sig_dependencias}
+                        value={this.state.sig_dependencias.value}
+                        placeholder="Selecciona..."
+                        size="sm"
+                        onChange={(dependencia_sig) => this.setDependenciaSiguiente(dependencia_sig)}
+                        name="selectDestino"/> :
+                        <input
                         className="form-control"
-                        value={this.state.instancia.expediente_id.tipo_de_expediente_id.descripcion}
-                        disabled/>
-                    </div>
-                  </Form.Row>
-                </div>
-                <div className="form-group col">
-                  <Form.Row>
-                    <Form.Label>Descripci&oacute;n</Form.Label>
-                    <Form.Control as="textarea" rows="5"
-                                  name="description"
-                                  value={this.state.instancia.expediente_id.descripcion}
-                                  disabled/>
-                  </Form.Row>
-                </div>
-              </Form.Row>
-              <Form.Row>
-                <div className="form-group col">
-                  <Form.Label>Dependencia Anterior</Form.Label>
-                  <input
-                    className="form-control"
-                    value={this.state.depPrev.descripcion}
-                    disabled/>
-                </div>
-                <div className="form-group col">
-                  <Form.Label>Dependencia Actual</Form.Label>
-                  <input
-                    className="form-control"
-                    value={this.state.depNow.descripcion}
-                    disabled/>
-                </div>
-              </Form.Row>
-              <Form.Row>
-                <div className="form-group col">
-                  <Form.Label>Estado</Form.Label>
-                  <Select
-                    options={selectOptions}
-                    placeholder="Selecciona..."
-                    size="sm"
-                    onChange={value => this.handleEstadoChange(value)}
-                    name="select"/>
-                </div>
-                <div className="form-group col">
-                  <Form.Label>Dependencia Siguiente</Form.Label>
-                  <input
-                    className="form-control"
-                    value={nextDependencia}
-                    disabled/>
-                </div>
-              </Form.Row>
-              <Form.Row>
-                <div className="from-group col">
-                  <Form.Label>Comentario</Form.Label>
-                  <Form.Control as="textarea"
-                                name="comment"
-                                placeholder="Agrega un comentario"
-                                value={this.state.comment}
-                                onChange={value => this.handleCommentChange(value)}
-                  />
-                </div>
-              </Form.Row>
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <button
-            type="button"
-            className="btn btn-sm btn-secondary"
-            onClick={this.handleClose}>
-            Cerrar
-          </button>
-          <button
-            type="button"
-            className="btn btn-sm btn-primary"
-            onClick={this.handleProcess}
-          >Guardar
-          </button>
-        </Modal.Footer>
-      </Modal>
-    );
+                        value={nextDependencia}
+                        disabled/> }
+                  </div>
+                </Form.Row>
+                <Form.Row>
+                  <div className="from-group col">
+                    <Form.Label>Comentario</Form.Label>
+                    <Form.Control as="textarea"
+                                  name="comment"
+                                  placeholder="Agrega un comentario"
+                                  value={this.state.comment}
+                                  onChange={value => this.handleCommentChange(value)}
+                    />
+                  </div>
+                </Form.Row>
+              </Form.Group>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <button
+              type="button"
+              className="btn btn-sm btn-secondary"
+              onClick={this.handleClose}>
+              Cerrar
+            </button>
+            <button
+              type="button"
+              className="btn btn-sm btn-primary"
+              onClick={this.handleProcess}
+            >Guardar
+            </button>
+          </Modal.Footer>
+        </Modal>
+      );  
+  
   }
 }
 

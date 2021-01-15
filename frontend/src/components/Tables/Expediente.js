@@ -10,6 +10,7 @@ import ProcesarExpediente from "../Forms/ProcesarExpediente";
 import "../../styles/table.css";
 import VerExpediente from "../Forms/VerExpediente";
 import ComentarioService from "../../services/Comentarios";
+import DependenciasService from "../../services/Dependencias";
 
 /**
  * Tabla para expedientes
@@ -26,7 +27,8 @@ class Expediente extends Component {
       totalRows: 0,
       selectedOption: 'Todos',
       recorrido:[],
-      comentarios:[]
+      comentarios:[],
+      sig_dependencias:[]
     };
     this.setShowNew = this.setShowNew.bind(this);
     this.handleOptionChange = this.handleOptionChange.bind(this);
@@ -38,6 +40,7 @@ class Expediente extends Component {
   // Para la primera carga siempre trae la pagina 1 (uno)
   componentDidMount() {
     this.filterExpedientes(1, '');
+    this.retrieveDependencias();
   }
 
   // componentWillUnmount() {
@@ -66,6 +69,28 @@ class Expediente extends Component {
       }),
       loading: false
     });
+  }
+
+  /**
+   * Obtiene todas las dependencias de la base de datos y los carga como opciones para el select
+   */
+  retrieveDependencias() {
+    DependenciasService.getAll(1)
+      .then((response) => {
+        this.setState({
+          sig_dependencias: response.data.results.map((d) => {
+            return {
+              id: d.id,
+              value: d.descripcion,
+              label: d.descripcion,
+            }
+          })
+        })
+      })
+      .catch((e) => {
+        Popups.error('Ocurrió un error al procesar la información');
+        console.log(`Error retrieveDependencias:\n${e}`);
+      });
   }
 
   /**
@@ -362,7 +387,6 @@ class Expediente extends Component {
       selectAllRowsItem: true,
       selectAllRowsItemText: 'Todos'
     };
-   
     return (
       <div>
         <div className="d-sm-flex align-items-center justify-content-between mb-2">
@@ -435,6 +459,7 @@ class Expediente extends Component {
             setShow={this.setShowProcess}
             showModal={this.state.showProcess}
             expedienteData={this.state.expedienteData}
+            sig_dependencias={this.state.sig_dependencias}
           />
            {/*Modal para ver el expediente con detalle*/}
           <VerExpediente
