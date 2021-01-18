@@ -223,7 +223,8 @@ class ProcesarExpediente extends Component {
   saveInstanciaRechazado = (userIdIn, tdePrevDep) => {
     return InstanciasService.create({
       expediente_id: this.state.instancia.expediente_id.id,
-      dependencia_anterior_id: tdePrevDep.dependencia_id.id,
+      dependencia_anterior_id: this.state.instancia.expediente_id.tipo_de_expediente_id.id === 1 ? this.state.depPrev.id :
+        tdePrevDep.dependencia_id.id,
       dependencia_actual_id: this.state.depPrev.id,
       dependencia_siguiente_id: this.state.depNow.id,
       estado_id: this.state.newEstado.id,
@@ -247,6 +248,7 @@ class ProcesarExpediente extends Component {
     ])
       .then(response => {
         // una vez terminados se guarda la nueva instancia
+        console.log(response[2].data.results.pop());
         this.saveInstanciaRechazado(userIdIn, response[2].data.results.pop())
           .then(resp => {
             this.saveExtraInstancia(resp.data);
@@ -273,25 +275,16 @@ class ProcesarExpediente extends Component {
     return InstanciasService.create({
       expediente_id: this.state.instancia.expediente_id.id,
       dependencia_anterior_id: this.state.depNow.id,
-      dependencia_actual_id: this.state.depNext.id,
-      dependencia_siguiente_id: tdeNextDep.dependencia_id.id,
+      dependencia_actual_id: this.state.instancia.expediente_id.tipo_de_expediente_id.id === 1 ? this.state.dependenciaSigSelected : 
+        this.state.depNext.id,
+      dependencia_siguiente_id:this.state.instancia.expediente_id.tipo_de_expediente_id.id === 1 ? this.state.dependenciaSigSelected :
+        tdeNextDep.dependencia_id.id,
       estado_id: this.state.newEstado.id,
       usuario_id_entrada: userIdIn,
       orden_actual: this.state.instancia.orden_actual + 1
     });
   }
 
-  saveInstanciaDerivadoSinRuta = (userIdIn) =>{
-    console.log(this.state.dependenciaSigSelected);
-    return InstanciasService.create({
-      expediente_id: this.state.instancia.expediente_id.id,
-      dependencia_anterior_id: this.state.depNow.id,
-      dependencia_actual_id: this.state.dependenciaSigSelected,
-      dependencia_siguiente_id:this.state.dependenciaSigSelected,
-      estado_id: this.state.newEstado.id,
-      usuario_id_entrada: userIdIn
-    });
-  }
   /**
    * Derivar el expediente modificando el estado del expediente, agregando usuario_salida a la instancia actual,
    * obteniendo la dependencia siguiente al siguiente. Luego guarda los datos de la nueva instancia y su respectivo
@@ -305,30 +298,17 @@ class ProcesarExpediente extends Component {
       this.getPrevOrNextDependenciaId(this.state.expedienteType, this.state.instancia.orden_actual, true)
     ])
       .then(response => {
-        if (this.state.instancia.expediente_id.tipo_de_expediente_id.id === 1) {
-          this.saveInstanciaDerivadoSinRuta(userIdIn)
-          .then(r => {
-            console.log(r.data);
-            this.saveExtraInstancia(r.data)
-            Popups.success('Expediente procesado.');
-          })
-          .catch(err => {
-            console.log(`Error saveInstanciaDerivadoSinRuta\n${err}`);
-            Popups.error('Ocurrio un error al procesar expediente.');
-          });  
-          
-        } else {
-          this.saveInstanciaDerivado(userIdIn, response[2].data.results.pop())
-          .then(resp => {
-             console.log(resp.data);
-            this.saveExtraInstancia(resp.data);
-            Popups.success('Expediente procesado.');
-          })
-          .catch(err => {
-            console.log(`Error saveInstanciaDerivado\n${err}`);
-            Popups.error('Ocurrio un error al procesar expediente.');
-          });  
-        }
+        this.saveInstanciaDerivado(userIdIn, response[2].data.results.pop())
+        .then(resp => {
+            console.log(resp.data);
+          this.saveExtraInstancia(resp.data);
+          Popups.success('Expediente procesado.');
+        })
+        .catch(err => {
+          console.log(`Error saveInstanciaDerivado\n${err}`);
+          Popups.error('Ocurrio un error al procesar expediente.');
+        });  
+        
       })
       .catch(e => {
         console.log(`Error processDerivado\n${e}`);
