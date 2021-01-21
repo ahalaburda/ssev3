@@ -9,6 +9,9 @@ class TiposDeExpedientes {
     return http.get(`/tipos_de_expedientes/?format=json&page=${page}`);
   }
 
+  /**
+   * Obtiene todos los Tipos de expedientes sin paginacion de la API
+   */
   getAllSinPag() {
     return http.get('/tipos_de_expedientes_sin_pag/?format=json');
   }

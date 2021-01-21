@@ -10,6 +10,9 @@ class ObjetosDeGastos{
         return http.get(`/objetos_de_gastos/?format=json&page=${page}`);
     }
 
+    /**
+     * Obtiene todos los objetos de datos sin paginacion de la API
+     */
     getAllNoPag(){
         return http.get("/objetos_de_gastos_no_pag/?format=json")
     }

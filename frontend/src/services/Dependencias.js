@@ -9,6 +9,9 @@ class Dependencias {
     return http.get('/dependencias/?format=json');
   }
 
+  /**
+   * Obtiene todas las dependencias sin paginacion de la API
+   */
   getAllSinPag(){
     return http.get('/dependencias_sin_pag/?format=json');
   }
