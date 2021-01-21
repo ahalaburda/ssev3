@@ -289,6 +289,10 @@ class Reporte extends Component {
         this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
           this.state.objetoSelected, this.state.description, helper.getEstado().RECIBIDO, 1);
         break;
+      case helper.getEstado().REANUDADO:
+        this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
+          this.state.objetoSelected, this.state.description, helper.getEstado().REANUDADO, 1);
+        break;
       case helper.getEstado().NORECIBIDO:
         this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
           this.state.objetoSelected, this.state.description, helper.getEstado().NORECIBIDO, 1);
@@ -588,6 +592,12 @@ class Reporte extends Component {
                     name="options" checked={this.state.estado === helper.getEstado().RECIBIDO} onChange={this.handleSearch} />
                     {this.state.estado === helper.getEstado().RECIBIDO &&
                       <FontAwesomeIcon id="recibidosIcon" icon="check"/>}&nbsp;Recibidos
+                  </label>
+                  <label className="btn btn-sm btn-custom shadow-sm">
+                    <input type='radio' id='reanudados' value={helper.getEstado().REANUDADO} 
+                    name="options" checked={this.state.estado === helper.getEstado().REANUDADO} onChange={this.handleSearch} />
+                    {this.state.estado === helper.getEstado().REANUDADO &&
+                      <FontAwesomeIcon id="reaundadosIcon" icon="check"/>}&nbsp;Reanudados
                   </label>
                   <label className="btn btn-sm btn-warning shadow-sm">
                     <input type='radio' id='noRecibidos' value={helper.getEstado().NORECIBIDO} 

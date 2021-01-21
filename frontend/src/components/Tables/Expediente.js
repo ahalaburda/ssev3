@@ -150,6 +150,9 @@ class Expediente extends Component {
       case helper.getEstado().RECIBIDO:
         this.filterExpedientes(1, helper.getEstado().RECIBIDO);
         break;
+      case helper.getEstado().REANUDADO:
+        this.filterExpedientes(1, helper.getEstado().REANUDADO);
+        break;
       case helper.getEstado().PAUSADO:
         this.filterExpedientes(1, helper.getEstado().PAUSADO);
         break;
@@ -417,6 +420,14 @@ class Expediente extends Component {
               {this.state.selectedOption === helper.getEstado().RECIBIDO &&
               <FontAwesomeIcon id="recibidosIcon" icon="check"/>}
               &nbsp;Recibidos
+            </label>
+            <label className="btn btn-sm btn-custom">
+              <input type="radio" id="reanudados" value={helper.getEstado().REANUDADO} name="options"
+                     checked={this.state.selectedOption === helper.getEstado().REANUDADO}
+                     onChange={this.handleOptionChange}/>
+              {this.state.selectedOption === helper.getEstado().REAUNUDADO &&
+              <FontAwesomeIcon id="reanudadosIcon" icon="check"/>}
+              &nbsp;Reanudados
             </label>
             <label className="btn btn-sm btn-dark">
               <input type="radio" id="pausados" value={helper.getEstado().PAUSADO} name="options"
