@@ -10,6 +10,10 @@ class ObjetosDeGastos{
         return http.get(`/objetos_de_gastos/?format=json&page=${page}`);
     }
 
+    getAllNoPag(){
+        return http.get("/objetos_de_gastos_no_pag/?format=json")
+    }
+
     /**
      * Crear un objeto de gasto.
      * @param objetoDeGasto

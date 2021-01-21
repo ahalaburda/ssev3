@@ -11,6 +11,7 @@ urlpatterns = [
     path('comentarios/<pk>', ComentarioDetailView.as_view()),
     path('objetos_de_gastos/', Objeto_de_GastoListView.as_view(), name="objetos_de_gastos"),
     path('objetos_de_gastos/<pk>', Objeto_de_GastoDetailView.as_view()),
+    path('objetos_de_gastos_no_pag/', Objeto_de_Gasto_NoPag_ListView.as_view()),
     path('estados/', EstadoListView.as_view(), name="estados"),
     path('estados/<pk>', EstadoDetailView.as_view()),
     path('prioridades/', PrioridadListView.as_view(), name="prioridades"),

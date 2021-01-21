@@ -75,10 +75,10 @@ class Expediente extends Component {
    * Obtiene todas las dependencias de la base de datos y los carga como opciones para el select
    */
   retrieveDependencias() {
-    DependenciasService.getAll(1)
+    DependenciasService.getAllSinPag()
       .then((response) => {
         this.setState({
-          sig_dependencias: response.data.results.map((d) => {
+          sig_dependencias: response.data.map((d) => {
             return {
               id: d.id,
               value: d.descripcion,

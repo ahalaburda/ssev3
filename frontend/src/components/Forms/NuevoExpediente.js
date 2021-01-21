@@ -46,10 +46,10 @@ class NuevoExpediente extends Component {
    * Obtener las dependencias de la base de datos y cargarlos como opciones para el select
    */
   retrieveAllDependencias() {
-    DependenciasService.getAll()
+    DependenciasService.getAllSinPag()
       .then((response) => {
         this.setState({
-          end_list: response.data.results.map((d) => {
+          end_list: response.data.map((d) => {
             return {
               id: d.id,
               value: d.descripcion,
@@ -67,10 +67,10 @@ class NuevoExpediente extends Component {
    * Obtener los tipos de expedientes de la base de datos y cargarlos como opciones para el select
    */
   retrieveTiposDeExpedientes() {
-    TiposDeExpedientesService.getAll()
+    TiposDeExpedientesService.getAllSinPag()
       .then(response => {
         this.setState({
-          tipos_expediente_list: response.data.results.map(tde => {
+          tipos_expediente_list: response.data.map(tde => {
             return {
               id: tde.id,
               value: tde.descripcion,

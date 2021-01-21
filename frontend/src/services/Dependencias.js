@@ -8,6 +8,10 @@ class Dependencias {
   getAll() {
     return http.get('/dependencias/?format=json');
   }
+
+  getAllSinPag(){
+    return http.get('/dependencias_sin_pag/?format=json');
+  }
 }
 
 export default new Dependencias();

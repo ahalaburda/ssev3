@@ -239,3 +239,13 @@ class EstadoListView(ListCreateAPIView):
 class EstadoDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Estado.objects.all()
     serializer_class = EstadoSerializer
+
+#Vistas para objetos de gastos sin paginar
+class Objeto_de_Gasto_NoPag_ListView(ListAPIView):
+    queryset = Objeto_de_Gasto.objects.all()
+    serializer_class = Objeto_de_GastoSerializer
+
+    def list(self, request, *args, **kwargs):
+        filtered_list = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(filtered_list, many=True)
+        return Response(serializer.data)

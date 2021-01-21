@@ -171,10 +171,10 @@ class Reporte extends Component {
    * Obtiene todas las dependencias de la base de datos y los carga como opciones para el select
    */
   retrieveDependencias() {
-    DependenciasService.getAll()
+    DependenciasService.getAllSinPag()
       .then((response) => {
         this.setState({
-          origen: response.data.results.map((d) => {
+          origen: response.data.map((d) => {
             return {
               id: d.id,
               value: d.descripcion,
@@ -193,10 +193,10 @@ class Reporte extends Component {
    * Obtiene los objetos de gastos de la base de datos y los carga como opciones para el select
    */
   retrieveObjetosDeGastos() {
-    ObjetosDeGastosService.getAll(1)
+    ObjetosDeGastosService.getAllNoPag()
       .then((response) => {
         this.setState({
-          objetoDeGasto: response.data.results.map((d) => {
+          objetoDeGasto: response.data.map((d) => {
             return {
               id: d.id,
               value: d.descripcion,
