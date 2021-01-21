@@ -426,6 +426,8 @@ class Reporte extends Component {
           switch (row.estado) {
             case "Recibido":
               return <div className="badge badge-success">{row.estado}</div>
+            case "Reanudado":
+              return <div className="badge badge-custom">{row.estado}</div>    
             case "No Recibido":
               return <div className="badge badge-warning">{row.estado}</div>
             case "Derivado":
@@ -592,12 +594,6 @@ class Reporte extends Component {
                     name="options" checked={this.state.estado === helper.getEstado().NORECIBIDO} onChange={this.handleSearch} />
                      {this.state.estado === helper.getEstado().NORECIBIDO &&
                     <FontAwesomeIcon id="noRecibidosIcon" icon="check"/>}&nbsp;No Recibidos
-                  </label>
-                  <label className="btn btn-sm btn-info shadow-sm">
-                    <input type='radio' id='derivados' value={helper.getEstado().DERIVADO} 
-                    name="options" checked={this.state.estado === helper.getEstado().DERIVADO} onChange={this.handleSearch} />
-                    {this.state.estado === helper.getEstado().DERIVADO &&
-                    <FontAwesomeIcon id="derivadosIcon" icon="check"/>}&nbsp;Derivados
                   </label>
                   <label className="btn btn-sm btn-dark shadow-sm">
                     <input type='radio' id='pausados' value={helper.getEstado().PAUSADO} 
