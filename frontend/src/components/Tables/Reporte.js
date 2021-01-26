@@ -125,7 +125,7 @@ class Reporte extends Component {
     }); 
     
     //Obtiene todas las instancias del expediente a traves de su ID y las carga en una tabla
-    InstanciaService.getInstanciasPorExp(row.id)
+    InstanciaService.getInstanciasPorExp(row.id, '')
     .then((response) =>{
       this.setState({
         recorrido: response.data.results.map((instancia) =>{

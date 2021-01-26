@@ -16,5 +16,5 @@ urlpatterns = [
     path('estados/<pk>', EstadoDetailView.as_view()),
     path('prioridades/', PrioridadListView.as_view(), name="prioridades"),
     path('prioridades/<pk>', PrioridadDetailView.as_view()),
-    path('instancias_por_expediente/<expediente_id>', ExpedienteInstanciasList.as_view()),
+    path('instancias_por_expediente/', ExpedienteInstanciasList.as_view()),
 ]

@@ -24,7 +24,7 @@ const initialState = {
   newNumMesa: '',
   comment: '',
   sig_dependencias: '',
-  dependenciaSigSelected:'',
+  dependenciaSigSelected:''
 }
 class ProcesarExpediente extends Component {
   constructor(props) {
@@ -191,6 +191,20 @@ class ProcesarExpediente extends Component {
     return TipoDeExpedienteService.getDetailByOrder(tipoExpediente.id, orden)
   }
 
+
+  /**
+   * Obtiene  la instancia mas reciente con el orden anterior a la actual de un expediente
+   * Se utiliza para rechazar expediente sin ruta predefinida
+   * @param {*} expId 
+   * @param {*} ordenActual 
+   */
+  getPrevDependenciaId(expId, ordenActual){  
+    console.log(expId);
+    console.log(ordenActual);  
+    let ordenAnterior = ordenActual - 1 ;
+    return InstanciasService.getInstanciasPorExp(expId, ordenAnterior)
+  }
+
   /**
    * Guarda una instancia extra para que al derivar o rechazar le aparezca como expediente no recibido en su
    * dependencia, y guarda el comentario asignando a esa instancia
@@ -220,18 +234,20 @@ class ProcesarExpediente extends Component {
    * @param tdePrevDep datos de tipo de expediente y dependencia anterior
    * @returns {*}
    */
-  saveInstanciaRechazado = (userIdIn, tdePrevDep) => {
+  saveInstanciaRechazado = (userIdIn, tdePrevDep, instPrev) => {
     return InstanciasService.create({
       expediente_id: this.state.instancia.expediente_id.id,
-      dependencia_anterior_id: this.state.instancia.expediente_id.tipo_de_expediente_id.id === 1 ? this.state.depPrev.id :
+      dependencia_anterior_id: this.state.instancia.expediente_id.tipo_de_expediente_id.id === 1 ? instPrev.dependencia_anterior_id.id :
         tdePrevDep.dependencia_id.id,
-      dependencia_actual_id: this.state.depPrev.id,
+      dependencia_actual_id:  this.state.instancia.expediente_id.tipo_de_expediente_id.id === 1 ? instPrev.dependencia_actual_id.id :
+        this.state.depPrev.id,
       dependencia_siguiente_id: this.state.depNow.id,
       estado_id: this.state.newEstado.id,
       usuario_id_entrada: userIdIn,
       orden_actual: this.state.instancia.orden_actual - 1
     });
   }
+
 
   /**
    * Rechazar el expediente modificando el estado del expediente, agregando usuario_salida a la instancia actual,
@@ -244,12 +260,12 @@ class ProcesarExpediente extends Component {
     Promise.all([
       this.setExpediente(false),
       this.setInstanciaUserOut(userIdIn),
-      this.getPrevOrNextDependenciaId(this.state.expedienteType, this.state.instancia.orden_actual, false)
+      this.getPrevOrNextDependenciaId(this.state.expedienteType, this.state.instancia.orden_actual, false),
+      this.getPrevDependenciaId(this.state.instancia.expediente_id.id,this.state.instancia.orden_actual)
     ])
       .then(response => {
         // una vez terminados se guarda la nueva instancia
-        console.log(response[2].data.results.pop());
-        this.saveInstanciaRechazado(userIdIn, response[2].data.results.pop())
+        this.saveInstanciaRechazado(userIdIn, response[2].data.results.pop(), response[3].data.results[0])
           .then(resp => {
             this.saveExtraInstancia(resp.data);
           })
@@ -300,7 +316,6 @@ class ProcesarExpediente extends Component {
       .then(response => {
         this.saveInstanciaDerivado(userIdIn, response[2].data.results.pop())
         .then(resp => {
-            console.log(resp.data);
           this.saveExtraInstancia(resp.data);
           Popups.success('Expediente procesado.');
         })
