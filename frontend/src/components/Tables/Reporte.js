@@ -125,7 +125,7 @@ class Reporte extends Component {
     }); 
     
     //Obtiene todas las instancias del expediente a traves de su ID y las carga en una tabla
-    InstanciaService.getInstanciasPorExp(row.id)
+    InstanciaService.getInstanciasPorExp(row.id, '')
     .then((response) =>{
       this.setState({
         recorrido: response.data.results.map((instancia) =>{
@@ -171,10 +171,10 @@ class Reporte extends Component {
    * Obtiene todas las dependencias de la base de datos y los carga como opciones para el select
    */
   retrieveDependencias() {
-    DependenciasService.getAll()
+    DependenciasService.getAllSinPag()
       .then((response) => {
         this.setState({
-          origen: response.data.results.map((d) => {
+          origen: response.data.map((d) => {
             return {
               id: d.id,
               value: d.descripcion,
@@ -193,10 +193,10 @@ class Reporte extends Component {
    * Obtiene los objetos de gastos de la base de datos y los carga como opciones para el select
    */
   retrieveObjetosDeGastos() {
-    ObjetosDeGastosService.getAll(1)
+    ObjetosDeGastosService.getAllNoPag()
       .then((response) => {
         this.setState({
-          objetoDeGasto: response.data.results.map((d) => {
+          objetoDeGasto: response.data.map((d) => {
             return {
               id: d.id,
               value: d.descripcion,
@@ -288,6 +288,10 @@ class Reporte extends Component {
       case helper.getEstado().RECIBIDO:
         this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
           this.state.objetoSelected, this.state.description, helper.getEstado().RECIBIDO, 1);
+        break;
+      case helper.getEstado().REANUDADO:
+        this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
+          this.state.objetoSelected, this.state.description, helper.getEstado().REANUDADO, 1);
         break;
       case helper.getEstado().NORECIBIDO:
         this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
@@ -426,6 +430,8 @@ class Reporte extends Component {
           switch (row.estado) {
             case "Recibido":
               return <div className="badge badge-success">{row.estado}</div>
+            case "Reanudado":
+              return <div className="badge badge-custom">{row.estado}</div>    
             case "No Recibido":
               return <div className="badge badge-warning">{row.estado}</div>
             case "Derivado":
@@ -587,17 +593,17 @@ class Reporte extends Component {
                     {this.state.estado === helper.getEstado().RECIBIDO &&
                       <FontAwesomeIcon id="recibidosIcon" icon="check"/>}&nbsp;Recibidos
                   </label>
+                  <label className="btn btn-sm btn-custom shadow-sm">
+                    <input type='radio' id='reanudados' value={helper.getEstado().REANUDADO} 
+                    name="options" checked={this.state.estado === helper.getEstado().REANUDADO} onChange={this.handleSearch} />
+                    {this.state.estado === helper.getEstado().REANUDADO &&
+                      <FontAwesomeIcon id="reaundadosIcon" icon="check"/>}&nbsp;Reanudados
+                  </label>
                   <label className="btn btn-sm btn-warning shadow-sm">
                     <input type='radio' id='noRecibidos' value={helper.getEstado().NORECIBIDO} 
                     name="options" checked={this.state.estado === helper.getEstado().NORECIBIDO} onChange={this.handleSearch} />
                      {this.state.estado === helper.getEstado().NORECIBIDO &&
                     <FontAwesomeIcon id="noRecibidosIcon" icon="check"/>}&nbsp;No Recibidos
-                  </label>
-                  <label className="btn btn-sm btn-info shadow-sm">
-                    <input type='radio' id='derivados' value={helper.getEstado().DERIVADO} 
-                    name="options" checked={this.state.estado === helper.getEstado().DERIVADO} onChange={this.handleSearch} />
-                    {this.state.estado === helper.getEstado().DERIVADO &&
-                    <FontAwesomeIcon id="derivadosIcon" icon="check"/>}&nbsp;Derivados
                   </label>
                   <label className="btn btn-sm btn-dark shadow-sm">
                     <input type='radio' id='pausados' value={helper.getEstado().PAUSADO} 

@@ -5,10 +5,16 @@ class TiposDeExpedientes {
    * Obtener todos los tipos de expedientes.
    * @returns {Promise<AxiosResponse<TiposDeExpedientes>>}
    */
-  getAll() {
-    return http.get('/tipos_de_expedientes/?format=json');
+  getAll(page) {
+    return http.get(`/tipos_de_expedientes/?format=json&page=${page}`);
   }
 
+  /**
+   * Obtiene todos los Tipos de expedientes sin paginacion de la API
+   */
+  getAllSinPag() {
+    return http.get('/tipos_de_expedientes_sin_pag/?format=json');
+  }
   /**
    * Obtener un tipo de expediente de acuerdo a su ID
    * @param id ID tipo expediente

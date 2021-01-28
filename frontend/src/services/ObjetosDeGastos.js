@@ -11,6 +11,13 @@ class ObjetosDeGastos{
     }
 
     /**
+     * Obtiene todos los objetos de datos sin paginacion de la API
+     */
+    getAllNoPag(){
+        return http.get("/objetos_de_gastos_no_pag/?format=json")
+    }
+
+    /**
      * Crear un objeto de gasto.
      * @param objetoDeGasto
      * @returns {Promise<AxiosResponse<any>>}

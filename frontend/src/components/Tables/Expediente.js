@@ -10,6 +10,7 @@ import ProcesarExpediente from "../Forms/ProcesarExpediente";
 import "../../styles/table.css";
 import VerExpediente from "../Forms/VerExpediente";
 import ComentarioService from "../../services/Comentarios";
+import DependenciasService from "../../services/Dependencias";
 
 /**
  * Tabla para expedientes
@@ -26,7 +27,8 @@ class Expediente extends Component {
       totalRows: 0,
       selectedOption: 'Todos',
       recorrido:[],
-      comentarios:[]
+      comentarios:[],
+      sig_dependencias:[]
     };
     this.setShowNew = this.setShowNew.bind(this);
     this.handleOptionChange = this.handleOptionChange.bind(this);
@@ -38,6 +40,7 @@ class Expediente extends Component {
   // Para la primera carga siempre trae la pagina 1 (uno)
   componentDidMount() {
     this.filterExpedientes(1, '');
+    this.retrieveDependencias();
   }
 
   // componentWillUnmount() {
@@ -67,6 +70,29 @@ class Expediente extends Component {
       loading: false
     });
   }
+
+  /**
+   * Obtiene todas las dependencias de la base de datos y los carga como opciones para el select
+   */
+  retrieveDependencias() {
+    DependenciasService.getAllSinPag()
+      .then((response) => {
+        this.setState({
+          sig_dependencias: response.data.map((d) => {
+            return {
+              id: d.id,
+              value: d.descripcion,
+              label: d.descripcion,
+            }
+          })
+        })
+      })
+      .catch((e) => {
+        Popups.error('Ocurrió un error al procesar la información');
+        console.log(`Error retrieveDependencias:\n${e}`);
+      });
+  }
+
 
   /**
    * Servicio que llama a la API para traer las ultimas instancias de acuerdo al usuario logueado y el estado
@@ -124,6 +150,9 @@ class Expediente extends Component {
         break;
       case helper.getEstado().RECIBIDO:
         this.filterExpedientes(1, helper.getEstado().RECIBIDO);
+        break;
+      case helper.getEstado().REANUDADO:
+        this.filterExpedientes(1, helper.getEstado().REANUDADO);
         break;
       case helper.getEstado().PAUSADO:
         this.filterExpedientes(1, helper.getEstado().PAUSADO);
@@ -204,7 +233,7 @@ class Expediente extends Component {
     }); 
     
     //Obtiene todas las instancias del expediente a traves de su ID y las carga en una tabla
-    InstanciaService.getInstanciasPorExp(row.id)
+    InstanciaService.getInstanciasPorExp(row.id, '')
     .then((response) =>{
       this.setState({
         recorrido: response.data.results.map((instancia) =>{
@@ -314,6 +343,8 @@ class Expediente extends Component {
           switch (row.estado) {
             case "Recibido":
               return <div className="badge badge-success">{row.estado}</div>
+            case "Reanudado":
+              return <div className="badge badge-custom">{row.estado}</div>  
             case "No Recibido":
               return <div className="badge badge-warning">{row.estado}</div>
             case "Derivado":
@@ -362,7 +393,6 @@ class Expediente extends Component {
       selectAllRowsItem: true,
       selectAllRowsItemText: 'Todos'
     };
-   
     return (
       <div>
         <div className="d-sm-flex align-items-center justify-content-between mb-2">
@@ -390,7 +420,15 @@ class Expediente extends Component {
                      onChange={this.handleOptionChange}/>
               {this.state.selectedOption === helper.getEstado().RECIBIDO &&
               <FontAwesomeIcon id="recibidosIcon" icon="check"/>}
-              &nbsp;Recibidos / Reanudados
+              &nbsp;Recibidos
+            </label>
+            <label className="btn btn-sm btn-custom">
+              <input type="radio" id="reanudados" value={helper.getEstado().REANUDADO} name="options"
+                     checked={this.state.selectedOption === helper.getEstado().REANUDADO}
+                     onChange={this.handleOptionChange}/>
+              {this.state.selectedOption === helper.getEstado().REAUNUDADO &&
+              <FontAwesomeIcon id="reanudadosIcon" icon="check"/>}
+              &nbsp;Reanudados
             </label>
             <label className="btn btn-sm btn-dark">
               <input type="radio" id="pausados" value={helper.getEstado().PAUSADO} name="options"
@@ -435,6 +473,7 @@ class Expediente extends Component {
             setShow={this.setShowProcess}
             showModal={this.state.showProcess}
             expedienteData={this.state.expedienteData}
+            sig_dependencias={this.state.sig_dependencias}
           />
            {/*Modal para ver el expediente con detalle*/}
           <VerExpediente

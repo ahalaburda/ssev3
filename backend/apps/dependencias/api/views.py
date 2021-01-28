@@ -1,7 +1,8 @@
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from apps.dependencias.models import Dependencia, Dependencia_por_usuario
 from .serializers import DependenciaSerializer, Dependencia_por_usuarioSerializer, \
     Dependencia_por_usuarioNewUpdateSerializer
+from rest_framework.response import Response
 from django_filters import rest_framework as filters
 
 
@@ -56,3 +57,13 @@ class Dependencia_por_usuarioDetailView(RetrieveUpdateDestroyAPIView):
         elif self.request.method in ['PATCH']:
             return Dependencia_por_usuarioNewUpdateSerializer
         return Dependencia_por_usuarioSerializer
+
+#Vista sin paginacion de las Dependencias
+class DependenciasSinPaginarListView(ListAPIView):
+    queryset = Dependencia.objects.all()
+    serializer_class = DependenciaSerializer
+
+    def list(self, request, *args, **kwargs):
+        filtered_list = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(filtered_list, many=True)
+        return Response(serializer.data)

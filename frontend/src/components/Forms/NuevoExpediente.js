@@ -46,10 +46,10 @@ class NuevoExpediente extends Component {
    * Obtener las dependencias de la base de datos y cargarlos como opciones para el select
    */
   retrieveAllDependencias() {
-    DependenciasService.getAll()
+    DependenciasService.getAllSinPag()
       .then((response) => {
         this.setState({
-          end_list: response.data.results.map((d) => {
+          end_list: response.data.map((d) => {
             return {
               id: d.id,
               value: d.descripcion,
@@ -67,10 +67,10 @@ class NuevoExpediente extends Component {
    * Obtener los tipos de expedientes de la base de datos y cargarlos como opciones para el select
    */
   retrieveTiposDeExpedientes() {
-    TiposDeExpedientesService.getAll()
+    TiposDeExpedientesService.getAllSinPag()
       .then(response => {
         this.setState({
-          tipos_expediente_list: response.data.results.map(tde => {
+          tipos_expediente_list: response.data.map(tde => {
             return {
               id: tde.id,
               value: tde.descripcion,
@@ -168,7 +168,7 @@ class NuevoExpediente extends Component {
       TiposDeExpedientesService.getDetails(tdeId)
         .then(response => {
           this.setState({
-            next_id: response.data.results[1].dependencia_id.id,
+            next_id: response.data.results[0].dependencia_id.id,
             end: response.data.results.slice(-1)[0].dependencia_id
           })
         })
@@ -216,9 +216,9 @@ class NuevoExpediente extends Component {
     const instancia = {
       expediente_id: expId,
       dependencia_actual_id: this.state.start.id,
-      dependencia_siguiente_id: this.state.next_id !== 0 && this.state.next_id,
+      dependencia_siguiente_id: this.state.next_id !== 0 ? this.state.next_id : this.state.end.id,
       usuario_id_entrada: user_in_id,
-      orden_actual: 1
+      orden_actual: 0
     }
     // guardar la primera instancia del expediente
     InstanciasService.create(instancia)
@@ -281,9 +281,16 @@ class NuevoExpediente extends Component {
    */
   //TODO checkValid deja pasar si hay errores
   handleSaveClick = () => {
-    this.checkValid();
-    this.save();
-    this.props.setShow(false);
+    if (this.validator.allValid()) {
+      if (this.state.end.id=== undefined) {
+        Popups.error("Seleccione la Dependencia Destino")
+      }else{
+        this.save();
+        this.props.setShow(false);
+      }
+    }else{
+      this.validator.showMessages();
+    }
   }
 
   render() {

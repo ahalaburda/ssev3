@@ -11189,6 +11189,18 @@ body.sidebar-toggled footer.sticky-footer {
   color: #000;
 }
 
+.badge-custom {
+  background-color: #AF7AC5;
+  color: #fff;
+}
+.btn-custom {
+  background-color: #AF7AC5;
+  color: #fff;
+}
+.btn-custom:hover {
+  color: #fff;
+}
+
 @media all {
   .page-break {
     display: none;

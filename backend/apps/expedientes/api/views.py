@@ -139,22 +139,31 @@ class InstanciaExpedienteList(ListAPIView):
         serializer = self.get_serializer(filtered_list, many=True)
         return Response(serializer.data)
 
+class ExpedienteInstaciasFilter(filters.FilterSet):
+    orden = filters.NumberFilter(field_name='orden_actual', lookup_expr='exact')
+    exp_id = filters.NumberFilter(field_name='expediente_id', lookup_expr='exact')
+
+    class Meta:
+        model: Instancia
+        fields = ('orden', 'exp_id')
+
 class ExpedienteInstanciasList(ListAPIView):
     """
     Vista para la lista de todas las instancias de cada expediente con respecto a su ID
     """
     queryset = Instancia.objects.all().order_by('-fecha_creacion')
     serializer_class = InstanciaSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = ExpedienteInstaciasFilter
 
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset() \
-            .filter(expediente_id__id=kwargs.get('expediente_id'))
-        page = self.paginate_queryset(queryset)
+        filtered_list = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(filtered_list)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
 
-        serializer = self.get_serializer(queryset, many=True)
+        serializer = self.get_serializer(filtered_list, many=True)
         return Response(serializer.data)
 
 
@@ -239,3 +248,13 @@ class EstadoListView(ListCreateAPIView):
 class EstadoDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Estado.objects.all()
     serializer_class = EstadoSerializer
+
+#Vistas para objetos de gastos sin paginar
+class Objeto_de_Gasto_NoPag_ListView(ListAPIView):
+    queryset = Objeto_de_Gasto.objects.all()
+    serializer_class = Objeto_de_GastoSerializer
+
+    def list(self, request, *args, **kwargs):
+        filtered_list = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(filtered_list, many=True)
+        return Response(serializer.data)

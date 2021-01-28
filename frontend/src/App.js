@@ -86,6 +86,7 @@ class App extends Component {
       localStorage.setItem('access_token', response.data.access);
       localStorage.setItem('refresh_token', response.data.refresh);
       localStorage.setItem('username', data.username);
+      localStorage.setItem('isAdmin',response.data.admin);
       sessionStorage.setItem('year_setting', moment().startOf('year').format('YYYY-MM-DD'));
       Popups.success('Sesión iniciada correctamente.');
       this.setState({
@@ -163,7 +164,7 @@ class App extends Component {
                     <Route exact path='/objetos_de_gastos/' component={ObjetosDeGastos}/>
                     <Route exact path='/login'>
                       <Login handleLogin={this.handleLogin} username={this.state.username}
-                             handleUserChange={this.handleUserChange}/>
+                              handleUserChange={this.handleUserChange}/>
                     </Route>
                   </div>
                 </div>

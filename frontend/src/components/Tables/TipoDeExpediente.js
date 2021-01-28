@@ -19,6 +19,7 @@ class TipoDeExpediente extends Component {
       showEdit: false,
       list: [],
       title: '',
+      totalRows: 0,
       dependencias: [],
       tipoExpediente: {
         id: 0,
@@ -36,12 +37,20 @@ class TipoDeExpediente extends Component {
     this.updateItem = this.updateItem.bind(this);
   }
 
+  componentWillUnmount() {
+    // fix Warning: Can't perform a React state update on an unmounted component
+    this.setState = (state,callback)=>{
+        return;
+    };
+  }
+  
   /**
    * Obtener los tipos de expedientes de la base de datos y cargarlos en la tabla
    */
-  retrieveTiposDeExpedientes() {
-    TiposDeExpedientesService.getAll()
+  retrieveTiposDeExpedientes(page) {
+    TiposDeExpedientesService.getAll(page)
       .then(response => {
+        this.setState({totalRows: response.data.count});
         this.setState({
           list: response.data.results.map(tde => {
             return {
@@ -58,7 +67,7 @@ class TipoDeExpediente extends Component {
   }
 
   componentDidMount() {
-    this.retrieveTiposDeExpedientes();
+    this.retrieveTiposDeExpedientes(1);
   }
 
   /**
@@ -162,6 +171,15 @@ class TipoDeExpediente extends Component {
     }
   }
 
+    /**
+   * Toma la pagina de la tabla y llama a findExp para traer los expedientes,
+   * siempre teniendo en cuanta los filtros aplicados con anterioridad
+   * @param {*} page 
+   */
+  handlePageChange= page =>{
+    this.retrieveTiposDeExpedientes(page);
+  }
+
   render() {
     const paginationOptions = {
       noRowsPerPage: true,
@@ -192,10 +210,10 @@ class TipoDeExpediente extends Component {
                 data-toggle="modal" data-target="#viewTipoExpedienteModal">
                 <FontAwesomeIcon icon="eye"/>
               </button>
-              <button
+              {/* <button
                 className="btn btn-sm btn-link text-primary" onClick={() => this.handleEditClick(row)}>
                 <FontAwesomeIcon icon="edit"/>
-              </button>
+              </button> */}
               <button
                 className="btn btn-sm btn-link text-danger"
                 onClick={() => {
@@ -226,6 +244,8 @@ class TipoDeExpediente extends Component {
           paginationServer
           paginationPerPage={20}
           paginationComponentOptions={paginationOptions}
+          paginationTotalRows={this.state.totalRows}
+          onChangePage={this.handlePageChange}
           highlightOnHover={true}
           noHeader={true}
           dense={true}

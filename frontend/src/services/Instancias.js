@@ -104,8 +104,8 @@ class Instancias {
    * Obtiene todas las instancias de un expediente
    * @param {*} expediente_id
    */
-  getInstanciasPorExp(expediente_id) {
-    return http.get(`/instancias_por_expediente/${expediente_id}`)
+  getInstanciasPorExp(expediente_id, orden) {
+    return http.get(`/instancias_por_expediente/?exp_id=${expediente_id}&orden=${orden}`)
   }
 
 
