@@ -168,7 +168,7 @@ class NuevoExpediente extends Component {
       TiposDeExpedientesService.getDetails(tdeId)
         .then(response => {
           this.setState({
-            next_id: response.data.results[1].dependencia_id.id,
+            next_id: response.data.results[0].dependencia_id.id,
             end: response.data.results.slice(-1)[0].dependencia_id
           })
         })
@@ -218,7 +218,7 @@ class NuevoExpediente extends Component {
       dependencia_actual_id: this.state.start.id,
       dependencia_siguiente_id: this.state.next_id !== 0 ? this.state.next_id : this.state.end.id,
       usuario_id_entrada: user_in_id,
-      orden_actual: 1
+      orden_actual: 0
     }
     // guardar la primera instancia del expediente
     InstanciasService.create(instancia)
@@ -281,9 +281,16 @@ class NuevoExpediente extends Component {
    */
   //TODO checkValid deja pasar si hay errores
   handleSaveClick = () => {
-    this.checkValid();
-    this.save();
-    this.props.setShow(false);
+    if (this.validator.allValid()) {
+      if (this.state.end.id=== undefined) {
+        Popups.error("Seleccione la Dependencia Destino")
+      }else{
+        this.save();
+        this.props.setShow(false);
+      }
+    }else{
+      this.validator.showMessages();
+    }
   }
 
   render() {

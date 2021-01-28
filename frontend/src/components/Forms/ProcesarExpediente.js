@@ -379,7 +379,10 @@ class ProcesarExpediente extends Component {
    * De acuerdo al estado en el cual se quiere procesar el expediente selecciona su funcion correspondiente
    */
   handleProcess = () => {
-    //TODO check valid
+    if (this.state.instancia.expediente_id.tipo_de_expediente_id.id  === 1 && this.state.dependenciaSigSelected === '' 
+    && this.state.newEstado.value === helper.getEstado().DERIVADO) {
+      Popups.error('Seleccione una dependecia para procesar el expediente')
+    }else{
     switch (this.state.newEstado.value) {
       case helper.getEstado().RECIBIDO:
         this.processExpediente();
@@ -403,8 +406,9 @@ class ProcesarExpediente extends Component {
         this.processFinalizadoAnulado();
         break;
       default:
-        console.log('Error case: default');
+        Popups.error('Seleccione un estado valido para el Expediente')
         break;
+      }
     }
   }
 
@@ -430,7 +434,7 @@ class ProcesarExpediente extends Component {
     }
 
     let selectOptions;
-    if (this.state.instancia.orden_actual === this.state.expedienteType.saltos) {
+    if (this.state.instancia.orden_actual === this.state.expedienteType.saltos && this.state.instancia.expediente_id.tipo_de_expediente_id.id !== 1) {
       // si la instancia esta en el ultimo salto, ya no se puede derivar
       selectOptions = helper.getAllEstados().filter(o => o.value !== helper.getEstado().DERIVADO);
     } else if (this.state.instancia.orden_actual <= 1) {
