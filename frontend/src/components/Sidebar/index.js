@@ -35,14 +35,14 @@ class Sidebar extends Component {
             <Item link="/" icon="tachometer-alt" text="Inicio"/>
   
             {/* Nav Item - Graficos */}
-            <Item link="/graficos/" icon="chart-bar" text="Gráficos"/>
+            {/* <Item link="/graficos/" icon="chart-bar" text="Gráficos"/> */}
   
             {/* Nav Item - Consultas */}
             <Item link="/consultas/" icon="search" text="Consultas"/>
   
             {/* Nav Item - Reportes */}
             <Item link="/reportes/" icon="folder" text="Reportes"/>
-  
+  z
             {/* Nav Item - Tipos de expedientes */}
             <Item link="/tipos_de_expedientes/" icon="chart-area" text="Tipos de Expedientes"/>
   
@@ -72,7 +72,7 @@ class Sidebar extends Component {
             <Item link="/" icon="tachometer-alt" text="Inicio"/>
   
             {/* Nav Item - Graficos */}
-            <Item link="/graficos/" icon="chart-bar" text="Gráficos"/>
+            {/* <Item link="/graficos/" icon="chart-bar" text="Gráficos"/> */}
   
             {/* Nav Item - Consultas */}
             <Item link="/consultas/" icon="search" text="Consultas"/>

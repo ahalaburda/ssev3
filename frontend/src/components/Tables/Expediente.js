@@ -1,4 +1,4 @@
-import React, {Component, useEffect} from "react";
+import React, {Component} from "react";
 import InstanciaService from "../../services/Instancias";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import DataTable from "react-data-table-component";
@@ -33,6 +33,8 @@ class Expediente extends Component {
     };
     this.setShowNew = this.setShowNew.bind(this);
     this.handleOptionChange = this.handleOptionChange.bind(this);
+    //Cada 30 seg. realiza una consulta a la api para mantener 
+    //actualizada la tabla de expedientes
     this.interval = setInterval(() => {
       this.filterExpedientes( this.state.page, this.state.selectedOption);
     }, 30000);
@@ -48,8 +50,6 @@ class Expediente extends Component {
   componentWillUnmount() {
     clearInterval(this.interval);
   }
-
- 
 
   /**
    * De acuerdo al response pasado del servicio, este setea la lista de expedientes del estado.
