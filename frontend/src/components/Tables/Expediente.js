@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, {Component, useEffect} from "react";
 import InstanciaService from "../../services/Instancias";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import DataTable from "react-data-table-component";
@@ -25,27 +25,31 @@ class Expediente extends Component {
       expedienteData: helper.getInstanciaInitialState(),
       list: [],
       totalRows: 0,
-      selectedOption: 'Todos',
+      selectedOption: '',
       recorrido:[],
       comentarios:[],
-      sig_dependencias:[]
+      sig_dependencias:[],
+      page : 1
     };
     this.setShowNew = this.setShowNew.bind(this);
     this.handleOptionChange = this.handleOptionChange.bind(this);
-    // this.interval = setInterval(() => {
-    //   this.retrieveExpedientes(1);
-    // }, 5000);
+    this.interval = setInterval(() => {
+      this.filterExpedientes( this.state.page, this.state.selectedOption);
+    }, 30000);
+    
   }
 
   // Para la primera carga siempre trae la pagina 1 (uno)
   componentDidMount() {
-    this.filterExpedientes(1, '');
     this.retrieveDependencias();
+    this.filterExpedientes(1, '');
   }
 
-  // componentWillUnmount() {
-  //   clearInterval(this.interval);
-  // }
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
+ 
 
   /**
    * De acuerdo al response pasado del servicio, este setea la lista de expedientes del estado.
@@ -111,6 +115,9 @@ class Expediente extends Component {
    * @param page
    */
   handlePageChange = page => {
+    this.setState({
+      page: page
+    });
     switch (this.state.selectedOption) {
       case helper.getEstado().NORECIBIDO:
         this.filterExpedientes(page, helper.getEstado().NORECIBIDO);
@@ -156,9 +163,6 @@ class Expediente extends Component {
         break;
       case helper.getEstado().PAUSADO:
         this.filterExpedientes(1, helper.getEstado().PAUSADO);
-        break;
-      case 'Todos':
-        this.filterExpedientes(1, '');
         break;
       default:
         this.filterExpedientes(1, '');
@@ -277,7 +281,7 @@ class Expediente extends Component {
 
   /**
    * Setear el estado 'showNew' para mostrar u ocultar el modal de nuevo expediente. Cuando se cierra el modal vuelve a
-   * llamar 'retrieveExpedientes' para que actualice la lista.
+   * llamar 'filterExpedientes' para que actualice la lista.
    */
   setShowNew = show => {
     this.setState({showNew: show});
@@ -401,7 +405,7 @@ class Expediente extends Component {
         <div className="btn-toolbar mb-2 justify-content-between">
           <div className="btn-group mr-2">
             <label className="btn btn-sm btn-secondary">
-              <input type="radio" id="todos" value="Todos" name="options"
+              <input type="radio" id="todos" value="" name="options"
                      checked={this.state.selectedOption === 'Todos'} onChange={this.handleOptionChange}/>
               {this.state.selectedOption === 'Todos' && <FontAwesomeIcon id="todosIcon" icon="check"/>}
               &nbsp;Todos

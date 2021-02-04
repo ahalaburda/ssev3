@@ -163,7 +163,10 @@ class ProcesarExpediente extends Component {
     ])
       .then(response => {
         this.saveComment(response[2].data.id, userIdIn);
-        Popups.success('Expediente procesado.');
+        Popups.success('Expediente procesado.');          
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       })
       .catch(e => {
         console.log(`Error processExpediente\n${e}`);
@@ -274,12 +277,13 @@ class ProcesarExpediente extends Component {
         this.saveInstanciaRechazado(userIdIn, response[2].data.results.pop(), response[3].data.results[0])
           .then(resp => {
             this.saveExtraInstancia(resp.data);
+            // window.location.reload();
+            Popups.success('Expediente procesado.');
           })
           .catch(err => {
             console.log(`Error saveInstanciaRechazado\n${err}`);
             Popups.error('Ocurrio un error al procesar expediente.');
           });
-        Popups.success('Expediente procesado.');
       })
       .catch(e => {
         console.log(`Error processRechazado\n${e}`);
@@ -324,6 +328,9 @@ class ProcesarExpediente extends Component {
         .then(resp => {
           this.saveExtraInstancia(resp.data);
           Popups.success('Expediente procesado.');
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
         })
         .catch(err => {
           console.log(`Error saveInstanciaDerivado\n${err}`);
@@ -366,6 +373,9 @@ class ProcesarExpediente extends Component {
       .then(response => {
         this.saveComment(response[2].data.id, userIdIn);
         Popups.success('Expediente procesado.');
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       })
       .catch(e => {
         console.log(`Error processFinalizado\n${e}`);
@@ -414,7 +424,7 @@ class ProcesarExpediente extends Component {
         break;
       default:
         Popups.error('Seleccione un estado valido para el Expediente')
-        break;
+        break;      
       }
     }
   }

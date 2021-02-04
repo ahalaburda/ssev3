@@ -297,17 +297,9 @@ class Reporte extends Component {
         this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
           this.state.objetoSelected, this.state.description, helper.getEstado().NORECIBIDO, 1);
         break;  
-      case helper.getEstado().DERIVADO:
-        this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
-          this.state.objetoSelected, this.state.description, helper.getEstado().DERIVADO, 1);
-        break;
       case helper.getEstado().PAUSADO:
         this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
           this.state.objetoSelected, this.state.description, helper.getEstado().PAUSADO, 1);
-        break;
-      case helper.getEstado().RECHAZADO:
-        this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
-          this.state.objetoSelected, this.state.description, helper.getEstado().RECHAZADO, 1);
         break;
       case helper.getEstado().FINALIZADO:   
         this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
@@ -610,12 +602,6 @@ class Reporte extends Component {
                     name="options" checked={this.state.estado === helper.getEstado().PAUSADO} onChange={this.handleSearch} />
                     {this.state.estado === helper.getEstado().PAUSADO &&
                     <FontAwesomeIcon id="pausadosIcon" icon="check"/>}&nbsp;Pausados
-                  </label>
-                  <label className="btn btn-sm btn-danger shadow-sm">
-                    <input type='radio' id='rechazados' value={helper.getEstado().RECHAZADO} 
-                    name="options" checked={this.state.estado === helper.getEstado().RECHAZADO} onChange={this.handleSearch} />
-                     {this.state.estado === helper.getEstado().RECHAZADO &&
-                    <FontAwesomeIcon id="rechazadosIcon" icon="check"/>}&nbsp;Rechazados
                   </label>
                   <label className="btn btn-sm btn-secondary shadow-sm">
                     <input type='radio' id='finalizados' value={helper.getEstado().FINALIZADO} 
