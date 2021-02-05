@@ -29,6 +29,7 @@ class Configuraciones extends Component {
     sessionStorage.clear();
     sessionStorage.setItem('year_setting', moment(this.state.selectedDate).format('YYYY-MM-DD'));
     this.handleShowChange();
+    window.location.reload();
   }
 
   render() {
