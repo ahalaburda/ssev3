@@ -46,8 +46,8 @@ class SimpleEdit extends Component {
   static getDerivedStateFromProps(nextProps) {
     return {
       id: nextProps.item.id,
-      description: nextProps.item.descripcion,
-      active: nextProps.item.activo
+      // description: nextProps.item.descripcion,
+      // active: nextProps.item.activo
     }
   }
 
