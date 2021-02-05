@@ -207,7 +207,7 @@ class ProcesarExpediente extends Component {
 
   /**
    * Guarda una instancia extra para que al derivar o rechazar le aparezca como expediente no recibido en su
-   * dependencia, y guarda el comentario asignando a esa instancia
+   * dependencia
    * @param savedInstancia Instancia guardada previamente
    */
   saveExtraInstancia = savedInstancia => {
@@ -220,9 +220,6 @@ class ProcesarExpediente extends Component {
       usuario_id_entrada: savedInstancia.usuario_id_entrada,
       orden_actual: savedInstancia.orden_actual
     })
-      .then(resp => {
-        this.saveComment(resp.data.id, savedInstancia.usuario_id_entrada);
-      })
       .catch(e => {
         console.log(`Error saveExtraInstancia\n${e}`);
       })
@@ -274,11 +271,14 @@ class ProcesarExpediente extends Component {
     ])
       .then(response => {
         // una vez terminados se guarda la nueva instancia
-        this.saveInstanciaRechazado(userIdIn, response[2].data.results.pop(), response[3].data.results[0])
+        this.saveInstanciaRechazado(userIdIn, response[2].data.results.pop(), response[3].data[0])
           .then(resp => {
+            this.saveComment(resp.data.id, userIdIn);
             this.saveExtraInstancia(resp.data);
-            // window.location.reload();
             Popups.success('Expediente procesado.');
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
           })
           .catch(err => {
             console.log(`Error saveInstanciaRechazado\n${err}`);
@@ -326,6 +326,7 @@ class ProcesarExpediente extends Component {
       .then(response => {
         this.saveInstanciaDerivado(userIdIn, response[2].data.results.pop())
         .then(resp => {
+          this.saveComment(resp.data.id, userIdIn);
           this.saveExtraInstancia(resp.data);
           Popups.success('Expediente procesado.');
           setTimeout(() => {

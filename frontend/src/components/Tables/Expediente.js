@@ -236,11 +236,11 @@ class Expediente extends Component {
       console.log(`Error handleViewExpediente: InstanciaService\n${e}`);
     }); 
     
-    //Obtiene todas las instancias del expediente a traves de su ID y las carga en una tabla
+    //Obtiene todas las instancias del expediente a traves de su ID 
     InstanciaService.getInstanciasPorExp(row.id, '')
     .then((response) =>{
       this.setState({
-        recorrido: response.data.results.map((instancia) =>{
+        recorrido: response.data.map((instancia) =>{
           return  {
             id: instancia.id,
             fecha:moment(instancia.fecha_creacion).isValid() ?
@@ -257,17 +257,14 @@ class Expediente extends Component {
       console.log(`Error handleViewExpediente: InstanciaService\n${e}`);
     });   
  
-    //Obtiene todos los comentarios de un expediente a traves de su ID y lo muestra en una tabla
+    //Obtiene todos los comentarios de un expediente a traves de su ID 
     ComentarioService.getComentarioPorExpedienteID(row.id)
       .then((response) =>{
         this.setState({
-          comentarios: response.data.results.map((comentario) =>{
+          comentarios: response.data.map((comentario) =>{
             return{
               id: comentario.id,
-              estado: comentario.instancia.estado_id.id,
-              fecha: moment(comentario.fecha_creacion).isValid() ?
-                moment(comentario.fecha_creacion).format('DD/MM/YYYY') : 'Sin fecha',
-              dependencia: comentario.instancia.dependencia_actual_id.descripcion,
+              instancia: comentario.instancia.id,
               comentario: comentario.descripcion
             }
           })

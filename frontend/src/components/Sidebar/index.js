@@ -42,7 +42,7 @@ class Sidebar extends Component {
   
             {/* Nav Item - Reportes */}
             <Item link="/reportes/" icon="folder" text="Reportes"/>
-  z
+            
             {/* Nav Item - Tipos de expedientes */}
             <Item link="/tipos_de_expedientes/" icon="chart-area" text="Tipos de Expedientes"/>
   

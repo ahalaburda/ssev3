@@ -158,10 +158,6 @@ class ExpedienteInstanciasList(ListAPIView):
 
     def list(self, request, *args, **kwargs):
         filtered_list = self.filter_queryset(self.get_queryset())
-        page = self.paginate_queryset(filtered_list)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
 
         serializer = self.get_serializer(filtered_list, many=True)
         return Response(serializer.data)
@@ -203,6 +199,12 @@ class ComentarioListView(ListCreateAPIView):
         if self.request.method in ['POST']:
             return ComentarioNewUpdateSerializer
         return ComentarioSerializer
+
+    def list(self, request, *args, **kwargs):
+        filtered_list = self.filter_queryset(self.get_queryset())
+
+        serializer = self.get_serializer(filtered_list, many=True)
+        return Response(serializer.data)
 
 
 class ComentarioDetailView(RetrieveUpdateDestroyAPIView):
