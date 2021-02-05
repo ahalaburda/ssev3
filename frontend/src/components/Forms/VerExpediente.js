@@ -68,15 +68,12 @@ class VerExpediente extends Component {
     let expNum = document.getElementById("expNum").innerHTML;
     let expData = document.getElementById("expData").innerHTML;
     let expRec = document.getElementById("recorrido").innerHTML;
-    let expCom = document.getElementById("comentarios").innerHTML;
     let printDoc = document.getElementById("ifmcontentstoprint").contentWindow;
     printDoc.document.open();
     printDoc.document.write(expNum);
     printDoc.document.write(expData);
     printDoc.document.write("<Strong>Recorrido:</Strong>");
     printDoc.document.write(expRec);
-    printDoc.document.write("<Strong>Comentarios:</Strong>");
-    printDoc.document.write(expCom);
     printDoc.document.close();
     printDoc.focus();
     printDoc.print();
@@ -99,9 +96,35 @@ class VerExpediente extends Component {
         return '#e74a3b';
       case 5:
         return '#858796';
+      case 8:
+        return '#AF7AC5';
       default:
         return '#5a5c69';
     } 
+  }
+
+  getDependencia = (dependencia, estado) => {
+    switch (estado) {
+      case 1:
+        return dependencia;
+      case 2:
+        return 'Recibido en '+ dependencia;
+      case 3:
+        return 'Derivado a ' + dependencia;
+      case 4:
+        return 'Rechazado a ' + dependencia;
+      case 5:
+        return 'Finalizado en ' + dependencia;
+      case 6:
+        return 'Anulado en ' + dependencia;
+      case 7:
+        return 'Pausado en ' + dependencia;
+      case 8:
+        return 'Reanudado en ' + dependencia;
+    
+      default:
+        break;
+    }
   }
   
   render() {
@@ -125,9 +148,6 @@ class VerExpediente extends Component {
                     <div>
                       <label className='modal-text '><strong>Tipo de Expediente:</strong> {this.state.tipoDeExpediente}
                       </label>
-                    </div>
-                    <div>
-                      <label className='modal-text'><strong>Objeto:</strong> {this.state.objetoDeGasto}</label>
                     </div>
                     <div>
                       <label className='modal-text'><strong>Origen:</strong> {this.state.origen}</label>
@@ -167,48 +187,21 @@ class VerExpediente extends Component {
                             {recorrido.map(rec =>
                               <TimelineEvent 
                               key= {rec.id}
-                              title= {rec.dependencia}
+                              title= {this.getDependencia(rec.dependencia, rec.estado)}
                               titleStyle={{color:'#000'}}
                               createdAt={rec.fecha}
                               icon={<FontAwesomeIcon icon='calendar-check'/>}
                               iconColor= {this.selectColor(rec.estado)}
                               bubbleStyle={{borderColor: this.selectColor(rec.estado), backgroundColor: '#fff'}}
                               >
+                                {comentarios.map(com =>
+                                <p key={com.id}>{rec.id === com.instancia ? com.comentario : '' }</p>
+                                  )}
                               </TimelineEvent>
                             )}
                           </Timeline>
                       </div>
                     </div>
-                  </div>
-
-                  <div>
-                    <label className='modal-text'>
-                      <strong>Comentarios:</strong>
-                    </label>
-                    <button
-                      id='mostrarComentario'
-                      className="btn btn-sm btn-link text-primary"
-                      onClick={() => this.showTable('comentarios', 'mostrarComentario')}>
-                      Mostrar
-                    </button>
-                  </div>
-
-                  <div id='comentarios' className='modal-table'>
-                    <Timeline lineColor={'#8f8b8b'}>
-                      {comentarios.map(com =>
-                        <TimelineEvent 
-                        key= {com.id}
-                        title= {com.dependencia}
-                        titleStyle={{color:'#000'}}
-                        createdAt={com.fecha}
-                        icon={<FontAwesomeIcon icon='comment-alt'/>}
-                        iconColor= {this.selectColor(com.estado)}
-                        bubbleStyle={{borderColor: this.selectColor(com.estado), backgroundColor: '#fff'}}
-                        >
-                          {com.comentario}
-                        </TimelineEvent>
-                      )}
-                    </Timeline>
                   </div>
                 </div>
               <div className="modal-footer">

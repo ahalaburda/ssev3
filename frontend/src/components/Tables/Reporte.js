@@ -124,11 +124,11 @@ class Reporte extends Component {
       console.log(`Error handleViewExpediente: InstanciaService\n${e}`);
     }); 
     
-    //Obtiene todas las instancias del expediente a traves de su ID y las carga en una tabla
+    //Obtiene todas las instancias del expediente a traves de su ID 
     InstanciaService.getInstanciasPorExp(row.id, '')
     .then((response) =>{
       this.setState({
-        recorrido: response.data.results.map((instancia) =>{
+        recorrido: response.data.map((instancia) =>{
           return {
             id: instancia.id,
             fecha: moment(instancia.fecha_creacion).isValid() ?
@@ -144,17 +144,14 @@ class Reporte extends Component {
       console.log(`Error handleViewExpediente: InstanciaService\n${e}`);
     });   
  
-    //Obtiene todos los comentarios de un expediente a traves de su ID y lo muestra en una tabla
+    //Obtiene todos los comentarios de un expediente a traves de su ID 
     ComentarioService.getComentarioPorExpedienteID(row.id)
       .then((response) =>{
         this.setState({
-          comentarios: response.data.results.map((comentario) =>{
+          comentarios: response.data.map((comentario) =>{
             return{
               id: comentario.id,
-              estado: comentario.instancia.estado_id.id,
-              fecha: moment(comentario.fecha_creacion).isValid() ?
-                moment(comentario.fecha_creacion).format('DD/MM/YYYY') : 'Sin fecha',
-              dependencia: comentario.instancia.dependencia_actual_id.descripcion,
+              instancia: comentario.instancia.id,
               comentario: comentario.descripcion
             }
           })
@@ -163,7 +160,7 @@ class Reporte extends Component {
       .catch((e) => {
         Popups.error('Ocurrio un error durante la busqueda.');
         console.log(`Error handleViewExpediente: ComentarioService\n${e}`);
-      });      
+      });     
   }
   
 
@@ -297,17 +294,9 @@ class Reporte extends Component {
         this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
           this.state.objetoSelected, this.state.description, helper.getEstado().NORECIBIDO, 1);
         break;  
-      case helper.getEstado().DERIVADO:
-        this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
-          this.state.objetoSelected, this.state.description, helper.getEstado().DERIVADO, 1);
-        break;
       case helper.getEstado().PAUSADO:
         this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
           this.state.objetoSelected, this.state.description, helper.getEstado().PAUSADO, 1);
-        break;
-      case helper.getEstado().RECHAZADO:
-        this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
-          this.state.objetoSelected, this.state.description, helper.getEstado().RECHAZADO, 1);
         break;
       case helper.getEstado().FINALIZADO:   
         this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
@@ -610,12 +599,6 @@ class Reporte extends Component {
                     name="options" checked={this.state.estado === helper.getEstado().PAUSADO} onChange={this.handleSearch} />
                     {this.state.estado === helper.getEstado().PAUSADO &&
                     <FontAwesomeIcon id="pausadosIcon" icon="check"/>}&nbsp;Pausados
-                  </label>
-                  <label className="btn btn-sm btn-danger shadow-sm">
-                    <input type='radio' id='rechazados' value={helper.getEstado().RECHAZADO} 
-                    name="options" checked={this.state.estado === helper.getEstado().RECHAZADO} onChange={this.handleSearch} />
-                     {this.state.estado === helper.getEstado().RECHAZADO &&
-                    <FontAwesomeIcon id="rechazadosIcon" icon="check"/>}&nbsp;Rechazados
                   </label>
                   <label className="btn btn-sm btn-secondary shadow-sm">
                     <input type='radio' id='finalizados' value={helper.getEstado().FINALIZADO} 

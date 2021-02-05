@@ -2,7 +2,7 @@ import React from 'react';
 import './Header.css'
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Configuraciones from "./components/Configuraciones";
-import Notificaciones from "./components/Notificaciones";
+// import Notificaciones from "./components/Notificaciones";
 import UserInfo from "./components/UserInfo";
 
 function Header(props) {
@@ -17,7 +17,7 @@ function Header(props) {
 				{/* Nav Item - Configuraciones */}
 				<Configuraciones/>
 				{/* Nav Item - Notificaciones */}
-				<Notificaciones/>
+				{/* <Notificaciones/> */}
 				{/* Nav Divider */}
 				<div className="topbar-divider d-none d-sm-block"/>
 				{/* Nav Item - User Information */}

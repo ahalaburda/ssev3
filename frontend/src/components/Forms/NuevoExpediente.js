@@ -245,6 +245,7 @@ class NuevoExpediente extends Component {
     this.saveExpediente()
       .then(response => {
         this.saveInstancia(response.data.id);
+        window.location.reload();
       })
       .catch(e => {
         Popups.error('Ocurrio un error al crear el nuevo expediente.');

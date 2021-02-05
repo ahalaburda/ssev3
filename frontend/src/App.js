@@ -5,7 +5,6 @@ import Footer from './components/Footer/index'
 import Expedientes from "./core/Expedientes/Expedientes";
 import TiposDeExpedientes from "./core/TiposDeExpedientes/TiposDeExpedientes";
 import Consultas from "./core/Consultas/Consultas";
-import Graficos from "./core/Graficos/Graficos";
 import Reportes from "./core/Reportes/Reportes";
 import ObjetosDeGastos from "./core/ObjetosDeGastos/ObjetosDeGastos";
 import Login from "./components/Forms/Login";
@@ -157,7 +156,7 @@ class App extends Component {
                   {this.state.loggedIn && <Header username={this.state.username} handleLogout={this.handleLogout}/>}
                   <div className="container-fluid">
                     <Route exact path='/' component={Expedientes}/>
-                    <Route exact path='/graficos/' component={Graficos}/>
+                    {/* <Route exact path='/graficos/' component={Graficos}/> */}
                     <Route exact path='/consultas/' component={Consultas}/>
                     <Route exact path='/reportes/' component={Reportes}/>
                     <Route exact path='/tipos_de_expedientes/' component={TiposDeExpedientes}/>
