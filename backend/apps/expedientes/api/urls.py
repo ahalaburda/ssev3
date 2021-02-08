@@ -17,4 +17,5 @@ urlpatterns = [
     path('prioridades/', PrioridadListView.as_view(), name="prioridades"),
     path('prioridades/<pk>', PrioridadDetailView.as_view()),
     path('instancias_por_expediente/', ExpedienteInstanciasList.as_view()),
+    path('instancias_por_dependencia/<dependencia>/<estado>/<anho>', InstanciasMEList.as_view())
 ]

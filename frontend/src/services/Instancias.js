@@ -108,6 +108,16 @@ class Instancias {
     return http.get(`/instancias_por_expediente/?exp_id=${expediente_id}&orden=${orden}`)
   }
 
+  /**
+   * Obtiene la instancia mas reciente
+   * teniendo en cuenta la depedencia, estado y anho
+   * @param {*} dependencia 
+   * @param {*} estado 
+   * @param {*} anho 
+   */
+  getInstanciasPorDepEstAnho(dependencia, estado, anho) {
+    return http.get(`/instancias_por_dependencia/${dependencia}/${estado}/${anho}`)
+  }
 
 }
 

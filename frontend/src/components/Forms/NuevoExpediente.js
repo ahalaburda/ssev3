@@ -358,7 +358,7 @@ class NuevoExpediente extends Component {
                                 onChange={e => this.setDescription(e)}
                                 onBlur={e => this.setDescription(e)}
                   />
-                  {this.validator.message('description', this.state.description, 'required|alpha_num_dash_space|max:200')}
+                  {this.validator.message('description', this.state.description, 'required|max:200')}
                 </div>
               </Form.Row>
               <Form.Row>
