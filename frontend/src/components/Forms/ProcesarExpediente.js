@@ -464,9 +464,9 @@ class ProcesarExpediente extends Component {
         // si no se permite ingresar el numero (por ahora aunque ingreses el numero se genera de manera aleatoria)
         numMesaComp = <input
           className="form-control"
-          placeholder="Ingresa n&uacute;mero de mesa."
+          placeholder="N&uacute;mero de mesa."
           value={this.state.newNumMesa}
-          onChange={e => this.handleNumMesaChange(e)}/>
+          onChange={e => this.handleNumMesaChange(e)} disabled/>
       }
     }
 
