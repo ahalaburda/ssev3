@@ -25,7 +25,8 @@ const initialState = {
   comment: '',
   sig_dependencias: '',
   dependenciaSigSelected:'',
-  dependenciaInicial:{}
+  dependenciaInicial:{},
+  lastInstanciaME: {}
 }
 class ProcesarExpediente extends Component {
   constructor(props) {
@@ -104,11 +105,11 @@ class ProcesarExpediente extends Component {
 
   /**
    * Genera el nuevo numero de mesa de entrada
-   * TODO fijar metodo para generacion de nro
+   * tomando como referencia y sumandole 1 al numero de mesa de entrada anterior
    * @returns {number}
    */
-  getNewMesaEntrada = () => {
-    return Math.floor((Math.random() * 100) + 1);
+  getNewMesaEntrada = (numAnterior) => {
+    return numAnterior + 1;
   }
 
   /**
@@ -117,10 +118,27 @@ class ProcesarExpediente extends Component {
    * @returns {Promise<AxiosResponse<*>>}
    */
   setExpediente = withMesaEntrada => {
-    return withMesaEntrada ?
+    //Se trae de la api la ultima instancia con dependencia en mesa de entrada y estado recibido del año actual, 
+    //para obtener su numero de mesa de entrada
+    InstanciasService.getInstanciasPorDepEstAnho('Mesa Entrada', 'Recibido', moment().year())
+    .then( response => {
+      this.setState({ 
+        lastInstanciaME : response.data.map((instancia) =>{
+          return {
+           numero: instancia.expediente_id.numero_mesa_de_entrada,
+           id: instancia.id
+          }
+        })
+      }) 
+      return withMesaEntrada ?
       ExpedienteService.update(this.state.instancia.expediente_id.id,
         {
-          numero_mesa_de_entrada: this.getNewMesaEntrada(),
+          //si el tamaño del arreglo guardado en LastInstancia es 0 siginifica que
+          //aun no existen instancias en mesa de entrada en el corriente y se le asigna
+          //1 como numero de mesa de entrada, si el tamaño es distinto el numero de ME se asigna a traves de la funcion
+          // getNewMesaEntrada
+          numero_mesa_de_entrada: this.state.lastInstanciaME.length === 0 ? 1 : 
+          this.getNewMesaEntrada(this.state.lastInstanciaME[0].numero),
           estado_id: this.state.newEstado.id,
           fecha_mesa_entrada: moment().toJSON()
         }) :
@@ -128,6 +146,8 @@ class ProcesarExpediente extends Component {
         {
           estado_id: this.state.newEstado.id
         });
+    })
+    
   }
 
   /**
@@ -444,9 +464,9 @@ class ProcesarExpediente extends Component {
         // si no se permite ingresar el numero (por ahora aunque ingreses el numero se genera de manera aleatoria)
         numMesaComp = <input
           className="form-control"
-          placeholder="Ingresa n&uacute;mero de mesa."
+          placeholder="N&uacute;mero de mesa."
           value={this.state.newNumMesa}
-          onChange={e => this.handleNumMesaChange(e)}/>
+          onChange={e => this.handleNumMesaChange(e)} disabled/>
       }
     }
 
@@ -478,7 +498,7 @@ class ProcesarExpediente extends Component {
     // si se selecciona rechazar expediente, se muestra la dependencia anterior como la dependencia siguiente
     this.state.newEstado.value === helper.getEstado().RECHAZADO ? nextDependencia = this.state.depPrev.descripcion :
       nextDependencia = this.state.depNext.descripcion;
-    
+   
     let tipoExpediente=this.state.instancia.expediente_id.tipo_de_expediente_id.id 
       return (
         <Modal

@@ -139,6 +139,17 @@ class InstanciaExpedienteList(ListAPIView):
         serializer = self.get_serializer(filtered_list, many=True)
         return Response(serializer.data)
 
+class InstanciasMEList(ListAPIView):
+    queryset = Instancia.objects.all().order_by('-fecha_creacion')
+    serializer_class = InstanciaSerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()\
+            .filter(dependencia_actual_id__descripcion=kwargs.get('dependencia'), estado_id__descripcion=kwargs.get('estado'), expediente_id__anho=kwargs.get('anho'))[:1]
+        filtered_list = self.filter_queryset(queryset)
+        serializer = self.get_serializer(filtered_list, many=True)
+        return Response(serializer.data)
+
 class ExpedienteInstaciasFilter(filters.FilterSet):
     orden = filters.NumberFilter(field_name='orden_actual', lookup_expr='exact')
     exp_id = filters.NumberFilter(field_name='expediente_id', lookup_expr='exact')
@@ -146,6 +157,7 @@ class ExpedienteInstaciasFilter(filters.FilterSet):
     class Meta:
         model: Instancia
         fields = ('orden', 'exp_id')
+
 
 class ExpedienteInstanciasList(ListAPIView):
     """
