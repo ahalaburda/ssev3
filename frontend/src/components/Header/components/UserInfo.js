@@ -8,8 +8,7 @@ function UserInfo(props) {
         <div className="nav-link dropdown-toggle" id="userDropdown" role="button" data-toggle="dropdown"
            aria-haspopup="true" aria-expanded="false">
           <span className="mr-2 d-none d-lg-inline text-gray-600 small">{props.username}</span>
-          <img className="img-profile rounded-circle" src="https://source.unsplash.com/kmTq5GU6c-0/60x60" alt=""/>
-        </div>
+         </div>
         {/* Dropdown - User Information */}
         <div className="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
           <button className="dropdown-item" onClick={() => {
