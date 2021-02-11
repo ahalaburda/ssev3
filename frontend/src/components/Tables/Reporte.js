@@ -13,6 +13,7 @@ import helper from "../../utils/helper";
 import DatePicker, {registerLocale} from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import es from 'date-fns/locale/es';
+import { EmptyTable } from "./EmptyTable";
 registerLocale('es', es);
 
 
@@ -37,7 +38,8 @@ class Reporte extends Component {
       description: '',
       estado: '',
       recorrido:[],
-      comentarios: []
+      comentarios: [],
+      mensaje: 'No hay expedientes que mostrar'
     };
      
   }
@@ -263,7 +265,10 @@ class Reporte extends Component {
     InstanciaService.getExpForReportes(fecha_desde, fecha_hasta, origen, objeto, description, estado,page)
       .then(response => {
         if (response.data.count === 0) {
-          Popups.error('Expediente(s) no encontrado(s).');
+          this.setState({
+            data: [],
+            mensaje: 'Expediente(s) no encontrado(s)'
+          })
         } else {
           this.setListFromResponse(response);
         }
@@ -641,6 +646,7 @@ class Reporte extends Component {
             paginationComponentOptions={paginationOptions}
             onChangePage={this.handlePageChange}
             highlightOnHover={true}
+            noDataComponent={<EmptyTable mensaje={this.state.mensaje} />}
             noHeader={true}
             dense={true}
             className="table-responsive table-sm table-bordered"
