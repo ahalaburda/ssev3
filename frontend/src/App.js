@@ -86,7 +86,7 @@ class App extends Component {
       localStorage.setItem('refresh_token', response.data.refresh);
       localStorage.setItem('username', data.username);
       localStorage.setItem('isAdmin',response.data.admin);
-      sessionStorage.setItem('year_setting', moment().startOf('year').format('YYYY-MM-DD'));
+      sessionStorage.setItem('year_setting', moment().startOf('year').format('YYYY'));
       Popups.success('Sesión iniciada correctamente.');
       this.setState({
         loggedIn: true,
@@ -106,7 +106,6 @@ class App extends Component {
   handleUserChange = e => {
     this.setState({username: e.target.value});
   }
-
   /**
    * Agregar a la blacklist el token utilizado
    * Borrar el access y refresh token del local storage

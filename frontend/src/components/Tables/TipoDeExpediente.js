@@ -214,13 +214,14 @@ class TipoDeExpediente extends Component {
                 className="btn btn-sm btn-link text-primary" onClick={() => this.handleEditClick(row)}>
                 <FontAwesomeIcon icon="edit"/>
               </button> */}
+              {(localStorage.getItem('isAdmin') === 'true') ?
               <button
                 className="btn btn-sm btn-link text-danger"
                 onClick={() => {
                   if (window.confirm("Estás seguro de eliminar?")) {this.handleDeleteClick(row)}}
                 }>
                 <FontAwesomeIcon icon="trash-alt"/>
-              </button>
+              </button>: <div/>}
             </div>,
           button: true,
         }
@@ -230,9 +231,10 @@ class TipoDeExpediente extends Component {
       <>
         <div className="d-sm-flex align-items-center justify-content-between mb-4">
           <h1 className="h3 mb-0 text-gray-800">Tipos de expedientes</h1>
+          {(localStorage.getItem('isAdmin') === 'true') ?
           <button className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" onClick={() => this.setShowNew(true)}>
             <FontAwesomeIcon icon="plus" size="sm" className="text-white-50"/>&nbsp;Nuevo
-          </button>
+          </button>: <div/>}
         </div>
 
         {/*Tabla de lista de tipos de expedientes*/}

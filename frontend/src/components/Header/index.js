@@ -4,16 +4,20 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Configuraciones from "./components/Configuraciones";
 // import Notificaciones from "./components/Notificaciones";
 import UserInfo from "./components/UserInfo";
+import helper from '../../utils/helper';
 
 function Header(props) {
 	return (
-		<nav className="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+		<nav className="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow ">
 			{/* Sidebar Toggle (Topbar) */}
 			<button id="sidebarToggleTop" className="btn btn-link d-md-none rounded-circle mr-3">
 				<FontAwesomeIcon icon="bars"/>
 			</button>
+			
 			{/* Topbar Navbar */}
-			<ul className="navbar-nav ml-auto">
+			<div style={{alignItems: 'center'}}  className='ml-auto'>{(helper.getCurrentYearSetting())}</div>
+			<ul className="navbar-nav ">
+				
 				{/* Nav Item - Configuraciones */}
 				<Configuraciones/>
 				{/* Nav Item - Notificaciones */}

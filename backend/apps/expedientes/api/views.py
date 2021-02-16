@@ -57,8 +57,8 @@ class InstanciaFilter(filters.FilterSet):
     """
     expediente_descripcion = filters.CharFilter(field_name='expediente_id__descripcion', lookup_expr='icontains')
     estado = filters.CharFilter(field_name='estado_id__descripcion', lookup_expr='exact')
-    fecha_desde = filters.DateTimeFilter(field_name='expediente_id__fecha_creacion', lookup_expr='gte')
-    fecha_hasta = filters.DateTimeFilter(field_name='expediente_id__fecha_creacion', lookup_expr='lte')
+    fecha_desde = filters.DateFilter(field_name='expediente_id__fecha_creacion__date', lookup_expr='gte')
+    fecha_hasta = filters.DateFilter(field_name='expediente_id__fecha_creacion__date', lookup_expr='lte')
     actual = filters.CharFilter(field_name='dependencia_actual_id__descripcion', lookup_expr='icontains')
     expediente_anho = filters.CharFilter(field_name='expediente_id__anho', lookup_expr='exact')
     expediente_nro_mesa = filters.CharFilter(field_name='expediente_id__numero_mesa_de_entrada', lookup_expr='exact')
@@ -109,7 +109,7 @@ class LastInstanciaListView(ListCreateAPIView):
 
 class InstanciaExpedienteFilter(filters.FilterSet):
     estado = filters.CharFilter(field_name='estado_id__descripcion', lookup_expr='exact')
-    anho = filters.DateTimeFilter(field_name='expediente_id__fecha_creacion', lookup_expr='gte')
+    anho = filters.NumberFilter(field_name='expediente_id__anho', lookup_expr='exact')
 
     class Meta:
         model: Instancia

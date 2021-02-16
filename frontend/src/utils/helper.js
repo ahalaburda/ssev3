@@ -1,3 +1,4 @@
+import moment from 'moment';
 class Helper {
 
   /**
@@ -31,7 +32,7 @@ class Helper {
    * @returns {string|string}
    */
   getCurrentYearSetting() {
-    return this.existYearSetting() ? sessionStorage.getItem('year_setting') : '2020';
+    return this.existYearSetting() ? sessionStorage.getItem('year_setting') : moment().year();
   }
 
   /**
