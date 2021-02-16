@@ -542,7 +542,7 @@ class Reporte extends Component {
               </div>
             </div>
 
-            <div className= "col-md-3">
+            {/* <div className= "col-md-3">
               <label className="col-form-label m-0 font-weight-bold" name='filtroPorObjeto'>Filtrar por Objeto: </label>
               <div className="form-group row">
                 <label className="col-form-label col-sm-3">Objeto: </label>
@@ -558,16 +558,19 @@ class Reporte extends Component {
                     />
                   </div>             
               </div>
-            </div>
+            </div> */}
 
-            <div className='col-md-2'>
-              <label className="col-form-label m-0 font-weight-bold">Filtrar por Descripción: </label>
+            <div className='col-md-3'>
+              <label className="col-form-label col-md-12 font-weight-bold">Filtrar por Descripción: </label>
+              <div className='form-group row'>
+              <label className=" col-form-label col-sm-4">Descripción: </label>
               <input
                 type="text"
                 name='description'
-                className="form-control form-control-sm-1"
+                className="form-control col-md-8"
                 onChange={e => this.handleDescriptionChange(e)}
-              />           
+              />  
+              </div>         
             </div>
           </div>
           
