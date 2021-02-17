@@ -565,21 +565,36 @@ class ProcesarExpediente extends Component {
                       onChange={value => this.handleEstadoChange(value)}
                       name="select"/>
                   </div>
-                  <div className="form-group col">
-                    <Form.Label>Dependencia Siguiente</Form.Label>   
-                       {this.state.newEstado.value === 'Derivado' && tipoExpediente === 1 ?
-                        <Select
-                        options={this.state.sig_dependencias}
-                        value={this.state.sig_dependencias.value}
-                        placeholder="Selecciona..."
-                        size="sm"
-                        onChange={(dependencia_sig) => this.setDependenciaSiguiente(dependencia_sig)}
-                        name="selectDestino"/> :
+                  {/* <div className="form-group col"> */}
+                  {this.state.newEstado.value === 'Derivado' && tipoExpediente === 1 ?
+                    <div className="form-group col">
+                      <Form.Label>Dependencia Siguiente</Form.Label>   
+                          <Select
+                          options={this.state.sig_dependencias}
+                          value={this.state.sig_dependencias.value}
+                          placeholder="Selecciona..."
+                          size="sm"
+                          onChange={(dependencia_sig) => this.setDependenciaSiguiente(dependencia_sig)}
+                          name="selectDestino"/>
+                    </div> :
+                  (this.state.newEstado.value === 'Rechazado' && tipoExpediente === 1) ?
+                    <div className="form-group col">
+                      <Form.Label>Dependencia Siguiente</Form.Label> 
                         <input
                         className="form-control"
                         value={nextDependencia}
-                        disabled/> }
-                  </div>
+                        disabled/> 
+                    </div>:  
+                  (tipoExpediente !== 1) ?
+                    <div className="form-group col">
+                      <Form.Label>Dependencia Siguiente</Form.Label> 
+                        <input
+                        className="form-control"
+                        value={nextDependencia}
+                        disabled/> 
+                    </div>:
+                    <div/>}
+                  {/* </div> */}
                 </Form.Row>
                 <Form.Row>
                   <div className="from-group col">
