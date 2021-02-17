@@ -108,7 +108,7 @@ class ReporteToPrint extends Component{
                     <h3 className='modal-text'>Reporte</h3>  
                     <div>
                     {(this.state.fecha_desde !== '' && this.state.searchExisted) ?
-                        <label className='modal-text '>Fecha de inicio: {this.state.fecha_desde} </label>
+                        <label className='modal-text '>Fecha inicial: {this.state.fecha_desde} </label>
                         : <div/>}    
                     </div>
                     <div>
