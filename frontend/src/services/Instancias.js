@@ -100,6 +100,9 @@ class Instancias {
     return http.get(`/instancias/?fecha_desde=${fecha_desde}&fecha_hasta=${fecha_hasta}&origen=${origen}&objeto_de_gasto=${objeto}&expediente_descripcion=${descripcion}&estado=${estado}&page=${page}&format=json`)
   }
 
+  getExpForReportesSinPag(fecha_desde, fecha_hasta, origen, objeto, descripcion, estado) {
+    return http.get(`/instancias_sin_pag/?fecha_desde=${fecha_desde}&fecha_hasta=${fecha_hasta}&origen=${origen}&objeto_de_gasto=${objeto}&expediente_descripcion=${descripcion}&estado=${estado}&format=json`)
+  }
   /**
    * Obtiene todas las instancias de un expediente
    * @param {*} expediente_id

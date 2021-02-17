@@ -14,8 +14,8 @@ import DatePicker, {registerLocale} from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import es from 'date-fns/locale/es';
 import { EmptyTable } from "./EmptyTable";
+import ReporteToPrint from './ReporteToPrint';
 registerLocale('es', es);
-
 
 /**
  * Tabla para reportes
@@ -26,6 +26,7 @@ class Reporte extends Component {
     this.state = {
       loading: false,
       data: [],
+      dataToPrint: [],
       totalRows: 0,
       startDate: new Date(),
       endDate: new Date(),
@@ -39,7 +40,8 @@ class Reporte extends Component {
       estado: '',
       recorrido:[],
       comentarios: [],
-      mensaje: 'No hay expedientes que mostrar'
+      mensaje: 'No hay expedientes que mostrar',
+      searchExisted: false
     };
      
   }
@@ -70,7 +72,8 @@ class Reporte extends Component {
         }
       }),
       loading: false,
-      totalRows: response.data.count
+      totalRows: response.data.count,
+      searchExisted : true
     });
   }
 
@@ -267,7 +270,8 @@ class Reporte extends Component {
         if (response.data.count === 0) {
           this.setState({
             data: [],
-            mensaje: 'Expediente(s) no encontrado(s)'
+            mensaje: 'Expediente(s) no encontrado(s)',
+            searchExisted : true
           })
         } else {
           this.setListFromResponse(response);
@@ -349,9 +353,46 @@ class Reporte extends Component {
     }
   }
 
-  //Funcion para imprimir la tabla
-  printTable = () =>{
-    window.print();
+  /**
+   * Funcion utilizada para la impresion de reportes,
+   * realiza una llamada a la api para traer los datos filtrados sin paginacion
+   */
+  printReporte = () =>{
+    //si es que se realizo alguna busqueda en la vista, procede a realizar la misma busqueda para generar la vista para impresion
+    (this.state.searchExisted) ?
+      InstanciaService.getExpForReportesSinPag(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
+        this.state.objetoSelected, this.state.description, this.state.estado)
+        .then(response => {
+          //si la busqueda no da resultados setea un mensaje
+          if (response.data.length === 0) {
+            this.setState({
+              dataToPrint: [],
+              mensaje: 'Expediente(s) no encontrado(s)'
+            })
+          } else {
+            this.setState({
+              dataToPrint: response.data.map(exp => {
+                return {
+                  id: exp.expediente_id.id,
+                  numero: exp.expediente_id.numero_mesa_de_entrada + "/" + exp.expediente_id.anho,
+                  fecha_me: moment(exp.expediente_id.fecha_mesa_entrada).isValid() ?
+                    moment(exp.expediente_id.fecha_mesa_entrada).format('DD/MM/YYYY - kk:mm:ss') : 'Sin fecha',
+                  origen: exp.expediente_id.dependencia_origen_id.descripcion,
+                  tipo: exp.expediente_id.tipo_de_expediente_id.descripcion,
+                  descripcion: exp.expediente_id.descripcion,
+                  estado: exp.estado_id.descripcion,
+                  dependencia: exp.dependencia_actual_id.descripcion
+                }
+              })
+            });
+          }
+          window.print();
+        })
+        .catch((e) => {
+          Popups.error('Ocurrio un error al imprimir el Reporte.');
+          console.log(`Error printReporte: InstanciaService\n${e}`);
+        }):
+      window.print();    
   }
   
   /**
@@ -448,7 +489,7 @@ class Reporte extends Component {
       {
         name: 'Acciones',
         cell: row =>
-          <div className='oculto-impresion'>
+          <div>
             <button
               className="btn btn-sm btn-link text-primary"
               onClick= {()=> this.handleViewExpediente(row)}
@@ -472,10 +513,10 @@ class Reporte extends Component {
     };
     return (
       <>
-        <div className="d-sm-flex align-items-center justify-content-between mb-4">
+        <div className="d-sm-flex align-items-center justify-content-between mb-4 oculto-impresion">
           <h1 className="h3 mb-0 text-gray-800">Reportes</h1>
         </div>
-          <div className= "col-12 oculto-impresion">
+          <div className= "col-12 oculto-impresion ">
             <div className='row'>
               <div className= "col-md-4">
                 <div className="row">
@@ -574,7 +615,7 @@ class Reporte extends Component {
             </div>
           </div>
           
-          <div className='col-md-12'>   
+          <div className='col-md-12 oculto-impresion'>   
             <div className='row'>  
               <div className='card-header py-3 col-md-9'>
               <div className="btn-group ml-auto">
@@ -620,7 +661,7 @@ class Reporte extends Component {
 
               <div className="py-3 col-md-3 text-right">
                 <button
-                  onClick= {()=>this.printTable()}
+                  onClick= {()=>this.printReporte()}
                   className="btn btn-sm btn-info"
                 > <FontAwesomeIcon icon="print"/>Imprimir
                 </button>
@@ -635,7 +676,7 @@ class Reporte extends Component {
           </div>
 
         </div> 
-        <div>
+        <div className='oculto-impresion'>
 
           {/*Tabla de lista de expediente*/}
           <DataTable
@@ -668,7 +709,21 @@ class Reporte extends Component {
           verTipo = {this.state.verTipo}
           verRecorrido = {this.state.recorrido}
           comentarios = {this.state.comentarios}
-          />   
+          /> 
+
+          {/* Vista solamente utilizada para la impresion de los reportes, no es visible  */}
+        <div className='no_mostrar'>
+          <ReporteToPrint
+          data = {this.state.dataToPrint}
+          mensaje = {this.state.mensaje}
+          fecha_desde = { moment(this.state.startDate).isValid() ? moment(this.state.startDate).format('DD/MM/YYYY') : ''}
+          fecha_hasta = { moment(this.state.endDate).isValid ? moment(this.state.endDate).format('DD/MM/YYYY') : ''}
+          origen = {this.state.origenSelected}
+          description = {this.state.description}
+          estado = {this.state.estado}
+          searchExisted = {this.state.searchExisted}
+          />
+        </div>  
       </>
     );
   }

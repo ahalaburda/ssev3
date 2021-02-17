@@ -81,6 +81,19 @@ def get_last_instancias():
         id__in=Instancia.objects.values('expediente_id').annotate(id=Max('id')).values('id')
     ).order_by('-expediente_id')
 
+class InstanciasForReportesListView(ListAPIView):
+    """
+    Vista para listar la ultima instancia de cada expediente sin paginar
+    """
+    queryset = get_last_instancias()
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = InstanciaFilter
+    serializer_class = InstanciaSerializer
+
+    def list(self, request, *args, **kwargs):
+        filtered_list = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(filtered_list, many=True)
+        return Response(serializer.data)
 
 class LastInstanciaListView(ListCreateAPIView):
     """
