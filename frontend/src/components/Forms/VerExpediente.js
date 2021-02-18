@@ -103,6 +103,29 @@ class VerExpediente extends Component {
     } 
   }
 
+  selectIcon =(estado)=>{
+    switch (estado) {
+      case 1:
+        return <FontAwesomeIcon icon='check'/>;
+      case 2:
+        return <FontAwesomeIcon icon='check-double'/>;
+      case 3:
+        return <FontAwesomeIcon icon='forward'/>;
+      case 4:
+        return <FontAwesomeIcon icon='backward'/>;
+      case 5:
+        return <FontAwesomeIcon icon='archive'/>;
+      case 6:
+        return <FontAwesomeIcon icon='stop'/>
+      case 7:
+        return <FontAwesomeIcon icon='hand-paper'/>
+      case 8:
+        return <FontAwesomeIcon icon='fast-forward'/>;
+      default:
+        return <FontAwesomeIcon icon='calendar-check'/>;
+    } 
+  }
+
   getDependencia = (dependencia, estado) => {
     switch (estado) {
       case 1:
@@ -190,7 +213,7 @@ class VerExpediente extends Component {
                               title= {this.getDependencia(rec.dependencia, rec.estado)}
                               titleStyle={{color:'#000'}}
                               createdAt={rec.fecha}
-                              icon={<FontAwesomeIcon icon='calendar-check'/>}
+                              icon={this.selectIcon(rec.estado)}
                               iconColor= {this.selectColor(rec.estado)}
                               bubbleStyle={{borderColor: this.selectColor(rec.estado), backgroundColor: '#fff'}}
                               >
