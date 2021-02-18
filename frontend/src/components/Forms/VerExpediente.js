@@ -63,6 +63,8 @@ class VerExpediente extends Component {
 
   /**
    * Funcion utilizada para imprimir el modal
+   * Toma los datos que se imprimiran a traves de su ID. luego los carga en un frame
+   * y relaiza la accion de impromor esos datos
    */
   printModal =()=>{
     let expNum = document.getElementById("expNum").innerHTML;
@@ -103,6 +105,42 @@ class VerExpediente extends Component {
     } 
   }
 
+  /**
+   * funcion que retorna el icono que sera mostrado en recorrido
+   * Dependiendo del estado en el que se encuentre el expediente en la instancia, el icono 
+   * retornado varia
+   * @param  estado 
+   */
+  selectIcon =(estado)=>{
+    switch (estado) {
+      case 1:
+        return <FontAwesomeIcon icon='check'/>;
+      case 2:
+        return <FontAwesomeIcon icon='check-double'/>;
+      case 3:
+        return <FontAwesomeIcon icon='forward'/>;
+      case 4:
+        return <FontAwesomeIcon icon='backward'/>;
+      case 5:
+        return <FontAwesomeIcon icon='archive'/>;
+      case 6:
+        return <FontAwesomeIcon icon='stop'/>
+      case 7:
+        return <FontAwesomeIcon icon='hand-paper'/>
+      case 8:
+        return <FontAwesomeIcon icon='fast-forward'/>;
+      default:
+        return <FontAwesomeIcon icon='calendar-check'/>;
+    } 
+  }
+
+  /**
+   * funcion que retorna el mensaje mostrado en recorrido
+   * Teniendo en cuenta el estado del expediente en esa instancia 
+   * el mensaje  que retorna cambiara
+   * @param {*} dependencia 
+   * @param {*} estado 
+   */
   getDependencia = (dependencia, estado) => {
     switch (estado) {
       case 1:
@@ -133,6 +171,7 @@ class VerExpediente extends Component {
 
     return (
       <>
+        {/* frame que se utiliza para realizar la impresion del modal */}
         <iframe title='conToPrint' id="ifmcontentstoprint" style={{display:'none'}}></iframe>
         <div className="modal fade" id="viewExpedienteModal"  role="dialog" aria-hidden="true">
           <div className="modal-dialog modal-lg modal-dialog-centered "  role="document">
@@ -190,7 +229,7 @@ class VerExpediente extends Component {
                               title= {this.getDependencia(rec.dependencia, rec.estado)}
                               titleStyle={{color:'#000'}}
                               createdAt={rec.fecha}
-                              icon={<FontAwesomeIcon icon='calendar-check'/>}
+                              icon={this.selectIcon(rec.estado)}
                               iconColor= {this.selectColor(rec.estado)}
                               bubbleStyle={{borderColor: this.selectColor(rec.estado), backgroundColor: '#fff'}}
                               >
