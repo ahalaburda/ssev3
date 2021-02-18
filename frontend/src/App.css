@@ -11207,6 +11207,16 @@ body.sidebar-toggled footer.sticky-footer {
   }
 }
 
+@media screen {
+  .no_mostrar { display: none; }
+  .no_imprimir { display: block; }
+}
+
+@media print {
+  .no_mostrar { display: block; }
+  .no_imprimir { display: none; }
+}
+
 @media print{
   .oculto-impresion, .oculto-impresion *{
     display: none !important;

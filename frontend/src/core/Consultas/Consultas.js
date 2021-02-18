@@ -14,7 +14,8 @@ class Consultas extends Component {
       id: '',
       description: '',
       num: '',
-      year: ''
+      year: '',
+      mensaje: 'No hay expedientes que mostrar'
     }
     this.handleIdChange = this.handleIdChange.bind(this);
     this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
@@ -96,7 +97,10 @@ class Consultas extends Component {
         this.setStateFromResponse(response);
       })
       .catch(e => {
-        Popups.error('Expediente no encontrado.')
+        this.setState({
+          data:[],
+          mensaje: `ID no encontrado`
+        })
         console.log(`Error findByExpedienteId: InstanciaService\n${e}`);
       });
   }
@@ -116,7 +120,6 @@ class Consultas extends Component {
    */
   setStateFromResponse = response => {
     //se controla el contador del response porque da codigo 200 aunque no encuentre ningun expediente
-    if (response.data.count > 0) {
       this.setState({
         data: response.data.results.map(ie => {
           return {
@@ -131,11 +134,7 @@ class Consultas extends Component {
             estado: ie.expediente_id.estado_id.descripcion
           }
         })
-      });
-      Popups.success('Expediente encontrado.');
-    } else {
-      Popups.error('No se encontro el expediente');
-    }
+      }); 
   }
 
   /**
@@ -146,7 +145,10 @@ class Consultas extends Component {
     InstanciaService.getByExpDescription(description)
       .then(response => {
         if (response.data.count === 0) {
-          Popups.error('Expediente(s) no encontrado(s).');
+          this.setState({
+            data: [],
+            mensaje:`Descripción no encontrada`
+          })
         } else {
           this.setStateFromResponse(response);
         }
@@ -174,7 +176,14 @@ class Consultas extends Component {
   findByYearNum = (year, num) => {
     InstanciaService.getByExpYearNum(year, num)
       .then(response => {
-        this.setStateFromResponse(response);
+        if (response.data.count === 0) {
+          this.setState({
+            data: [],
+            mensaje:`Número de expediente/Año no encontrados`
+          })
+        } else {
+          this.setStateFromResponse(response);
+        }
       })
       .catch(e => {
         Popups.error('Ocurrio un error durante la búsqueda.');
@@ -212,7 +221,6 @@ class Consultas extends Component {
                     onChange={e => this.handleIdChange(e)}
                     onBlur={e => this.handleIdChange(e)}
                     value={this.state.id}
-                    autoFocus
                   />
                   {this.validator.message('id', this.state.id, 'required|numeric|min:1,num')}
                 </div>
@@ -291,7 +299,10 @@ class Consultas extends Component {
             </div>
           </Tab>
         </Tabs>
-        <Consulta data={this.state.data}/>
+        <Consulta 
+        data={this.state.data}
+        mensaje={this.state.mensaje}
+        />
       </>
     );
   }

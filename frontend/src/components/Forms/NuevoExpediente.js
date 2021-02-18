@@ -134,7 +134,6 @@ class NuevoExpediente extends Component {
     tde !== sinRutaPredefinida && this.nextNLastDependencia(tde.id);
     // si el tipo de expediente seleccionado es igual a sinRutaPredefinida se muestra el selector destino
     this.setState({
-      showDestino: tde === sinRutaPredefinida ? '' : 'd-none',
       tipo_expediente: tde
     });
     this.checkValid();
@@ -149,15 +148,7 @@ class NuevoExpediente extends Component {
     this.checkValid();
   }
 
-  /**
-   * Setea el destino del expediente. Si se setea el destino es porque se selecciono sin ruta predefinida, entonces el
-   * destino, next y last dependencia son iguales.
-   * @param destino
-   */
-  handleSelectDestino = destino => {
-    this.setState({end: destino});
-    this.checkValid();
-  }
+  
 
   /**
    * Setea la siguiente y ultima dependencia de la ruta de acuerdo al tipo de expediente seleccionado.
@@ -196,7 +187,7 @@ class NuevoExpediente extends Component {
       descripcion: this.state.description,
       tipo_de_expediente_id: this.state.tipo_expediente.id,
       dependencia_origen_id: this.state.start.id,
-      dependencia_destino_id: this.state.end.id,
+      dependencia_destino_id: (this.state.tipo_expediente.id === 1) ? this.state.start.id : this.state.end.id,
       prioridad_id: this.state.high_priority ? 2 : 1
     }
     return ExpedientesService.create(newExpediente);
@@ -211,12 +202,11 @@ class NuevoExpediente extends Component {
     const user_in_id = helper.existToken() ? helper.getCurrentUserId() : null;
     // si next_id es igual a 0 (cero) es porque se selecciono Sin Ruta Predefinida y la siguiente instancia se setea al
     // procesar el expediente.
-    // Se asume que el expediente se crea en la dependencia correspondiente y por eso se asigna el 'orden_actual = 1',
     // eso significa que ese tipo de expediente pertenece al usuario que esta creando
     const instancia = {
       expediente_id: expId,
       dependencia_actual_id: this.state.start.id,
-      dependencia_siguiente_id: this.state.next_id !== 0 ? this.state.next_id : this.state.end.id,
+      dependencia_siguiente_id: this.state.next_id !== 0 ? this.state.next_id : this.state.start.id,
       usuario_id_entrada: user_in_id,
       orden_actual: 0
     }
@@ -245,7 +235,9 @@ class NuevoExpediente extends Component {
     this.saveExpediente()
       .then(response => {
         this.saveInstancia(response.data.id);
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       })
       .catch(e => {
         Popups.error('Ocurrio un error al crear el nuevo expediente.');
@@ -283,12 +275,8 @@ class NuevoExpediente extends Component {
   //TODO checkValid deja pasar si hay errores
   handleSaveClick = () => {
     if (this.validator.allValid()) {
-      if (this.state.end.id=== undefined) {
-        Popups.error("Seleccione la Dependencia Destino")
-      }else{
         this.save();
         this.props.setShow(false);
-      }
     }else{
       this.validator.showMessages();
     }
@@ -332,20 +320,6 @@ class NuevoExpediente extends Component {
                     onChange={value => this.handleSelectOrigen(value)}
                   />
                   {this.validator.message('select', this.state.start_list, 'required')}
-                </div>
-              </Form.Row>
-              <Form.Row>
-                <div className="form-group col">
-                  <div className={this.state.showDestino}>
-                    <label>Destino</label>
-                    <Select
-                      options={this.state.end_list}
-                      placeholder="Selecciona..."
-                      name="select"
-                      onChange={value => this.handleSelectDestino(value)}
-                    />
-                    {this.validator.message('select', this.state.end_list, 'required')}
-                  </div>
                 </div>
               </Form.Row>
               <Form.Row>

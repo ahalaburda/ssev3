@@ -11,6 +11,7 @@ import "../../styles/table.css";
 import VerExpediente from "../Forms/VerExpediente";
 import ComentarioService from "../../services/Comentarios";
 import DependenciasService from "../../services/Dependencias";
+import { EmptyTable } from "./EmptyTable";
 
 /**
  * Tabla para expedientes
@@ -182,7 +183,6 @@ class Expediente extends Component {
             loading: false,
             list: []
           });
-          Popups.error('No existen expedientes en su dependencia.');
         }
       })
       .catch(e => {
@@ -463,6 +463,7 @@ class Expediente extends Component {
             onChangePage={this.handlePageChange}
             highlightOnHover={true}
             noHeader={true}
+            noDataComponent= { <EmptyTable mensaje ='No existen expedientes en su dependencia'/>}
             dense={true}
             className="table-responsive table-sm table-bordered"
           />

@@ -1,12 +1,14 @@
 import React, {Component} from "react";
 import DataTable from "react-data-table-component";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { EmptyTable } from "./EmptyTable";
 
 class Consulta extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      list: []
+      list: [],
+      mensaje : ''
     }
   }
 
@@ -16,7 +18,10 @@ class Consulta extends Component {
 
   //reemplazo de funcion componentWillReceiveProps
   static getDerivedStateFromProps(nextProps) {
-    return {list: nextProps.data}
+    return {
+      list: nextProps.data,
+      mensaje: nextProps.mensaje
+    }
   }
    
   /**
@@ -132,6 +137,7 @@ class Consulta extends Component {
         highlightOnHover={true}
         noHeader={true}
         dense={true}
+        noDataComponent={<EmptyTable mensaje={this.state.mensaje} />}
         className="table-responsive table-sm table-bordered"
       />
     );

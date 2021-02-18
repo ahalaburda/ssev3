@@ -57,8 +57,8 @@ class InstanciaFilter(filters.FilterSet):
     """
     expediente_descripcion = filters.CharFilter(field_name='expediente_id__descripcion', lookup_expr='icontains')
     estado = filters.CharFilter(field_name='estado_id__descripcion', lookup_expr='exact')
-    fecha_desde = filters.DateTimeFilter(field_name='expediente_id__fecha_creacion', lookup_expr='gte')
-    fecha_hasta = filters.DateTimeFilter(field_name='expediente_id__fecha_creacion', lookup_expr='lte')
+    fecha_desde = filters.DateFilter(field_name='expediente_id__fecha_creacion__date', lookup_expr='gte')
+    fecha_hasta = filters.DateFilter(field_name='expediente_id__fecha_creacion__date', lookup_expr='lte')
     actual = filters.CharFilter(field_name='dependencia_actual_id__descripcion', lookup_expr='icontains')
     expediente_anho = filters.CharFilter(field_name='expediente_id__anho', lookup_expr='exact')
     expediente_nro_mesa = filters.CharFilter(field_name='expediente_id__numero_mesa_de_entrada', lookup_expr='exact')
@@ -81,6 +81,19 @@ def get_last_instancias():
         id__in=Instancia.objects.values('expediente_id').annotate(id=Max('id')).values('id')
     ).order_by('-expediente_id')
 
+class InstanciasForReportesListView(ListAPIView):
+    """
+    Vista para listar la ultima instancia de cada expediente sin paginar
+    """
+    queryset = get_last_instancias()
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = InstanciaFilter
+    serializer_class = InstanciaSerializer
+
+    def list(self, request, *args, **kwargs):
+        filtered_list = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(filtered_list, many=True)
+        return Response(serializer.data)
 
 class LastInstanciaListView(ListCreateAPIView):
     """
@@ -109,7 +122,7 @@ class LastInstanciaListView(ListCreateAPIView):
 
 class InstanciaExpedienteFilter(filters.FilterSet):
     estado = filters.CharFilter(field_name='estado_id__descripcion', lookup_expr='exact')
-    anho = filters.DateTimeFilter(field_name='expediente_id__fecha_creacion', lookup_expr='gte')
+    anho = filters.NumberFilter(field_name='expediente_id__anho', lookup_expr='exact')
 
     class Meta:
         model: Instancia

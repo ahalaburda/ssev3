@@ -35,7 +35,7 @@ class VerTipoExpediente extends Component {
     return (
       <div className="modal fade" id="viewTipoExpedienteModal" tabIndex="-1" role="dialog" aria-hidden="true">
         <div className="modal-dialog modal-lg modal-dialog-centered" role="document">
-          <div className="modal-content">
+          <div className="modal-content modal-text">
             <div className="modal-header">
               <h5 className="modal-title">{this.state.titulo}</h5>
               <button type="button" className="close" data-dismiss="modal" aria-label="Close">
