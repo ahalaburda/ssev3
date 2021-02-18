@@ -63,6 +63,8 @@ class VerExpediente extends Component {
 
   /**
    * Funcion utilizada para imprimir el modal
+   * Toma los datos que se imprimiran a traves de su ID. luego los carga en un frame
+   * y relaiza la accion de impromor esos datos
    */
   printModal =()=>{
     let expNum = document.getElementById("expNum").innerHTML;
@@ -103,6 +105,12 @@ class VerExpediente extends Component {
     } 
   }
 
+  /**
+   * funcion que retorna el icono que sera mostrado en recorrido
+   * Dependiendo del estado en el que se encuentre el expediente en la instancia, el icono 
+   * retornado varia
+   * @param  estado 
+   */
   selectIcon =(estado)=>{
     switch (estado) {
       case 1:
@@ -126,6 +134,13 @@ class VerExpediente extends Component {
     } 
   }
 
+  /**
+   * funcion que retorna el mensaje mostrado en recorrido
+   * Teniendo en cuenta el estado del expediente en esa instancia 
+   * el mensaje  que retorna cambiara
+   * @param {*} dependencia 
+   * @param {*} estado 
+   */
   getDependencia = (dependencia, estado) => {
     switch (estado) {
       case 1:
@@ -156,6 +171,7 @@ class VerExpediente extends Component {
 
     return (
       <>
+        {/* frame que se utiliza para realizar la impresion del modal */}
         <iframe title='conToPrint' id="ifmcontentstoprint" style={{display:'none'}}></iframe>
         <div className="modal fade" id="viewExpedienteModal"  role="dialog" aria-hidden="true">
           <div className="modal-dialog modal-lg modal-dialog-centered "  role="document">
