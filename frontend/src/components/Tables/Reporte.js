@@ -717,7 +717,7 @@ class Reporte extends Component {
           data = {this.state.dataToPrint}
           mensaje = {this.state.mensaje}
           fecha_desde = { moment(this.state.startDate).isValid() ? moment(this.state.startDate).format('DD/MM/YYYY') : ''}
-          fecha_hasta = { moment(this.state.endDate).isValid ? moment(this.state.endDate).format('DD/MM/YYYY') : ''}
+          fecha_hasta = { moment(this.state.endDate).isValid() ? moment(this.state.endDate).format('DD/MM/YYYY') : ''}
           origen = {this.state.origenSelected}
           description = {this.state.description}
           estado = {this.state.estado}
