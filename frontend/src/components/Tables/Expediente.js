@@ -47,9 +47,13 @@ class Expediente extends Component {
     this.retrieveDependencias();
     this.filterExpedientes(1, '');
   }
-
+ 
   componentWillUnmount() {
     clearInterval(this.interval);
+     // fix Warning: Can't perform a React state update on an unmounted component
+     this.setState = (state,callback)=>{
+      return;
+  };
   }
 
   /**
@@ -190,7 +194,7 @@ class Expediente extends Component {
         Popups.error('Ocurrio un error al obtener los expedientes');
       });
   }
-
+  
   /**
    * Setea los estados utilizados para mostrar los datos en el modal de Ver Expediente
    */

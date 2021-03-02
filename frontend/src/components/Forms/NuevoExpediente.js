@@ -42,6 +42,14 @@ class NuevoExpediente extends Component {
     });
   }
 
+  componentWillUnmount() {
+    clearInterval(this.interval);
+    // fix Warning: Can't perform a React state update on an unmounted component
+    this.setState = (state,callback)=>{
+      return;
+    };
+  }
+
   /**
    * Obtener las dependencias de la base de datos y cargarlos como opciones para el select
    */
@@ -89,7 +97,8 @@ class NuevoExpediente extends Component {
    */
   //TODO al iniciar por primera vez el server frontend, genera error al no poder acceder al contenido del localstorage porque este esta vacio aun.
   retrieveDependenciasByUser() {
-    DependenciasPorUsuarioService.getByUser(helper.getCurrentUserId())
+    if (helper.getCurrentUserId() !== undefined) {
+      DependenciasPorUsuarioService.getByUser(helper.getCurrentUserId())
       .then(response => {
         this.setState({
           start_list: response.data.results.map(dxu => {
@@ -104,6 +113,7 @@ class NuevoExpediente extends Component {
       .catch(e => {
         console.log(`Error DependenciasPorUsuarioService.\n${e}`);
       });
+    }
   }
 
   componentDidMount() {
