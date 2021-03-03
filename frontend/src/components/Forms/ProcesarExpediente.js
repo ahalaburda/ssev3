@@ -474,7 +474,7 @@ class ProcesarExpediente extends Component {
     if (this.state.instancia.orden_actual === this.state.expedienteType.saltos && this.state.instancia.expediente_id.tipo_de_expediente_id.id !== 1) {
       // si la instancia esta en el ultimo salto, ya no se puede derivar
       selectOptions = helper.getAllEstados().filter(o => o.value !== helper.getEstado().DERIVADO);
-    } else if (this.state.instancia.orden_actual <= 0) {
+    } else if (this.state.depPrev.descripcion === 'Origen' ) {
       // si la instancia esta en el primer salto, no se puede rechazar
       selectOptions = helper.getAllEstados().filter(o => o.value !== helper.getEstado().RECHAZADO);
     } else {
