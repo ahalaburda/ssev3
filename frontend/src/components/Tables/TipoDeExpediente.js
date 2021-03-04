@@ -214,7 +214,7 @@ class TipoDeExpediente extends Component {
                 className="btn btn-sm btn-link text-primary" onClick={() => this.handleEditClick(row)}>
                 <FontAwesomeIcon icon="edit"/>
               </button> */}
-              {(localStorage.getItem('isAdmin') === 'true') ?
+              {(sessionStorage.getItem('isAdmin') === 'true') ?
               <button
                 className="btn btn-sm btn-link text-danger"
                 onClick={() => {
@@ -231,7 +231,7 @@ class TipoDeExpediente extends Component {
       <>
         <div className="d-sm-flex align-items-center justify-content-between mb-4">
           <h1 className="h3 mb-0 text-gray-800">Tipos de expedientes</h1>
-          {(localStorage.getItem('isAdmin') === 'true') ?
+          {(sessionStorage.getItem('isAdmin') === 'true') ?
           <button className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" onClick={() => this.setShowNew(true)}>
             <FontAwesomeIcon icon="plus" size="sm" className="text-white-50"/>&nbsp;Nuevo
           </button>: <div/>}

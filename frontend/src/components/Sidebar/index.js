@@ -46,7 +46,7 @@ class Sidebar extends Component {
             <Item link="/tipos_de_expedientes/" icon="chart-area" text="Tipos de Expedientes"/>
   
             {/* Nav Item - Objetos de tastos */}
-            {(localStorage.getItem('isAdmin') === 'true') ? <Item link="/objetos_de_gastos/" icon="comment-dollar" text="Objetos de Gastos"/> : <div/> }
+            {(sessionStorage.getItem('isAdmin') === 'true') ? <Item link="/objetos_de_gastos/" icon="comment-dollar" text="Objetos de Gastos"/> : <div/> }
   
             <hr className="sidebar-divider d-none d-md-block"/>
             {/* Sidebar Toggler */}

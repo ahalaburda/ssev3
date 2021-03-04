@@ -36,8 +36,8 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loggedIn: !!localStorage.getItem('access_token'),
-      username: localStorage.getItem('username') === null ? '' : localStorage.getItem('username')
+      loggedIn: !!sessionStorage.getItem('access_token'),
+      username: sessionStorage.getItem('username') === null ? '' : sessionStorage.getItem('username')
     }
     this.handleLogin = this.handleLogin.bind(this);
     this.handleUserChange = this.handleUserChange.bind(this);
@@ -48,16 +48,15 @@ class App extends Component {
       error => {
         if (error.response.status === 401 && error.response.statusText === "Unauthorized"
           && error.response.data.code === "token_not_valid") {
-          const refreshToken = localStorage.getItem('refresh_token');
+          const refreshToken = sessionStorage.getItem('refresh_token');
           if (refreshToken) {
             const tokenParts = JSON.parse(atob(refreshToken.split('.')[1]));
             const now = Math.ceil(Date.now() / 1000);
             if (tokenParts.exp < now) {
               this.setState({loggedIn: false});
-              localStorage.clear();
-              // localStorage.removeItem('access_token');
-              // localStorage.removeItem('refresh_token');
-              // localStorage.removeItem('username');
+              // sessionStorage.removeItem('access_token');
+              // sessionStorage.removeItem('refresh_token');
+              // sessionStorage.removeItem('username');
               sessionStorage.clear();
               // sessionStorage.removeItem('year_setting');
               Popups.error('Debes iniciar sesión.');
@@ -83,10 +82,10 @@ class App extends Component {
       password: data.password
     }).then(response => {
       axiosBase.defaults.headers['Authorization'] = 'JWT ' + response.data.access;
-      localStorage.setItem('access_token', response.data.access);
-      localStorage.setItem('refresh_token', response.data.refresh);
-      localStorage.setItem('username', data.username);
-      localStorage.setItem('isAdmin',response.data.admin);
+      sessionStorage.setItem('access_token', response.data.access);
+      sessionStorage.setItem('refresh_token', response.data.refresh);
+      sessionStorage.setItem('username', data.username);
+      sessionStorage.setItem('isAdmin',response.data.admin);
       sessionStorage.setItem('year_setting', moment().startOf('year').format('YYYY'));
       Popups.success('Sesión iniciada correctamente.');
       this.setState({
@@ -115,13 +114,13 @@ class App extends Component {
    */
   handleLogout = () => {
     axiosBase.post('/token/blacklist/', {
-      "refresh_token": localStorage.getItem('refresh_token')
+      "refresh_token": sessionStorage.getItem('refresh_token')
     }).then(response => {
       if (response.status === 205) {
-        localStorage.clear();
-        // localStorage.removeItem('access_token');
-        // localStorage.removeItem('refresh_token');
-        // localStorage.removeItem('username');
+        sessionStorage.clear();
+        // sessionStorage.removeItem('access_token');
+        // sessionStorage.removeItem('refresh_token');
+        // sessionStorage.removeItem('username');
         sessionStorage.clear();
         axiosBase.defaults.headers['Authorization'] = null;
         this.setState({

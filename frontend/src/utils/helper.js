@@ -6,7 +6,7 @@ class Helper {
    * @returns {boolean}
    */
   existToken() {
-    return !!localStorage.getItem('access_token');
+    return !!sessionStorage.getItem('access_token');
   }
 
   /**
@@ -23,7 +23,7 @@ class Helper {
    */
   getCurrentUserId() {
     const token_parts = this.existToken() &&
-      JSON.parse(atob(localStorage.getItem('access_token').split('.')[1]));
+      JSON.parse(atob(sessionStorage.getItem('access_token').split('.')[1]));
     return token_parts.user_id;
   }
 
@@ -32,7 +32,7 @@ class Helper {
    * @returns {string|string}
    */
   getCurrentYearSetting() {
-    return this.existYearSetting() ? sessionStorage.getItem('year_setting') : moment().year();
+    return this.existYearSetting() ? sessionStorage.getItem('year_setting') :  moment().startOf('year').format('YYYY');
   }
 
   /**

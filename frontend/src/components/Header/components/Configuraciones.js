@@ -26,7 +26,7 @@ class Configuraciones extends Component {
    * Limpia el session storage y setea la nueva configuracion de anho
    */
   handleSaveClick = () => {
-    sessionStorage.clear();
+    //sessionStorage.clear();
     sessionStorage.setItem('year_setting', moment(this.state.selectedDate).format('YYYY'));
     this.handleShowChange();
     window.location.reload();

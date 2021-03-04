@@ -1,13 +1,13 @@
 import axios from 'axios';
 
 // URL base para la conexiona con la API
-const baseURL = 'http://192.168.17.14:8000/api';
+const baseURL = 'http://127.0.0.1:8000/api';
 
 // Creacion de la instancia de Axios
 const axiosInstance = axios.create({
   baseURL: baseURL,
   headers: {
-    'Authorization': 'JWT ' + localStorage.getItem('access_token'),
+    'Authorization': 'JWT ' + sessionStorage.getItem('access_token'),
     'Content-type': 'application/json',
     'accept': 'application/json'
   }
@@ -27,7 +27,7 @@ axiosInstance.interceptors.response.use(
     const originalRequest = error.config;
     if (error.response.status === 401 && error.response.statusText === "Unauthorized"
       && error.response.data.code === "token_not_valid") {
-      const refreshToken = localStorage.getItem('refresh_token');
+      const refreshToken = sessionStorage.getItem('refresh_token');
       if (refreshToken) {
         const tokenParts = JSON.parse(atob(refreshToken.split('.')[1]));
         // exp date in token is expressed in seconds, while now() returns milliseconds:
@@ -37,8 +37,8 @@ axiosInstance.interceptors.response.use(
             .post('/token/refresh/', {refresh: refreshToken})
             .then((response) => {
 
-              localStorage.setItem('access_token', response.data.access);
-              localStorage.setItem('refresh_token', response.data.refresh);
+              sessionStorage.setItem('access_token', response.data.access);
+              sessionStorage.setItem('refresh_token', response.data.refresh);
 
               axiosInstance.defaults.headers['Authorization'] = "JWT " + response.data.access;
               originalRequest.headers['Authorization'] = "JWT " + response.data.access;

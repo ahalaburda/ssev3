@@ -125,13 +125,13 @@ class Consultas extends Component {
           return {
             id: ie.expediente_id.id,
             numero: ie.expediente_id.numero_mesa_de_entrada + "/" + ie.expediente_id.anho,
-            fechaMe: moment(ie.expediente_id.fecha_mesa_entrada) ?
+            fechaMe: moment(ie.expediente_id.fecha_mesa_entrada).isValid() ?
               moment(ie.expediente_id.fecha_mesa_entrada).format('DD/MM/YYYY - kk:mm:ss') : 'Sin fecha',
             descripcion: ie.expediente_id.descripcion,
             origen: ie.expediente_id.dependencia_origen_id.descripcion,
             destino: ie.expediente_id.dependencia_destino_id.descripcion,
             dependenciaActual: ie.dependencia_actual_id.descripcion,
-            estado: ie.expediente_id.estado_id.descripcion
+            estado: ie.estado_id.descripcion
           }
         })
       }); 

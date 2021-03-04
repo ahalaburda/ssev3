@@ -42,6 +42,14 @@ class NuevoExpediente extends Component {
     });
   }
 
+  componentWillUnmount() {
+    clearInterval(this.interval);
+    // fix Warning: Can't perform a React state update on an unmounted component
+    this.setState = (state,callback)=>{
+      return;
+    };
+  }
+
   /**
    * Obtener las dependencias de la base de datos y cargarlos como opciones para el select
    */
@@ -87,9 +95,9 @@ class NuevoExpediente extends Component {
   /**
    * Obtener las posibles dependencias de origen de acuerdo al usuario activo.
    */
-  //TODO al iniciar por primera vez el server frontend, genera error al no poder acceder al contenido del localstorage porque este esta vacio aun.
   retrieveDependenciasByUser() {
-    DependenciasPorUsuarioService.getByUser(helper.getCurrentUserId())
+    if (helper.getCurrentUserId() !== undefined) {
+      DependenciasPorUsuarioService.getByUser(helper.getCurrentUserId())
       .then(response => {
         this.setState({
           start_list: response.data.results.map(dxu => {
@@ -104,6 +112,7 @@ class NuevoExpediente extends Component {
       .catch(e => {
         console.log(`Error DependenciasPorUsuarioService.\n${e}`);
       });
+    }
   }
 
   componentDidMount() {
@@ -124,15 +133,10 @@ class NuevoExpediente extends Component {
   }
 
   /**
-   * Setear el tipo de expediente, la segunda y la ultima dependencia para el tipo de expediente y se oculta el campo
-   * destino mientras que el tipo de expediente no sea "Sin ruta predefinida".
+   * Setear el tipo de expediente.
    * @param tde tipo expediente ID
    */
   handleSelectTipoExpediente = tde => {
-    const sinRutaPredefinida = this.state.tipos_expediente_list[0];
-    // si el tipo expediente es distinto a sin ruta predefinida se busca la dependencia siguiente y la ultima (destino)
-    tde !== sinRutaPredefinida && this.nextNLastDependencia(tde.id);
-    // si el tipo de expediente seleccionado es igual a sinRutaPredefinida se muestra el selector destino
     this.setState({
       tipo_expediente: tde
     });
@@ -140,7 +144,7 @@ class NuevoExpediente extends Component {
   }
 
   /**
-   * Setea el origen del expediente
+   * Setea el origen del expediente, tambien 
    * @param origen
    */
   handleSelectOrigen = origen => {
@@ -151,7 +155,7 @@ class NuevoExpediente extends Component {
   
 
   /**
-   * Setea la siguiente y ultima dependencia de la ruta de acuerdo al tipo de expediente seleccionado.
+   * Setea la siguiente, la primera y ultima dependencia de la ruta de acuerdo al tipo de expediente seleccionado.
    * @param tdeId
    */
   nextNLastDependencia = tdeId => {
@@ -159,7 +163,9 @@ class NuevoExpediente extends Component {
       TiposDeExpedientesService.getDetails(tdeId)
         .then(response => {
           this.setState({
-            next_id: response.data.results[0].dependencia_id.id,
+            first_dependencia_id: response.data.results[0].dependencia_id.id,
+            next_id: this.state.start.id === response.data.results[0].dependencia_id.id ? response.data.results[1].dependencia_id.id:
+             response.data.results[0].dependencia_id.id,
             end: response.data.results.slice(-1)[0].dependencia_id
           })
         })
@@ -197,7 +203,6 @@ class NuevoExpediente extends Component {
    * Guarda la instancia inicial para el nuevo expediente.
    * @param expId
    */
-  //TODO controlar que si no existe el token no se puede guardar el expediente
   saveInstancia = expId => {
     const user_in_id = helper.existToken() ? helper.getCurrentUserId() : null;
     // si next_id es igual a 0 (cero) es porque se selecciono Sin Ruta Predefinida y la siguiente instancia se setea al
@@ -208,7 +213,11 @@ class NuevoExpediente extends Component {
       dependencia_actual_id: this.state.start.id,
       dependencia_siguiente_id: this.state.next_id !== 0 ? this.state.next_id : this.state.start.id,
       usuario_id_entrada: user_in_id,
-      orden_actual: 0
+      //si start.id es igual que first_dependencia_id significa que el expediente fue creado en la primera dependencia de la
+      //ruta de ese tipo de expediente por lo cual su orden pasa a ser 1, si se crea en otra dependecia su orden es 0
+      orden_actual: this.state.start.id === this.state.first_dependencia_id ? 1 : 0,
+      //El estado inicial de un expediente siempre va a ser "recibido"
+      estado_id: 2
     }
     // guardar la primera instancia del expediente
     InstanciasService.create(instancia)
@@ -253,6 +262,18 @@ class NuevoExpediente extends Component {
   }
 
   /**
+   * Verifica si los select del formulario no estan vacio y retorna true
+   * caso contrario false
+   */
+  selectCheckValid = () => {
+    if (this.state.start.id !== undefined  && this.state.tipo_expediente.id !== undefined) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /**
    * Limpiar los campos cuando se cierra el modal.
    */
   handleClose = () => {
@@ -272,18 +293,34 @@ class NuevoExpediente extends Component {
   /**
    * Si todas las validaciones estan correctas, guarda, si no muestran los mensajes de errores.
    */
-  //TODO checkValid deja pasar si hay errores
   handleSaveClick = () => {
-    if (this.validator.allValid()) {
+    if (this.selectCheckValid()) {
+      if (this.validator.allValid()) {
         this.save();
         this.props.setShow(false);
-    }else{
-      this.validator.showMessages();
+      }else{
+        this.validator.showMessages();
     }
+    } else {
+      //si algun select no se completa
+      Popups.error('Complete todos los campos del formulario')
+      
+    }  
+      
   }
 
   render() {
-    const date = moment().format('LLL');
+    //Se traduce los meses que provee momentJS para que aparezcan en español en el modal
+    moment.updateLocale('es', {
+      months: 'Enero_Febrero_Marzo_Abril_Mayo_Junio_Julio_Agosto_Septiembre_Octubre_Noviembre_Diciembre'.split('_'),
+      monthsShort: 'Enero._Feb._Mar_Abr._May_Jun_Jul._Ago_Sept._Oct._Nov._Dec.'.split('_'),
+    });
+    const date = moment().locale('es').format('LLL');
+    /**
+     * Cada vez que se modifique el origen o el tipo de expediente 
+     * se llamara a la funcion para setear la dependencia siguiente correctamente
+     */
+    this.nextNLastDependencia(this.state.tipo_expediente.id);
 
     return (
       <Modal
@@ -310,7 +347,7 @@ class NuevoExpediente extends Component {
                   {this.validator.message('select', this.state.tipos_expediente_list, 'required')}
                 </div>
               </Form.Row>
-              <Form.Row>
+               <Form.Row>
                 <div className="form-group col">
                   <Form.Label>Origen</Form.Label>
                   <Select
@@ -319,7 +356,6 @@ class NuevoExpediente extends Component {
                     name="select"
                     onChange={value => this.handleSelectOrigen(value)}
                   />
-                  {this.validator.message('select', this.state.start_list, 'required')}
                 </div>
               </Form.Row>
               <Form.Row>
