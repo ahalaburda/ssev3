@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import InstanciaService from "../../services/Instancias";
+import ExpedienteService from "../../services/Expedientes";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import DataTable from "react-data-table-component";
 import NuevoExpediente from "../Forms/NuevoExpediente";
@@ -13,6 +14,10 @@ import ComentarioService from "../../services/Comentarios";
 import DependenciasService from "../../services/Dependencias";
 import { EmptyTable } from "./EmptyTable";
 
+//se utiliza para retrasar la ejecucion de una funcion
+const sleep = (milliseconds) => {
+  return new Promise(resolve => setTimeout(resolve, milliseconds))
+}
 /**
  * Tabla para expedientes
  */
@@ -30,7 +35,8 @@ class Expediente extends Component {
       recorrido:[],
       comentarios:[],
       sig_dependencias:[],
-      page : 1
+      page : 1,
+      lastInstanciaME:{}
     };
     this.setShowNew = this.setShowNew.bind(this);
     this.handleOptionChange = this.handleOptionChange.bind(this);
@@ -195,29 +201,11 @@ class Expediente extends Component {
       });
   }
   
-  /**
-   * Setea los estados utilizados para mostrar los datos en el modal de Ver Expediente
-   */
-  cleanModal= ()=> {
-    this.setState({
-      verNumero: '',
-      verFecha: '',
-      verDescripcion: '',
-      verObjetoDeGasto: '',
-      verEstado: '',
-      verOrigen: '',
-      verDependencia: '',
-      verTipo: '',
-      recorrido: [],
-      comentarios: [],
-    })
-  }
 
   /**
    * Funcion para cargar los datos del expediente seleccionado al modal 
    */
-  handleViewExpediente =row=>{
-    this.cleanModal();  
+  handleViewExpediente =row=>{ 
     //Se trae el expediente via ID y se muestra en pantalla los datos del mismo
     InstanciaService.getByExpedienteId(row.id)
     .then(response =>{
@@ -278,6 +266,125 @@ class Expediente extends Component {
         Popups.error('Ocurrio un error durante la busqueda.');
         console.log(`Error handleViewExpediente: ComentarioService\n${e}`);
       });  
+  }
+
+   /**
+   * Modificar la instancia anterior para actualizar el usuario_id_salida, que en este caso es el usuario actualmente
+   * logeado.
+   * @param userIdOut Usuario id salida
+   * @returns {Promise<AxiosResponse<*>>}
+   */
+  setInstanciaUserOut = userIdOut => {
+    return InstanciaService.update(this.state.expedienteData.id, {
+      fecha_recepcion: moment().toJSON(),
+      usuario_id_salida: userIdOut
+    });
+  }
+
+  /**
+   * Genera el nuevo numero de mesa de entrada
+   * tomando como referencia y sumandole 1 al numero de mesa de entrada anterior
+   * @returns {number}
+   */
+  getNewMesaEntrada = (numAnterior) => {
+    return numAnterior + 1;
+  }
+
+  /**
+   * Guarda la nueva intancia para los estados Recibido
+   * @param userIdIn Usuario id
+   * @returns {Promise<AxiosResponse<*>>}
+   */
+  saveInstanciaRecibido = userIdIn => {
+    return InstanciaService.create({
+      expediente_id: this.state.expedienteData.expediente_id.id,
+      dependencia_anterior_id: this.state.expedienteData.dependencia_anterior_id.id,
+      dependencia_actual_id: this.state.expedienteData.dependencia_actual_id.id,
+      dependencia_siguiente_id: this.state.expedienteData.dependencia_siguiente_id.id,
+      estado_id: 2,
+      usuario_id_entrada: userIdIn,
+      orden_actual: this.state.expedienteData.orden_actual
+    });
+  }
+   /**
+   * Setea el nuevo estado y proporciona un numero de mesa de entrada al expediente si este no lo tiene aun
+   * @param withMesaEntrada True generar nuevo numero mesa de entrada, False sin modificar numero.
+   * @returns {Promise<AxiosResponse<*>>}
+   */
+  setExpediente = withMesaEntrada => {
+    //Se trae de la api la ultima instancia con dependencia en mesa de entrada y estado recibido del año actual, 
+    //para obtener su numero de mesa de entrada
+    InstanciaService.getInstanciasPorDepEstAnho('Mesa Entrada', 'Recibido', moment().year())
+    .then( response => {
+      this.setState({ 
+        lastInstanciaME : response.data.map((instancia) =>{
+          return {
+           numero: instancia.expediente_id.numero_mesa_de_entrada,
+           id: instancia.id
+          }
+        })
+      }) 
+      return withMesaEntrada ?
+      ExpedienteService.update(this.state.expedienteData.expediente_id.id,
+        {
+          //si el tamaño del arreglo guardado en LastInstancia es 0 siginifica que
+          //aun no existen instancias en mesa de entrada en el corriente y se le asigna
+          //1 como numero de mesa de entrada, si el tamaño es distinto el numero de ME se asigna a traves de la funcion
+          // getNewMesaEntrada
+          numero_mesa_de_entrada: this.state.lastInstanciaME.length === 0 ? 1 : 
+          this.getNewMesaEntrada(this.state.lastInstanciaME[0].numero),
+          estado_id: 2,
+          fecha_mesa_entrada: moment().toJSON()
+        }) :
+      ExpedienteService.update(this.state.expedienteData.expediente_id.id,
+        {
+          estado_id: 2
+        });
+    })  
+  }
+
+   /**
+   * Procesa los expedientes con estado Recibido
+   */
+  processExpediente = () => {
+    const userIdIn = helper.existToken() ? helper.getCurrentUserId() : null;
+    const withMesaEntrada = this.state.expedienteData.dependencia_actual_id.descripcion === 'Mesa Entrada' &&
+      this.state.expedienteData.expediente_id.numero_mesa_de_entrada === 0;
+    this.setExpediente(withMesaEntrada)
+    this.setInstanciaUserOut(userIdIn)
+    this.saveInstanciaRecibido(userIdIn)
+  }
+
+
+  /**
+   * Funcion que se encarga de recibir todos los expedientes que se encuentran con el estado "NO recibido" en la dependencia
+   */
+ async  recibirTodos  () {
+    if (this.state.list.length > 0) {
+      //Recorre todos los expedientes que se encuentran con estado no recibido y los procesa
+      for (let index = this.state.list.length; index > 0; index--) {
+        InstanciaService.getByExpedienteId(this.state.list[index-1].id)
+        .then(response => {
+          this.setState({
+             expedienteData: response.data.results[0]
+          });  
+            this.processExpediente(); 
+        })
+        .catch(e => {
+          console.log(`Error handleProcessExpediente\n${e}`);
+        });
+        await sleep(500);
+      }
+      Popups.success('Expedientes procesados');
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+      
+    } else {
+      Popups.error('No existen expedientes para ser procesados')
+      
+    }
+    
   }
 
   /**
@@ -445,6 +552,11 @@ class Expediente extends Component {
             </label>
           </div>
           <div className="btn-group mb-2">
+            {this.state.selectedOption === helper.getEstado().NORECIBIDO ? 
+             <button className="btn btn-success btn-icon-split"
+                     onClick={()=>this.recibirTodos()}><span className="icon text-white-50">
+                      <FontAwesomeIcon icon='check-double'/>
+                      </span><span className="text">Recibir {this.state.list.length} Expedientes</span></button> : <div/>}
             <button className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
                     onClick={() => this.setShowNew(true)}>
               <FontAwesomeIcon icon="plus" size="sm" className="text-white-50"/>&nbsp;Nuevo

@@ -24,7 +24,8 @@ class NuevoExpediente extends Component {
       end: {},
       next_id: 0,
       description: '',
-      high_priority: false
+      high_priority: false,
+      lastInstanciaME: {}
     }
     this.setDescription = this.setDescription.bind(this);
     this.handleSaveClick = this.handleSaveClick.bind(this);
@@ -207,7 +208,7 @@ class NuevoExpediente extends Component {
     const user_in_id = helper.existToken() ? helper.getCurrentUserId() : null;
     // si next_id es igual a 0 (cero) es porque se selecciono Sin Ruta Predefinida y la siguiente instancia se setea al
     // procesar el expediente.
-    // eso significa que ese tipo de expediente pertenece al usuario que esta creando
+    // eso significa que ese tipo de expediente pertenece al usuario que esta creando 
     const instancia = {
       expediente_id: expId,
       dependencia_actual_id: this.state.start.id,
@@ -241,7 +242,32 @@ class NuevoExpediente extends Component {
    * Guarda el nuevo expediente con su respectiva instancia
    */
   save = () => {
-    this.saveExpediente()
+    //Si la dependencia donde se crea el expediente es Mesa de Entrada ya se le asigna el numero y fecha de ME al mismo
+    if (this.state.start.value === 'Mesa Entrada') {
+      //Se trae de la api la ultima instancia con dependencia en mesa de entrada y estado recibido del año actual, 
+    //para obtener su numero de mesa de entrada
+    InstanciasService.getInstanciasPorDepEstAnho('Mesa Entrada', 'Recibido', moment().year())
+    .then( response => {
+      this.setState({ 
+        lastInstanciaME : response.data.map((instancia) =>{
+          return {
+           numero: instancia.expediente_id.numero_mesa_de_entrada
+          }
+        })
+      })
+      const newExpedienteWithME = {
+        //se toma el numero de ME del ultimo expediente que paso por ME y se le suma 1, en caso de que no haya pasado ningun exp
+        //por ME se asigna el numero de ME 1, ya que es el primero del año
+        numero_mesa_de_entrada: this.state.lastInstanciaME.length > 0 ? this.state.lastInstanciaME[0].numero + 1 : 1,
+        anho: moment().year(),
+        descripcion: this.state.description,
+        fecha_mesa_entrada: moment().toJSON(),
+        tipo_de_expediente_id: this.state.tipo_expediente.id,
+        dependencia_origen_id: this.state.start.id,
+        dependencia_destino_id: (this.state.tipo_expediente.id === 1) ? this.state.start.id : this.state.end.id,
+        prioridad_id: this.state.high_priority ? 2 : 1
+      }
+      ExpedientesService.create(newExpedienteWithME)
       .then(response => {
         this.saveInstancia(response.data.id);
         setTimeout(() => {
@@ -252,6 +278,21 @@ class NuevoExpediente extends Component {
         Popups.error('Ocurrio un error al crear el nuevo expediente.');
         console.log(`Error save() en nuevo expediente\n${e}`);
       });
+    })  
+    //si la dependencia es distinta a ME se crea el expediente sin numero de ME 
+    } else {
+      this.saveExpediente()
+      .then(response => {
+        this.saveInstancia(response.data.id);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      })
+      .catch(e => {
+        Popups.error('Ocurrio un error al crear el nuevo expediente.');
+        console.log(`Error save() en nuevo expediente\n${e}`);
+      });
+    }   
   }
 
   /**
