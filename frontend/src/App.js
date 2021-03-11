@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, useEffect, useState} from 'react';
 import Sidebar from './components/Sidebar/index'
 import Header from './components/Header/index'
 import Footer from './components/Footer/index'
@@ -31,6 +31,31 @@ import {
 import axiosBase from "./services/http-common";
 import Popups from "./components/Popups";
 import moment from "moment";
+import IdleTimer from './utils/IdleTimer';
+
+/**
+ * Funcion para setear el tiempo de cierre de sesion por inactividad
+ */
+function AutoLogout() {
+  const [isTimeout, setIsTimeout] = useState(false);
+  useEffect(() => {
+    const timer = new IdleTimer({
+      timeout: 36000, //expire after 10 hours
+      onTimeout: () => {
+        setIsTimeout(true);
+      },
+      onExpired: () => {
+        setIsTimeout(true); 
+      }
+    });
+    return () => {
+      //cuando se cumple el tiempo establecido de inactividad se llama a la funcion para cerrar sesion
+      timer.cleanUp();
+    };
+  }, []);
+  return <div>{isTimeout }</div>;
+}
+
 
 class App extends Component {
   constructor(props) {
@@ -54,11 +79,7 @@ class App extends Component {
             const now = Math.ceil(Date.now() / 1000);
             if (tokenParts.exp < now) {
               this.setState({loggedIn: false});
-              // sessionStorage.removeItem('access_token');
-              // sessionStorage.removeItem('refresh_token');
-              // sessionStorage.removeItem('username');
               sessionStorage.clear();
-              // sessionStorage.removeItem('year_setting');
               Popups.error('Debes iniciar sesión.');
             }
           }
@@ -118,10 +139,6 @@ class App extends Component {
     }).then(response => {
       if (response.status === 205) {
         sessionStorage.clear();
-        // sessionStorage.removeItem('access_token');
-        // sessionStorage.removeItem('refresh_token');
-        // sessionStorage.removeItem('username');
-        sessionStorage.clear();
         axiosBase.defaults.headers['Authorization'] = null;
         this.setState({
           loggedIn: false,
@@ -133,7 +150,7 @@ class App extends Component {
       console.log(e);
     })
   }
-
+  
   render() {
     library.add(faSearch, faBell, faCogs, faUser,
       faSignOutAlt, faChartBar, faPlus, faPencilAlt,
@@ -145,6 +162,7 @@ class App extends Component {
     //TODO error de computedMatch por tener el Redirect fuera del Switch
     return (
       <>
+        <AutoLogout />
         <ReactNotification/>
         <Router>
           {this.state.loggedIn ? <Redirect to='/'/> : <Redirect to='/login'/>}

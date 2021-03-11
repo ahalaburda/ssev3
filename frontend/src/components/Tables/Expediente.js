@@ -311,10 +311,10 @@ class Expediente extends Component {
    * @param withMesaEntrada True generar nuevo numero mesa de entrada, False sin modificar numero.
    * @returns {Promise<AxiosResponse<*>>}
    */
-  setExpediente = withMesaEntrada => {
+  async setExpediente (withMesaEntrada) {
     //Se trae de la api la ultima instancia con dependencia en mesa de entrada y estado recibido del año actual, 
     //para obtener su numero de mesa de entrada
-    InstanciaService.getInstanciasPorDepEstAnho('Mesa Entrada', 'Recibido', moment().year())
+    await InstanciaService.getInstanciasPorDepEstAnho('Mesa Entrada', 'Recibido', moment().year())
     .then( response => {
       this.setState({ 
         lastInstanciaME : response.data.map((instancia) =>{
@@ -346,7 +346,7 @@ class Expediente extends Component {
    /**
    * Procesa los expedientes con estado Recibido
    */
-  processExpediente = () => {
+   processExpediente = () => {
     const userIdIn = helper.existToken() ? helper.getCurrentUserId() : null;
     const withMesaEntrada = this.state.expedienteData.dependencia_actual_id.descripcion === 'Mesa Entrada' &&
       this.state.expedienteData.expediente_id.numero_mesa_de_entrada === 0;
@@ -359,7 +359,7 @@ class Expediente extends Component {
   /**
    * Funcion que se encarga de recibir todos los expedientes que se encuentran con el estado "NO recibido" en la dependencia
    */
- async  recibirTodos  () {
+  async  recibirTodos() {
     if (this.state.list.length > 0) {
       //Recorre todos los expedientes que se encuentran con estado no recibido y los procesa
       for (let index = this.state.list.length; index > 0; index--) {
@@ -368,12 +368,12 @@ class Expediente extends Component {
           this.setState({
              expedienteData: response.data.results[0]
           });  
-            this.processExpediente(); 
+          this.processExpediente();           
         })
         .catch(e => {
           console.log(`Error handleProcessExpediente\n${e}`);
         });
-        await sleep(500);
+       await sleep(500);
       }
       Popups.success('Expedientes procesados');
       setTimeout(() => {
