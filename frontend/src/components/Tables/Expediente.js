@@ -206,27 +206,15 @@ class Expediente extends Component {
    * Funcion para cargar los datos del expediente seleccionado al modal 
    */
   handleViewExpediente =row=>{ 
-    //Se trae el expediente via ID y se muestra en pantalla los datos del mismo
-    InstanciaService.getByExpedienteId(row.id)
-    .then(response =>{
-      this.setState({
-        verNumero: row.numero,
-        verDescripcion: row.descripcion,
-        verFecha: row.fecha_me,
-        verEstado: row.estado,
-        verOrigen: row.origen,
-        verDependencia: row.dependenciaActual,
-        verTipo: row.tipoExpediente,
-        verObjetoDeGasto: response.data.results.map(exp =>{
-          return ( exp.expediente_id.objeto_de_gasto_id ?
-           exp.expediente_id.objeto_de_gasto_id.descripcion : 'Sin Objeto de Gasto')
-        })  
-      });
-    })
-    .catch((e) => {
-      Popups.error('Ocurrio un error durante la busqueda.');
-      console.log(`Error handleViewExpediente: InstanciaService\n${e}`);
-    }); 
+    this.setState({
+      verNumero: row.numero,
+      verDescripcion: row.descripcion,
+      verFecha: row.fecha_me,
+      verEstado: row.estado,
+      verOrigen: row.origen,
+      verDependencia: row.dependenciaActual,
+      verTipo: row.tipoExpediente, 
+    });
     
     //Obtiene todas las instancias del expediente a traves de su ID 
     InstanciaService.getInstanciasPorExp(row.id, '')

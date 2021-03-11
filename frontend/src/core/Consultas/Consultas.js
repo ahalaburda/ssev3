@@ -129,7 +129,7 @@ class Consultas extends Component {
               moment(ie.expediente_id.fecha_mesa_entrada).format('DD/MM/YYYY - kk:mm:ss') : 'Sin fecha',
             descripcion: ie.expediente_id.descripcion,
             origen: ie.expediente_id.dependencia_origen_id.descripcion,
-            destino: ie.expediente_id.dependencia_destino_id.descripcion,
+            tipoExpediente: ie.expediente_id.tipo_de_expediente_id.descripcion,
             dependenciaActual: ie.dependencia_actual_id.descripcion,
             estado: ie.estado_id.descripcion
           }

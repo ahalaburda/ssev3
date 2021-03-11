@@ -2,13 +2,19 @@ import React, {Component} from "react";
 import DataTable from "react-data-table-component";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import { EmptyTable } from "./EmptyTable";
+import moment from "moment";
+import InstanciaService from "../../services/Instancias";
+import VerExpediente from "../Forms/VerExpediente";
+import ComentarioService from "../../services/Comentarios";
+import Popups from "../Popups";
 
 class Consulta extends Component {
   constructor(props) {
     super(props);
     this.state = {
       list: [],
-      mensaje : ''
+      mensaje : '',
+      recorrido:[]
     }
   }
 
@@ -45,6 +51,59 @@ class Consulta extends Component {
     printDoc.print();
   }
 
+  /**
+   * Funcion para cargar los datos del expediente seleccionado al modal 
+   */
+  handleViewExpediente =row=>{ 
+      this.setState({
+        verNumero: row.numero,
+        verDescripcion: row.descripcion,
+        verFecha: row.fechaMe,
+        verEstado: row.estado,
+        verOrigen: row.origen,
+        verDependencia: row.dependenciaActual,
+        verTipo: row.tipoExpediente, 
+      });
+    //Obtiene todas las instancias del expediente a traves de su ID 
+    InstanciaService.getInstanciasPorExp(row.id, '')
+    .then((response) =>{
+      this.setState({
+        recorrido: response.data.map((instancia) =>{
+          return  {
+            id: instancia.id,
+            fecha:moment(instancia.fecha_creacion).isValid() ?
+              moment(instancia.fecha_creacion).format('DD/MM/YYYY') : 'Sin fecha',
+            dependencia:instancia.dependencia_actual_id.descripcion,
+            estado: instancia.estado_id.id
+          }  
+          
+        })
+      }) 
+    }) 
+    .catch((e) => {
+      Popups.error('Ocurrio un error al cargar la información.');
+      console.log(`Error handleViewExpediente: InstanciaService\n${e}`);
+    });   
+ 
+    //Obtiene todos los comentarios de un expediente a traves de su ID 
+    ComentarioService.getComentarioPorExpedienteID(row.id)
+      .then((response) =>{
+        this.setState({
+          comentarios: response.data.map((comentario) =>{
+            return{
+              id: comentario.id,
+              instancia: comentario.instancia.id,
+              comentario: comentario.descripcion
+            }
+          })
+        })  
+      })
+      .catch((e) => {
+        Popups.error('Ocurrio un error al cargar la información.');
+        console.log(`Error handleViewExpediente: ComentarioService\n${e}`);
+      });  
+  }
+
   render() {
     // columnas para la tabla
      const columns = [
@@ -70,8 +129,8 @@ class Consulta extends Component {
         wrap: true
       },
       {
-        name: 'Destino',
-        selector: 'destino',
+        name: 'Tipo de Expediente',
+        selector: 'tipoExpediente',
         wrap: true
       },
       {
@@ -110,6 +169,13 @@ class Consulta extends Component {
         name: 'Acciones',
         cell: (row) =>
           <div>
+            <button
+              className="btn btn-sm btn-link text-primary"
+              title="Ver expediente"
+              onClick= {()=> this.handleViewExpediente(row)}
+              data-toggle="modal" data-target="#viewExpedienteModal">
+              <FontAwesomeIcon icon="eye"/>
+            </button>
             <button 
             onClick= {()=> this.printExp(row)}
             className="btn btn-sm btn-link text-info">
@@ -129,17 +195,31 @@ class Consulta extends Component {
     };
 
     return (
-      <DataTable
-        columns={columns}
-        data={this.state.list}
-        pagination
-        paginationComponentOptions={paginationOptions}
-        highlightOnHover={true}
-        noHeader={true}
-        dense={true}
-        noDataComponent={<EmptyTable mensaje={this.state.mensaje} />}
-        className="table-responsive table-sm table-bordered"
-      />
+      <>
+        <DataTable
+          columns={columns}
+          data={this.state.list}
+          pagination
+          paginationComponentOptions={paginationOptions}
+          highlightOnHover={true}
+          noHeader={true}
+          dense={true}
+          noDataComponent={<EmptyTable mensaje={this.state.mensaje} />}
+          className="table-responsive table-sm table-bordered"
+        />
+        {/*Modal para ver el expediente con detalle*/}
+        <VerExpediente
+        verEstado = {this.state.verEstado}
+        verOrigen = {this.state.verOrigen}
+        verDependencia = {this.state.verDependencia}
+        verNumero = {this.state.verNumero}
+        verFecha = {this.state.verFecha}
+        verDescripcion = {this.state.verDescripcion}
+        verTipo = {this.state.verTipo}
+        verRecorrido = {this.state.recorrido}
+        comentarios = {this.state.comentarios}
+        />
+      </>
     );
   }
 }
