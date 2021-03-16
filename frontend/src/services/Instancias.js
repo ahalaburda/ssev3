@@ -113,13 +113,12 @@ class Instancias {
 
   /**
    * Obtiene la instancia mas reciente
-   * teniendo en cuenta la depedencia, estado y anho
+   * teniendo en cuenta la depedencia, estado
    * @param {*} dependencia 
    * @param {*} estado 
-   * @param {*} anho 
    */
-  getInstanciasPorDepEstAnho(dependencia, estado, anho) {
-    return http.get(`/instancias_por_dependencia/${dependencia}/${estado}/${anho}`)
+  getInstanciasPorDepEstAnho(dependencia, estado) {
+    return http.get(`/instancias_por_dependencia/${dependencia}/${estado}/`)
   }
 
 }

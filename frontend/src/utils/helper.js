@@ -1,4 +1,7 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import moment from 'moment';
+import React from "react";
+
 class Helper {
 
   /**
@@ -228,37 +231,37 @@ class Helper {
       {
         id: 2,
         value: 'Recibido',
-        label: 'Recibido'
+        label: <span><FontAwesomeIcon icon='check-double'/> Recibido</span>
       },
       {
         id: 3,
         value: 'Derivado',
-        label: 'Derivado'
+        label: <span><FontAwesomeIcon icon='forward'/> Derivado</span>
       },
       {
         id: 4,
         value: 'Rechazado',
-        label: 'Rechazado'
+        label: <span><FontAwesomeIcon icon='backward'/> Rechazado</span>
       },
       {
         id: 5,
         value: 'Finalizado',
-        label: 'Finalizado'
+        label: <span><FontAwesomeIcon icon='archive'/> Finalizado</span>
       },
       {
         id: 6,
         value: 'Anulado',
-        label: 'Anulado'
+        label: <span><FontAwesomeIcon icon='stop'/> Anulado</span>
       },
       {
         id: 7,
         value: 'Pausado',
-        label: 'Pausado'
+        label: <span><FontAwesomeIcon icon='hand-paper'/> Pausado</span>
       },
       {
         id: 8,
         value: 'Reanudado',
-        label: 'Reanudado'
+        label: <span><FontAwesomeIcon icon='fast-forward'/> Reanudado</span>
       }
     ]
   }

@@ -2,7 +2,7 @@ from django_filters import rest_framework as filters
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from rest_framework.response import Response
 from .serializers import *
-
+import datetime
 
 class ExpedienteFilter(filters.FilterSet):
     """
@@ -153,12 +153,15 @@ class InstanciaExpedienteList(ListAPIView):
         return Response(serializer.data)
 
 class InstanciasMEList(ListAPIView):
-    queryset = Instancia.objects.all().order_by('-fecha_creacion')
+    queryset = Instancia.objects.all().order_by('-expediente_id__numero_mesa_de_entrada')
     serializer_class = InstanciaSerializer
 
     def list(self, request, *args, **kwargs):
+        #se toma el año actual en el que corre el servidor para hacer la consulta a la BD
+        day = datetime.datetime.now()
+        formatedYear = day.strftime("%Y")
         queryset = self.get_queryset()\
-            .filter(dependencia_actual_id__descripcion=kwargs.get('dependencia'), estado_id__descripcion=kwargs.get('estado'), expediente_id__anho=kwargs.get('anho'))[:1]
+            .filter(dependencia_actual_id__descripcion=kwargs.get('dependencia'), estado_id__descripcion=kwargs.get('estado'), expediente_id__anho=formatedYear)[:1]
         filtered_list = self.filter_queryset(queryset)
         serializer = self.get_serializer(filtered_list, many=True)
         return Response(serializer.data)

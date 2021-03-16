@@ -190,7 +190,6 @@ class NuevoExpediente extends Component {
    */
   saveExpediente = () => {
     const newExpediente = {
-      anho: moment().year(),
       descripcion: this.state.description,
       tipo_de_expediente_id: this.state.tipo_expediente.id,
       dependencia_origen_id: this.state.start.id,
@@ -246,7 +245,7 @@ class NuevoExpediente extends Component {
     if (this.state.start.value === 'Mesa Entrada') {
       //Se trae de la api la ultima instancia con dependencia en mesa de entrada y estado recibido del año actual, 
     //para obtener su numero de mesa de entrada
-    InstanciasService.getInstanciasPorDepEstAnho('Mesa Entrada', 'Recibido', moment().year())
+    InstanciasService.getInstanciasPorDepEstAnho('Mesa Entrada', 'Recibido')
     .then( response => {
       this.setState({ 
         lastInstanciaME : response.data.map((instancia) =>{
@@ -259,9 +258,7 @@ class NuevoExpediente extends Component {
         //se toma el numero de ME del ultimo expediente que paso por ME y se le suma 1, en caso de que no haya pasado ningun exp
         //por ME se asigna el numero de ME 1, ya que es el primero del año
         numero_mesa_de_entrada: this.state.lastInstanciaME.length > 0 ? this.state.lastInstanciaME[0].numero + 1 : 1,
-        anho: moment().year(),
         descripcion: this.state.description,
-        fecha_mesa_entrada: moment().toJSON(),
         tipo_de_expediente_id: this.state.tipo_expediente.id,
         dependencia_origen_id: this.state.start.id,
         dependencia_destino_id: (this.state.tipo_expediente.id === 1) ? this.state.start.id : this.state.end.id,
@@ -269,6 +266,10 @@ class NuevoExpediente extends Component {
       }
       ExpedientesService.create(newExpedienteWithME)
       .then(response => {
+        //Se actualiza la fecha de ME del expediente creado recientemente con la hora del servidor
+        //que se guarda en fecha_actualizacion
+        ExpedientesService.update(response.data.id,{
+          fecha_mesa_entrada: response.data.fecha_actualizacion});
         this.saveInstancia(response.data.id);
         setTimeout(() => {
           window.location.reload();

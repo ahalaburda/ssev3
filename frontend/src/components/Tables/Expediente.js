@@ -264,7 +264,6 @@ class Expediente extends Component {
    */
   setInstanciaUserOut = userIdOut => {
     return InstanciaService.update(this.state.expedienteData.id, {
-      fecha_recepcion: moment().toJSON(),
       usuario_id_salida: userIdOut
     });
   }
@@ -299,36 +298,44 @@ class Expediente extends Component {
    * @param withMesaEntrada True generar nuevo numero mesa de entrada, False sin modificar numero.
    * @returns {Promise<AxiosResponse<*>>}
    */
-  async setExpediente (withMesaEntrada) {
-    //Se trae de la api la ultima instancia con dependencia en mesa de entrada y estado recibido del año actual, 
-    //para obtener su numero de mesa de entrada
-    await InstanciaService.getInstanciasPorDepEstAnho('Mesa Entrada', 'Recibido', moment().year())
-    .then( response => {
-      this.setState({ 
-        lastInstanciaME : response.data.map((instancia) =>{
-          return {
-           numero: instancia.expediente_id.numero_mesa_de_entrada,
-           id: instancia.id
-          }
+  async setExpediente(withMesaEntrada){
+    if (withMesaEntrada) {
+      //Se trae de la api la ultima instancia con dependencia en mesa de entrada y estado recibido del año actual, 
+      //para obtener su numero de mesa de entrada
+      await InstanciaService.getByExpedienteId(this.state.expedienteData.expediente_id.id)
+      .then(resp => {
+        this.setState({
+          fechaApi: resp.data.results[0].fecha_recepcion
         })
-      }) 
-      return withMesaEntrada ?
-      ExpedienteService.update(this.state.expedienteData.expediente_id.id,
-        {
-          //si el tamaño del arreglo guardado en LastInstancia es 0 siginifica que
-          //aun no existen instancias en mesa de entrada en el corriente y se le asigna
-          //1 como numero de mesa de entrada, si el tamaño es distinto el numero de ME se asigna a traves de la funcion
-          // getNewMesaEntrada
-          numero_mesa_de_entrada: this.state.lastInstanciaME.length === 0 ? 1 : 
-          this.getNewMesaEntrada(this.state.lastInstanciaME[0].numero),
-          estado_id: 2,
-          fecha_mesa_entrada: moment().toJSON()
-        }) :
-      ExpedienteService.update(this.state.expedienteData.expediente_id.id,
+      InstanciaService.getInstanciasPorDepEstAnho('Mesa Entrada', 'Recibido')
+        .then( response => {
+          this.setState({ 
+            lastInstanciaME : response.data.map((expedienteData) =>{
+              return {
+              numero: expedienteData.expediente_id.numero_mesa_de_entrada,
+              id: expedienteData.id
+              }
+            })
+          }) 
+          return ExpedienteService.update(this.state.expedienteData.expediente_id.id,
+            {
+              //si el tamaño del arreglo guardado en LastInstancia es 0 siginifica que
+              //aun no existen instancias en mesa de entrada en el corriente y se le asigna
+              //1 como numero de mesa de entrada, si el tamaño es distinto el numero de ME se asigna a traves de la funcion
+              // getNewMesaEntrada
+              numero_mesa_de_entrada: this.state.lastInstanciaME.length === 0 ? 1 : 
+              this.getNewMesaEntrada(this.state.lastInstanciaME[0].numero),
+              estado_id: 2,
+              fecha_mesa_entrada: this.state.fechaApi
+            })
+        })
+      })
+    } else {
+     return ExpedienteService.update(this.state.expedienteData.expediente_id.id,
         {
           estado_id: 2
-        });
-    })  
+        }); 
+    }  
   }
 
    /**
@@ -338,8 +345,8 @@ class Expediente extends Component {
     const userIdIn = helper.existToken() ? helper.getCurrentUserId() : null;
     const withMesaEntrada = this.state.expedienteData.dependencia_actual_id.descripcion === 'Mesa Entrada' &&
       this.state.expedienteData.expediente_id.numero_mesa_de_entrada === 0;
+    this.setInstanciaUserOut(userIdIn)  
     this.setExpediente(withMesaEntrada)
-    this.setInstanciaUserOut(userIdIn)
     this.saveInstanciaRecibido(userIdIn)
   }
 

@@ -4,7 +4,7 @@ from django.conf import settings
 from apps.dependencias.models import Dependencia
 from apps.tipos_de_expedientes.models import Tipo_de_expediente
 from apps.lotes.models import Lote
-
+import datetime
 
 class Estado(models.Model):
     descripcion = models.CharField(max_length=50)
@@ -40,8 +40,10 @@ class Objeto_de_Gasto(models.Model):
 
 
 class Expediente(models.Model):
+    day = datetime.datetime.now()
+    formatedYear = day.strftime("%Y")
     numero_mesa_de_entrada = models.IntegerField(blank=True, null=False, default=0)
-    anho = models.IntegerField(blank=True, null=True)
+    anho = models.IntegerField(blank=True, null=True, default=formatedYear)
     descripcion = models.TextField(blank=False, null=False, max_length=300)
     tipo_de_expediente_id = models.ForeignKey(Tipo_de_expediente, db_column='tipo_de_expediente_id',  null=False,
                                               blank=False, on_delete=models.CASCADE)
@@ -92,7 +94,7 @@ class Instancia(models.Model):
     estado_id = models.ForeignKey(Estado, db_column='estado_id', related_name='estado', null=False, blank=False,
                                   on_delete=models.CASCADE, default=1)
     fecha_creacion = models.DateTimeField(auto_now_add=True, blank=True, null=True)
-    fecha_recepcion = models.DateTimeField(blank=True, null=True)
+    fecha_recepcion = models.DateTimeField(auto_now=True, blank=True, null=True)
     fecha_final = models.DateTimeField(blank=True, null=True)
     usuario_id_entrada = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='usuario_id_entrada', null=True,
                                            related_name='usuario_entrada', on_delete=models.CASCADE)
