@@ -68,7 +68,7 @@ WSGI_APPLICATION = 'sse_django.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 LANGUAGE_CODE = 'es-PY'
 
-TIME_ZONE = 'America/Asuncion'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 

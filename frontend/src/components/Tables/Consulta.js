@@ -237,7 +237,7 @@ class Consulta extends Component {
     printDoc.document.write(`<Strong>ID:</Strong> ${row.id}<br>`);
     printDoc.document.write(`<Strong>Fecha:</Strong> ${row.fechaMe}<br>`);
     printDoc.document.write(`<Strong>Origen:</Strong> ${row.origen}<br>`);
-    printDoc.document.write(`<Strong>Destino:</Strong> ${row.destino}<br>`);
+    printDoc.document.write(`<Strong>Tipo de Expediente:</Strong> ${row.tipoExpediente}<br>`);
     printDoc.document.write(`<Strong>Descripción:</Strong> ${row.descripcion}<br>`);
     printDoc.document.write(`<Strong>Estado:</Strong> ${row.estado}<br>`);
     printDoc.document.write(`<Strong>Dependencia Actual:</Strong> ${row.dependenciaActual}<hr>`);
