@@ -181,7 +181,6 @@ class Expediente extends Component {
   }
 
   filterExpedientes = (page, state) => {
-    this.setState({loading: true});
     this.getInstanciasExpedientes(page, state)
       .then(response => {
         if (response.data.count > 0) {
@@ -190,7 +189,6 @@ class Expediente extends Component {
         } else {
           // si no hay resultados se limpia la lista del estado
           this.setState({
-            loading: false,
             list: []
           });
         }
@@ -565,7 +563,6 @@ class Expediente extends Component {
             columns={columns}
             data={this.state.list}
             defaultSortField="fecha me"
-            progressPending={this.state.loading}
             pagination
             paginationServer
             paginationPerPage={20}

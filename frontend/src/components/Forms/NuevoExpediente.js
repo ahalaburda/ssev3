@@ -141,6 +141,7 @@ class NuevoExpediente extends Component {
     this.setState({
       tipo_expediente: tde
     });
+    this.nextNLastDependencia(tde.id);
     this.checkValid();
   }
 
@@ -150,6 +151,7 @@ class NuevoExpediente extends Component {
    */
   handleSelectOrigen = origen => {
     this.setState({start: origen});
+    this.nextNLastDependencia(this.state.tipo_expediente.id);
     this.checkValid();
   }
 
@@ -358,11 +360,6 @@ class NuevoExpediente extends Component {
       monthsShort: 'Enero._Feb._Mar_Abr._May_Jun_Jul._Ago_Sept._Oct._Nov._Dec.'.split('_'),
     });
     const date = moment().locale('es').format('LLL');
-    /**
-     * Cada vez que se modifique el origen o el tipo de expediente 
-     * se llamara a la funcion para setear la dependencia siguiente correctamente
-     */
-    this.nextNLastDependencia(this.state.tipo_expediente.id);
 
     return (
       <Modal
