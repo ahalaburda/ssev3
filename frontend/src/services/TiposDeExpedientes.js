@@ -15,6 +15,11 @@ class TiposDeExpedientes {
   getAllSinPag() {
     return http.get('/tipos_de_expedientes_sin_pag/?format=json');
   }
+
+  getByDescription(description, page){
+    return http.get(`/tipos_de_expedientes/?desc=${description}&page=${page}&format=json`)
+  }
+
   /**
    * Obtener un tipo de expediente de acuerdo a su ID
    * @param id ID tipo expediente

@@ -6,14 +6,23 @@ from .serializers import Tipo_de_expedienteSerializer, Tipo_de_expediente_detall
 from rest_framework.response import Response
 
 
+class TipoDeExpedienteFilter (filters.FilterSet):
+
+    desc = filters.CharFilter(field_name='descripcion', lookup_expr='exact')
+
+    class Meta:
+        model = Tipo_de_expediente
+        fields = ('desc',)
+
 class Tipo_de_expedienteListView(ListCreateAPIView):
     """
     Vista para lista de tipos de expedientes, se permite crear un nuevo tipo expediente en la misma vista.
     Esta vista estara cacheada.
     """
-    queryset = Tipo_de_expediente.objects.all()
+    queryset = Tipo_de_expediente.objects.all().order_by('descripcion')
     serializer_class = Tipo_de_expedienteSerializer
-
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = TipoDeExpedienteFilter
 
 
 class Tipo_de_expedienteDetailView(RetrieveUpdateDestroyAPIView):
@@ -60,9 +69,10 @@ class Tipo_de_expediente_detalleDetailView(RetrieveUpdateDestroyAPIView):
             return Tipo_de_expediente_detalleNewUpdateSerializer
         return Tipo_de_expediente_detalleSerializer
 
+
 #Vista para Tipos de Expedientes sin paginar
 class TipoDeExpedientesSinPagListView(ListAPIView):
-    queryset = Tipo_de_expediente.objects.all()
+    queryset = Tipo_de_expediente.objects.all().order_by('descripcion')
     serializer_class = Tipo_de_expedienteSerializer
 
     def list(self, request, *args, **kwargs):
