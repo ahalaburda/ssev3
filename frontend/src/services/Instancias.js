@@ -16,8 +16,8 @@ class Instancias {
    * @param description Descripcion buscada
    * @returns {Promise<AxiosResponse<Instancia>>}
    */
-  getByExpDescription(description) {
-    return http.get(`/instancias/?expediente_descripcion=${description}&format=json`);
+  getByExpDescription(description,page) {
+    return http.get(`/instancias/?expediente_descripcion=${description}&page=${page}&format=json`);
   }
 
   /**
