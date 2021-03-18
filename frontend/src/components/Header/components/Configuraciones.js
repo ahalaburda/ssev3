@@ -44,6 +44,8 @@ class Configuraciones extends Component {
                   className="form-control"
                   locale="es"
                   dateFormat="yyyy"
+                  minDate= {new Date('2021-01-01')}
+                  maxDate= {new Date()}
                   selected={this.state.selectedDate}
                   onChange={date => this.setStartDate(date)}
                   showYearPicker

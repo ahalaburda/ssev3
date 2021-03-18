@@ -40,6 +40,21 @@ class Popups {
       }
     });
   }
+
+   /**
+   * Mensaje de info.
+   * @param message mensaje a mostrar.
+   */
+    info(message) {
+      store.addNotification({
+        message: message,
+        type: "info",
+        insert: "bottom",
+        container: "top-right",
+        animationIn: ["animated", "fadeIn"],
+        animationOut: ["animated", "fadeOut"],
+      });
+    }
 }
 
 export default new Popups();

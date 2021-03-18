@@ -61,7 +61,8 @@ class Reporte extends Component {
       data: response.data.results.map(exp => {
         return {
           id: exp.expediente_id.id,
-          numero: exp.expediente_id.numero_mesa_de_entrada + "/" + exp.expediente_id.anho,
+          numero: exp.expediente_id.numero_mesa_de_entrada === 0 ? 'Sin nro.' : exp.expediente_id.numero_mesa_de_entrada
+           + "/" + exp.expediente_id.anho,
           fecha_me: moment(exp.expediente_id.fecha_mesa_entrada).isValid() ?
             moment(exp.expediente_id.fecha_mesa_entrada).format('DD/MM/YYYY - kk:mm:ss') : 'Sin fecha',
           origen: exp.expediente_id.dependencia_origen_id.descripcion,
@@ -503,6 +504,7 @@ class Reporte extends Component {
                         onChange = {date => this.setStartDate(date)}
                         selectsStart
                         startDate = {this.state.startDate}
+                        maxDate={new Date()}
                         endDate = {this.state.endDate}
                         value = {this.state.startDate} 
                       />
@@ -525,6 +527,7 @@ class Reporte extends Component {
                       selectsEnd
                       startDate = {this.state.startDate}
                       minDate = {this.state.startDate}
+                      maxDate={new Date()}
                       endDate = {this.state.endDate}
                       value = {this.state.endDate}
                     />

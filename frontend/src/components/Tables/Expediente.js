@@ -36,7 +36,8 @@ class Expediente extends Component {
       comentarios:[],
       sig_dependencias:[],
       page : 1,
-      lastInstanciaME:{}
+      lastInstanciaME:{},
+      firstLoad: true
     };
     this.setShowNew = this.setShowNew.bind(this);
     this.handleOptionChange = this.handleOptionChange.bind(this);
@@ -183,9 +184,14 @@ class Expediente extends Component {
   filterExpedientes = (page, state) => {
     this.getInstanciasExpedientes(page, state)
       .then(response => {
+        //Si se recibe un expediente en la dependencia salta un mensaje en el modal
+        if (response.data.count> this.state.totalRows && !this.state.firstLoad) {
+          Popups.info('Nuevo expediente en su dependencia')
+        }
         if (response.data.count > 0) {
           this.setListFromResponse(response);
-          this.setState({totalRows: response.data.count});
+          this.setState({totalRows: response.data.count,
+            firstLoad: false});
         } else {
           // si no hay resultados se limpia la lista del estado
           this.setState({
