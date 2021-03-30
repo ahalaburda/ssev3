@@ -6,6 +6,7 @@ import TiposDeExpedientesService from "../../services/TiposDeExpedientes";
 import VerTipoExpediente from "../Forms/VerTipoExpediente";
 import NuevoTipoExpediente from "../Forms/NuevoTipoExpediente";
 import SimpleEdit from "../Forms/SimpleEdit";
+import Select from "react-select";
 
 
 /**
@@ -21,6 +22,8 @@ class TipoDeExpediente extends Component {
       title: '',
       totalRows: 0,
       dependencias: [],
+      tipoDeExpedientesList:[],
+      tipoExpSelected: '',
       tipoExpediente: {
         id: 0,
         descripcion: '',
@@ -47,9 +50,10 @@ class TipoDeExpediente extends Component {
   /**
    * Obtener los tipos de expedientes de la base de datos y cargarlos en la tabla
    */
-  retrieveTiposDeExpedientes(page) {
-    TiposDeExpedientesService.getAll(page)
+  retrieveTiposDeExpedientes(tde,page) {
+    TiposDeExpedientesService.getByDescription(tde, page)
       .then(response => {
+        console.log(response);
         this.setState({totalRows: response.data.count});
         this.setState({
           list: response.data.results.map(tde => {
@@ -67,7 +71,29 @@ class TipoDeExpediente extends Component {
   }
 
   componentDidMount() {
-    this.retrieveTiposDeExpedientes(1);
+    this.getTiposDeExpedientes();
+    this.retrieveTiposDeExpedientes(this.state.tipoExpSelected,1);
+  }
+
+  /**
+   * Obtiene los tipo de Expedientes sin paginación existentes para cargarlos en el select
+   */
+  getTiposDeExpedientes(){
+    TiposDeExpedientesService.getAllSinPag()
+    .then(response => {
+      this.setState({
+        tipoDeExpedientesList: response.data.map(tde =>{
+          return{
+            id: tde.id,
+            value: tde.descripcion,
+            label: tde.descripcion
+          }
+        })
+      })
+    })
+    .catch(e => {
+      console.log(e);
+    })
   }
 
   /**
@@ -171,13 +197,28 @@ class TipoDeExpediente extends Component {
     }
   }
 
+  setTipoExpediente = (tde) =>{
+    if (tde) {
+      this.setState({
+        tipoExpSelected: tde.value
+      })
+      this.retrieveTiposDeExpedientes(tde.value, 1);
+    } else {
+      this.setState({
+        tipoExpSelected: ''
+      })
+      this.retrieveTiposDeExpedientes('',1); 
+    }
+      
+  }
+
     /**
    * Toma la pagina de la tabla y llama a findExp para traer los expedientes,
    * siempre teniendo en cuanta los filtros aplicados con anterioridad
    * @param {*} page 
    */
   handlePageChange= page =>{
-    this.retrieveTiposDeExpedientes(page);
+    this.retrieveTiposDeExpedientes(this.state.tipoExpSelected,page);
   }
 
   render() {
@@ -226,7 +267,6 @@ class TipoDeExpediente extends Component {
           button: true,
         }
       ];
-
     return (
       <>
         <div className="d-sm-flex align-items-center justify-content-between mb-4">
@@ -236,12 +276,27 @@ class TipoDeExpediente extends Component {
             <FontAwesomeIcon icon="plus" size="sm" className="text-white-50"/>&nbsp;Nuevo
           </button>: <div/>}
         </div>
+        <div className= "col-md-3">
+              <label className="col-form-label m-0 font-weight-bold" name='filtroPorObjeto'>Filtrar por Descripción: </label>
+              <div className="form-group row">
+                  <div className="col-md-9">
+                    <Select
+                      options = {this.state.tipoDeExpedientesList} 
+                      placeholder = "Selecciona..."
+                      name = "selectObjeto"
+                      value =  {this.state.tipoExpSelected.label}
+                      onChange = {value => this.setTipoExpediente(value)}
+                      isClearable="True" 
+                      isSearchable="True"
+                    />
+                  </div>             
+              </div>
+            </div>
 
         {/*Tabla de lista de tipos de expedientes*/}
         <DataTable
           columns={columns}
           data={this.state.list}
-          defaultSortField="descripcion"
           pagination
           paginationServer
           paginationPerPage={20}

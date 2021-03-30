@@ -1,4 +1,7 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import moment from 'moment';
+import React from "react";
+
 class Helper {
 
   /**
@@ -218,6 +221,24 @@ class Helper {
     }
   }
 
+  selectColor =(estado)=>{
+    switch (estado) {
+      case 1:
+        return '#f6c23e';
+      case 2:
+        return '#1cc88a';
+      case 3:
+        return '#36b9cc';
+      case 4:
+        return '#e74a3b';
+      case 5:
+        return '#858796';
+      case 8:
+        return '#AF7AC5';
+      default:
+        return '#5a5c69';
+    } 
+  }
   /**
    * Retorna todos los posibles estados de un expediente.
    * @returns {(
@@ -228,37 +249,38 @@ class Helper {
       {
         id: 2,
         value: 'Recibido',
-        label: 'Recibido'
+        label: <span style={{color:'#1cc88a'}}><FontAwesomeIcon icon='check-double'/> Recibido</span>,
+
       },
       {
         id: 3,
         value: 'Derivado',
-        label: 'Derivado'
+        label: <span style={{color:'#36b9cc'}}><FontAwesomeIcon icon='forward'/> Derivado</span>
       },
       {
         id: 4,
         value: 'Rechazado',
-        label: 'Rechazado'
+        label: <span style={{color:'#e74a3b'}}><FontAwesomeIcon icon='backward'/> Rechazado</span>
       },
       {
         id: 5,
         value: 'Finalizado',
-        label: 'Finalizado'
+        label: <span style={{color:'#858796'}}><FontAwesomeIcon icon='archive'/> Finalizado</span>
       },
       {
         id: 6,
         value: 'Anulado',
-        label: 'Anulado'
+        label: <span style={{color:'#5a5c69'}}><FontAwesomeIcon icon='stop'/> Anulado</span>
       },
       {
         id: 7,
         value: 'Pausado',
-        label: 'Pausado'
+        label: <span style={{color:'#5a5c69'}}><FontAwesomeIcon icon='hand-paper'/> Pausado</span>
       },
       {
         id: 8,
         value: 'Reanudado',
-        label: 'Reanudado'
+        label: <span style={{color:'#AF7AC5'}}><FontAwesomeIcon icon='fast-forward'/> Reanudado</span>
       }
     ]
   }

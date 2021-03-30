@@ -36,15 +36,16 @@ class Expediente extends Component {
       comentarios:[],
       sig_dependencias:[],
       page : 1,
-      lastInstanciaME:{}
+      lastInstanciaME:{},
+      firstLoad: true
     };
     this.setShowNew = this.setShowNew.bind(this);
     this.handleOptionChange = this.handleOptionChange.bind(this);
-    //Cada 30 seg. realiza una consulta a la api para mantener 
+    //Cada 120 seg. realiza una consulta a la api para mantener 
     //actualizada la tabla de expedientes
     this.interval = setInterval(() => {
       this.filterExpedientes( this.state.page, this.state.selectedOption);
-    }, 30000);
+    }, 120000);
     
   }
 
@@ -181,16 +182,19 @@ class Expediente extends Component {
   }
 
   filterExpedientes = (page, state) => {
-    this.setState({loading: true});
     this.getInstanciasExpedientes(page, state)
       .then(response => {
+        //Si se recibe un expediente en la dependencia salta un mensaje en el modal
+        if (response.data.count> this.state.totalRows && !this.state.firstLoad) {
+          Popups.info('Nuevo expediente en su dependencia')
+        }
         if (response.data.count > 0) {
           this.setListFromResponse(response);
-          this.setState({totalRows: response.data.count});
+          this.setState({totalRows: response.data.count,
+            firstLoad: false});
         } else {
           // si no hay resultados se limpia la lista del estado
           this.setState({
-            loading: false,
             list: []
           });
         }
@@ -206,27 +210,15 @@ class Expediente extends Component {
    * Funcion para cargar los datos del expediente seleccionado al modal 
    */
   handleViewExpediente =row=>{ 
-    //Se trae el expediente via ID y se muestra en pantalla los datos del mismo
-    InstanciaService.getByExpedienteId(row.id)
-    .then(response =>{
-      this.setState({
-        verNumero: row.numero,
-        verDescripcion: row.descripcion,
-        verFecha: row.fecha_me,
-        verEstado: row.estado,
-        verOrigen: row.origen,
-        verDependencia: row.dependenciaActual,
-        verTipo: row.tipoExpediente,
-        verObjetoDeGasto: response.data.results.map(exp =>{
-          return ( exp.expediente_id.objeto_de_gasto_id ?
-           exp.expediente_id.objeto_de_gasto_id.descripcion : 'Sin Objeto de Gasto')
-        })  
-      });
-    })
-    .catch((e) => {
-      Popups.error('Ocurrio un error durante la busqueda.');
-      console.log(`Error handleViewExpediente: InstanciaService\n${e}`);
-    }); 
+    this.setState({
+      verNumero: row.numero,
+      verDescripcion: row.descripcion,
+      verFecha: row.fecha_me,
+      verEstado: row.estado,
+      verOrigen: row.origen,
+      verDependencia: row.dependenciaActual,
+      verTipo: row.tipoExpediente, 
+    });
     
     //Obtiene todas las instancias del expediente a traves de su ID 
     InstanciaService.getInstanciasPorExp(row.id, '')
@@ -276,7 +268,6 @@ class Expediente extends Component {
    */
   setInstanciaUserOut = userIdOut => {
     return InstanciaService.update(this.state.expedienteData.id, {
-      fecha_recepcion: moment().toJSON(),
       usuario_id_salida: userIdOut
     });
   }
@@ -311,47 +302,55 @@ class Expediente extends Component {
    * @param withMesaEntrada True generar nuevo numero mesa de entrada, False sin modificar numero.
    * @returns {Promise<AxiosResponse<*>>}
    */
-  setExpediente = withMesaEntrada => {
-    //Se trae de la api la ultima instancia con dependencia en mesa de entrada y estado recibido del año actual, 
-    //para obtener su numero de mesa de entrada
-    InstanciaService.getInstanciasPorDepEstAnho('Mesa Entrada', 'Recibido', moment().year())
-    .then( response => {
-      this.setState({ 
-        lastInstanciaME : response.data.map((instancia) =>{
-          return {
-           numero: instancia.expediente_id.numero_mesa_de_entrada,
-           id: instancia.id
-          }
+  async setExpediente(withMesaEntrada){
+    if (withMesaEntrada) {
+      //Se trae de la api la ultima instancia con dependencia en mesa de entrada y estado recibido del año actual, 
+      //para obtener su numero de mesa de entrada
+      await InstanciaService.getByExpedienteId(this.state.expedienteData.expediente_id.id)
+      .then(resp => {
+        this.setState({
+          fechaApi: resp.data.results[0].fecha_recepcion
         })
-      }) 
-      return withMesaEntrada ?
-      ExpedienteService.update(this.state.expedienteData.expediente_id.id,
-        {
-          //si el tamaño del arreglo guardado en LastInstancia es 0 siginifica que
-          //aun no existen instancias en mesa de entrada en el corriente y se le asigna
-          //1 como numero de mesa de entrada, si el tamaño es distinto el numero de ME se asigna a traves de la funcion
-          // getNewMesaEntrada
-          numero_mesa_de_entrada: this.state.lastInstanciaME.length === 0 ? 1 : 
-          this.getNewMesaEntrada(this.state.lastInstanciaME[0].numero),
-          estado_id: 2,
-          fecha_mesa_entrada: moment().toJSON()
-        }) :
-      ExpedienteService.update(this.state.expedienteData.expediente_id.id,
+      InstanciaService.getInstanciasPorDepEstAnho('Mesa Entrada', 'Recibido')
+        .then( response => {
+          this.setState({ 
+            lastInstanciaME : response.data.map((expedienteData) =>{
+              return {
+              numero: expedienteData.expediente_id.numero_mesa_de_entrada,
+              id: expedienteData.id
+              }
+            })
+          }) 
+          return ExpedienteService.update(this.state.expedienteData.expediente_id.id,
+            {
+              //si el tamaño del arreglo guardado en LastInstancia es 0 siginifica que
+              //aun no existen instancias en mesa de entrada en el corriente y se le asigna
+              //1 como numero de mesa de entrada, si el tamaño es distinto el numero de ME se asigna a traves de la funcion
+              // getNewMesaEntrada
+              numero_mesa_de_entrada: this.state.lastInstanciaME.length === 0 ? 1 : 
+              this.getNewMesaEntrada(this.state.lastInstanciaME[0].numero),
+              estado_id: 2,
+              fecha_mesa_entrada: this.state.fechaApi
+            })
+        })
+      })
+    } else {
+     return ExpedienteService.update(this.state.expedienteData.expediente_id.id,
         {
           estado_id: 2
-        });
-    })  
+        }); 
+    }  
   }
 
    /**
    * Procesa los expedientes con estado Recibido
    */
-  processExpediente = () => {
+   processExpediente = () => {
     const userIdIn = helper.existToken() ? helper.getCurrentUserId() : null;
     const withMesaEntrada = this.state.expedienteData.dependencia_actual_id.descripcion === 'Mesa Entrada' &&
       this.state.expedienteData.expediente_id.numero_mesa_de_entrada === 0;
+    this.setInstanciaUserOut(userIdIn)  
     this.setExpediente(withMesaEntrada)
-    this.setInstanciaUserOut(userIdIn)
     this.saveInstanciaRecibido(userIdIn)
   }
 
@@ -359,7 +358,7 @@ class Expediente extends Component {
   /**
    * Funcion que se encarga de recibir todos los expedientes que se encuentran con el estado "NO recibido" en la dependencia
    */
- async  recibirTodos  () {
+  async  recibirTodos() {
     if (this.state.list.length > 0) {
       //Recorre todos los expedientes que se encuentran con estado no recibido y los procesa
       for (let index = this.state.list.length; index > 0; index--) {
@@ -368,12 +367,12 @@ class Expediente extends Component {
           this.setState({
              expedienteData: response.data.results[0]
           });  
-            this.processExpediente(); 
+          this.processExpediente();           
         })
         .catch(e => {
           console.log(`Error handleProcessExpediente\n${e}`);
         });
-        await sleep(500);
+       await sleep(500);
       }
       Popups.success('Expedientes procesados');
       setTimeout(() => {
@@ -570,7 +569,6 @@ class Expediente extends Component {
             columns={columns}
             data={this.state.list}
             defaultSortField="fecha me"
-            progressPending={this.state.loading}
             pagination
             paginationServer
             paginationPerPage={20}

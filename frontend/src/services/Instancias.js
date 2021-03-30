@@ -16,8 +16,8 @@ class Instancias {
    * @param description Descripcion buscada
    * @returns {Promise<AxiosResponse<Instancia>>}
    */
-  getByExpDescription(description) {
-    return http.get(`/instancias/?expediente_descripcion=${description}&format=json`);
+  getByExpDescription(description,page) {
+    return http.get(`/instancias/?expediente_descripcion=${description}&page=${page}&format=json`);
   }
 
   /**
@@ -113,13 +113,12 @@ class Instancias {
 
   /**
    * Obtiene la instancia mas reciente
-   * teniendo en cuenta la depedencia, estado y anho
+   * teniendo en cuenta la depedencia, estado
    * @param {*} dependencia 
    * @param {*} estado 
-   * @param {*} anho 
    */
-  getInstanciasPorDepEstAnho(dependencia, estado, anho) {
-    return http.get(`/instancias_por_dependencia/${dependencia}/${estado}/${anho}`)
+  getInstanciasPorDepEstAnho(dependencia, estado) {
+    return http.get(`/instancias_por_dependencia/${dependencia}/${estado}/`)
   }
 
 }

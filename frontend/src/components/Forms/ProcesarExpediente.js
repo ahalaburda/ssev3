@@ -26,7 +26,8 @@ const initialState = {
   sig_dependencias: '',
   dependenciaSigSelected:'',
   dependenciaInicial:{},
-  lastInstanciaME: {}
+  lastInstanciaME: {},
+  fechaApi: {}
 }
 class ProcesarExpediente extends Component {
   constructor(props) {
@@ -81,7 +82,6 @@ class ProcesarExpediente extends Component {
    */
   setInstanciaUserOut = userIdOut => {
     return InstanciasService.update(this.state.instancia.id, {
-      fecha_recepcion: moment().toJSON(),
       usuario_id_salida: userIdOut
     });
   }
@@ -118,36 +118,46 @@ class ProcesarExpediente extends Component {
    * @returns {Promise<AxiosResponse<*>>}
    */
   setExpediente = withMesaEntrada => {
-    //Se trae de la api la ultima instancia con dependencia en mesa de entrada y estado recibido del año actual, 
-    //para obtener su numero de mesa de entrada
-    InstanciasService.getInstanciasPorDepEstAnho('Mesa Entrada', 'Recibido', moment().year())
-    .then( response => {
-      this.setState({ 
-        lastInstanciaME : response.data.map((instancia) =>{
-          return {
-           numero: instancia.expediente_id.numero_mesa_de_entrada,
-           id: instancia.id
-          }
+    if (withMesaEntrada) {
+      //Trae del API el expediente que se esta procesando para obtener el dia y fecha actualizada
+      // desde el servidor y poder asignarselo a la fecha_mesa_entrada
+      InstanciasService.getByExpedienteId(this.state.instancia.expediente_id.id)
+      .then(resp => {
+        this.setState({
+          //se guarda la fecha y hora actual del API
+          fechaApi: resp.data.results[0].fecha_recepcion
         })
-      }) 
-      return withMesaEntrada ?
-      ExpedienteService.update(this.state.instancia.expediente_id.id,
-        {
-          //si el tamaño del arreglo guardado en LastInstancia es 0 siginifica que
-          //aun no existen instancias en mesa de entrada en el corriente y se le asigna
-          //1 como numero de mesa de entrada, si el tamaño es distinto el numero de ME se asigna a traves de la funcion
-          // getNewMesaEntrada
-          numero_mesa_de_entrada: this.state.lastInstanciaME.length === 0 ? 1 : 
-          this.getNewMesaEntrada(this.state.lastInstanciaME[0].numero),
-          estado_id: this.state.newEstado.id,
-          fecha_mesa_entrada: moment().toJSON()
-        }) :
-      ExpedienteService.update(this.state.instancia.expediente_id.id,
+        //Se trae de la api la ultima instancia con dependencia en mesa de entrada y estado recibido del año actual, 
+        //para obtener su numero de mesa de entrada
+        InstanciasService.getInstanciasPorDepEstAnho('Mesa Entrada', 'Recibido')
+        .then( response => {
+          this.setState({ 
+            lastInstanciaME : response.data.map((instancia) =>{
+              return {
+              numero: instancia.expediente_id.numero_mesa_de_entrada,
+              id: instancia.id
+              }
+            })
+          }) 
+          return ExpedienteService.update(this.state.instancia.expediente_id.id,
+            {
+              //si el tamaño del arreglo guardado en LastInstancia es 0 siginifica que
+              //aun no existen instancias en mesa de entrada en el corriente año y se le asigna
+              //1 como numero de mesa de entrada, si el tamaño es distinto el numero de ME se asigna a traves de la funcion
+              // getNewMesaEntrada
+              numero_mesa_de_entrada: this.state.lastInstanciaME.length === 0 ? 1 : 
+              this.getNewMesaEntrada(this.state.lastInstanciaME[0].numero),
+              estado_id: this.state.newEstado.id,
+              fecha_mesa_entrada: this.state.fechaApi
+            })
+        })
+      })
+    } else {
+     return ExpedienteService.update(this.state.instancia.expediente_id.id,
         {
           estado_id: this.state.newEstado.id
-        });
-    })
-    
+        }); 
+    }  
   }
 
   /**
@@ -177,8 +187,8 @@ class ProcesarExpediente extends Component {
     const withMesaEntrada = this.state.depNow.descripcion === 'Mesa Entrada' &&
       this.state.instancia.expediente_id.numero_mesa_de_entrada === 0;
     Promise.all([
-      this.setExpediente(withMesaEntrada),
       this.setInstanciaUserOut(userIdIn),
+      this.setExpediente(withMesaEntrada),
       this.saveInstanciaRecibidoPausadoReanudado(userIdIn)
     ])
       .then(response => {

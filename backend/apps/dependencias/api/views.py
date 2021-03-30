@@ -60,7 +60,7 @@ class Dependencia_por_usuarioDetailView(RetrieveUpdateDestroyAPIView):
 
 #Vista sin paginacion de las Dependencias
 class DependenciasSinPaginarListView(ListAPIView):
-    queryset = Dependencia.objects.all()
+    queryset = Dependencia.objects.all().order_by('descripcion')
     serializer_class = DependenciaSerializer
 
     def list(self, request, *args, **kwargs):
