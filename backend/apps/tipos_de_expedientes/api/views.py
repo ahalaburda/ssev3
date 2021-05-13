@@ -9,10 +9,11 @@ from rest_framework.response import Response
 class TipoDeExpedienteFilter (filters.FilterSet):
 
     desc = filters.CharFilter(field_name='descripcion', lookup_expr='exact')
+    estado = filters.BooleanFilter(field_name='activo', lookup_expr='exact')
 
     class Meta:
         model = Tipo_de_expediente
-        fields = ('desc',)
+        fields = ('desc', 'estado')
 
 class Tipo_de_expedienteListView(ListCreateAPIView):
     """
@@ -72,7 +73,7 @@ class Tipo_de_expediente_detalleDetailView(RetrieveUpdateDestroyAPIView):
 
 #Vista para Tipos de Expedientes sin paginar
 class TipoDeExpedientesSinPagListView(ListAPIView):
-    queryset = Tipo_de_expediente.objects.all().order_by('descripcion')
+    queryset = Tipo_de_expediente.objects.all().order_by('descripcion').exclude(activo="False")
     serializer_class = Tipo_de_expedienteSerializer
 
     def list(self, request, *args, **kwargs):

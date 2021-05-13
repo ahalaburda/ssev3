@@ -5,6 +5,7 @@ import Popups from "../Popups";
 import TiposDeExpedientesService from "../../services/TiposDeExpedientes";
 import VerTipoExpediente from "../Forms/VerTipoExpediente";
 import NuevoTipoExpediente from "../Forms/NuevoTipoExpediente";
+import EditTipoExpediente from "../Forms/EditTipoExpediente";
 import SimpleEdit from "../Forms/SimpleEdit";
 import Select from "react-select";
 
@@ -18,19 +19,21 @@ class TipoDeExpediente extends Component {
     this.state = {
       showNew: false,
       showEdit: false,
+      showEditTDE: false,
       list: [],
       title: '',
       totalRows: 0,
       dependencias: [],
       tipoDeExpedientesList:[],
       tipoExpSelected: '',
+      tdeDetalle: [],
+      estado: true,
       tipoExpediente: {
         id: 0,
         descripcion: '',
         activo: true
       }
     };
-    this.retrieveTiposDeExpedientes = this.retrieveTiposDeExpedientes.bind(this);
     this.setShowNew = this.setShowNew.bind(this);
     this.setShowEdit = this.setShowEdit.bind(this);
     this.handleViewClick = this.handleViewClick.bind(this);
@@ -46,6 +49,25 @@ class TipoDeExpediente extends Component {
         return;
     };
   }
+
+  getTiposDeExpedientesByEstado(estado,page) {
+    TiposDeExpedientesService.getByEstado(estado, page)
+    .then(response => {
+      this.setState({totalRows: response.data.count});
+      this.setState({
+        list: response.data.results.map(tde => {
+          return {
+            id: tde.id,
+            descripcion: tde.descripcion,
+            activo: tde.activo ? "Activo" : "Inactivo"
+          }
+        })
+      });
+    })
+    .catch(e => {
+      console.log(e);
+    });
+  }
   
   /**
    * Obtener los tipos de expedientes de la base de datos y cargarlos en la tabla
@@ -53,7 +75,6 @@ class TipoDeExpediente extends Component {
   retrieveTiposDeExpedientes(tde,page) {
     TiposDeExpedientesService.getByDescription(tde, page)
       .then(response => {
-        console.log(response);
         this.setState({totalRows: response.data.count});
         this.setState({
           list: response.data.results.map(tde => {
@@ -72,7 +93,7 @@ class TipoDeExpediente extends Component {
 
   componentDidMount() {
     this.getTiposDeExpedientes();
-    this.retrieveTiposDeExpedientes(this.state.tipoExpSelected,1);
+    this.getTiposDeExpedientesByEstado(true,1);
   }
 
   /**
@@ -107,7 +128,7 @@ class TipoDeExpediente extends Component {
    * Setear el estado 'showEdit' para mostrar u ocultar el modal
    */
   setShowEdit = show => {
-    this.setState({showEdit: show})
+    this.setState({showEditTDE: show})
   }
 
   /**
@@ -131,12 +152,30 @@ class TipoDeExpediente extends Component {
    * @param row La fila a editarse
    */
   handleEditClick = row => {
-    TiposDeExpedientesService.getById(row.id)
+  TiposDeExpedientesService.getDetails(row.id)
       .then(response => {
         this.setState({
-          tipoExpediente: response.data
+          tipoExpediente: { 
+            id: row.id,
+            descripcion: row.descripcion},
+            tdeDetalle: response.data.results.sort((a, b) => a.orden - b.orden).map(d => {
+              return {
+               value: d.dependencia_id.descripcion,
+               label: d.dependencia_id.descripcion,
+               id: d.dependencia_id.id
+              }
+            }),
+          // dependencias: response.data.results.sort((a, b) => a.orden - b.orden).map(d => {
+          //   return d.dependencia_id.descripcion
+          // })
         })
-      })
+      });
+    // TiposDeExpedientesService.getById(row.id)
+    //   .then(response => {
+    //     this.setState({
+    //       tipoExpediente: response.data
+    //     })
+    //   })
     this.setShowEdit(true);
   }
 
@@ -208,8 +247,21 @@ class TipoDeExpediente extends Component {
         tipoExpSelected: ''
       })
       this.retrieveTiposDeExpedientes('',1); 
-    }
-      
+    }   
+  }
+
+  getTDEActivos = () =>{
+    this.setState({
+      estado: true
+    })
+    this.getTiposDeExpedientesByEstado(true,1);
+  }
+
+  getTDEInactivos = () =>{
+    this.setState({
+      estado: false
+    })
+    this.getTiposDeExpedientesByEstado(false,1);
   }
 
     /**
@@ -218,7 +270,7 @@ class TipoDeExpediente extends Component {
    * @param {*} page 
    */
   handlePageChange= page =>{
-    this.retrieveTiposDeExpedientes(this.state.tipoExpSelected,page);
+    this.getTiposDeExpedientesByEstado(true,page);
   }
 
   render() {
@@ -251,10 +303,12 @@ class TipoDeExpediente extends Component {
                 data-toggle="modal" data-target="#viewTipoExpedienteModal">
                 <FontAwesomeIcon icon="eye"/>
               </button>
-              {/* <button
-                className="btn btn-sm btn-link text-primary" onClick={() => this.handleEditClick(row)}>
-                <FontAwesomeIcon icon="edit"/>
-              </button> */}
+              {(sessionStorage.getItem('isAdmin') === 'true') ?
+                 <button
+                  className="btn btn-sm btn-link text-primary" onClick={() => this.handleEditClick(row)}>
+                  <FontAwesomeIcon icon="edit"/>
+                </button>: <div/>}
+              
               {(sessionStorage.getItem('isAdmin') === 'true') ?
               <button
                 className="btn btn-sm btn-link text-danger"
@@ -276,22 +330,36 @@ class TipoDeExpediente extends Component {
             <FontAwesomeIcon icon="plus" size="sm" className="text-white-50"/>&nbsp;Nuevo
           </button>: <div/>}
         </div>
-        <div className= "col-md-3">
-              <label className="col-form-label m-0 font-weight-bold" name='filtroPorObjeto'>Filtrar por Descripción: </label>
-              <div className="form-group row">
-                  <div className="col-md-9">
-                    <Select
-                      options = {this.state.tipoDeExpedientesList} 
-                      placeholder = "Selecciona..."
-                      name = "selectObjeto"
-                      value =  {this.state.tipoExpSelected.label}
-                      onChange = {value => this.setTipoExpediente(value)}
-                      isClearable="True" 
-                      isSearchable="True"
-                    />
-                  </div>             
-              </div>
+        <div className= "col-md-4">
+            <label className="col-form-label m-0 font-weight-bold" name='filtroPorObjeto'>Filtrar por Descripción: </label>
+            <div className="form-group row">
+              <div className="col-md-9">
+                <Select
+                  options = {this.state.tipoDeExpedientesList} 
+                  placeholder = "Selecciona..."
+                  name = "selectObjeto"
+                  value =  {this.state.tipoExpSelected.label}
+                  onChange = {value => this.setTipoExpediente(value)}
+                  isClearable="True" 
+                  isSearchable="True"
+                />
+              </div> 
+          {(sessionStorage.getItem('isAdmin') === 'true') ?
+            
+              <div>
+                <button
+                  value='' 
+                  className="btn btn-sm btn-info"
+                  onClick= {this.getTDEActivos}
+                  >Activos</button>
+                <button
+                  value=''
+                  className="btn btn-sm btn-danger"
+                  onClick = {this.getTDEInactivos}
+                  >Inactivos</button>             
+              </div>: <div/>}          
             </div>
+          </div>
 
         {/*Tabla de lista de tipos de expedientes*/}
         <DataTable
@@ -319,6 +387,14 @@ class TipoDeExpediente extends Component {
         <VerTipoExpediente
           titulo={this.state.title}
           dependencias={this.state.dependencias}/>
+
+        <EditTipoExpediente
+          setShow={this.setShowEdit}
+          showModal={this.state.showEditTDE}
+          newItem={this.addItem}
+          tipoExpediente={this.state.tipoExpediente}
+          tdeDetalle={this.state.tdeDetalle}
+          />
 
         {/*Modal para editar tipo de expediente*/}
         <SimpleEdit

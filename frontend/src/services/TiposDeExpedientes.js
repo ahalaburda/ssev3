@@ -17,7 +17,11 @@ class TiposDeExpedientes {
   }
 
   getByDescription(description, page){
-    return http.get(`/tipos_de_expedientes/?desc=${description}&page=${page}&format=json`)
+    return http.get(`/tipos_de_expedientes/?desc=${description}&estado=true&page=${page}&format=json`)
+  }
+
+  getByEstado(estado, page){
+    return http.get(`/tipos_de_expedientes/?estado=${estado}&page=${page}&format=json`)
   }
 
   /**

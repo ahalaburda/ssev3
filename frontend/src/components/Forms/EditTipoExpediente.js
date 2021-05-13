@@ -6,6 +6,7 @@ import Popups from "../Popups";
 import SimpleReactValidator from "simple-react-validator";
 import {Modal} from "react-bootstrap";
 import {Container, Draggable} from "react-smooth-dnd";
+import moment from "moment";
 
 /**
  * Modal para nuevo tipo de expediente
@@ -14,9 +15,12 @@ class NuevoTipoExpediente extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      tipoExpediente:{},
       description: '',
       dependencias: [],
-      selectedOptions: []
+      selectedOptions: [],
+      tdeDetalle:[],
+      cantSaltos:0
     };
     this.retrieveDependencias = this.retrieveDependencias.bind(this);
     this.setOption = this.setOption.bind(this);
@@ -62,6 +66,23 @@ class NuevoTipoExpediente extends Component {
     this.setState = (state,callback)=>{
         return;
     };
+  }
+  
+  componentDidUpdate(nextProps){
+    if (nextProps.tipoExpediente !== this.state.tipoExpediente) {
+        this.setState({
+            description: this.state.tipoExpediente.descripcion,
+            selectedOptions: this.state.tdeDetalle
+        })
+    }
+  }
+
+
+  static getDerivedStateFromProps(nextProps) {
+    return {
+      tipoExpediente: nextProps.tipoExpediente,
+      tdeDetalle: nextProps.tdeDetalle
+    }
   }
 
   componentDidMount() {
@@ -143,8 +164,8 @@ class NuevoTipoExpediente extends Component {
    */
   saveHead = () => {
     TiposDeExpedientesService.create({
-      descripcion: this.state.description,
-      saltos : this.state.selectedOptions.length
+        descripcion: this.state.description,
+        saltos : this.state.selectedOptions.length
     })
       .then(response => {
         if (response.status === 201) {
@@ -155,6 +176,11 @@ class NuevoTipoExpediente extends Component {
               descripcion: response.data.descripcion,
               activo: response.data.activo ? "Activo" : "Inactivo"
             });
+            TiposDeExpedientesService.update(this.state.tipoExpediente.id,
+                {
+                  activo: false,
+                  descripcion: this.state.tipoExpediente.descripcion + ', ' + moment().format('MMMM Do YYYY')
+                })
             Popups.success("Guardado con éxito");
           } else {
             //si ocurrio algun error al guardar los detalles se borra la cabecera
@@ -182,8 +208,8 @@ class NuevoTipoExpediente extends Component {
    */
   clearState = () => {
     this.setState({
-      description: '',
-      selectedOptions: []
+        description: '',
+        selectedOptions: []
     });
   }
 
@@ -201,6 +227,9 @@ class NuevoTipoExpediente extends Component {
   handleSaveClick = () => {
     if (this.checkValid()) {
       this.saveHead();
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
       this.handleClose();
     }
   }
@@ -237,7 +266,7 @@ class NuevoTipoExpediente extends Component {
   }
 
   render() {
-    return (
+   return (
       <Modal
         show={this.props.showModal}
         onShow={this.clearState}
@@ -246,13 +275,14 @@ class NuevoTipoExpediente extends Component {
         centered
       >
         <Modal.Header>
-          <Modal.Title>Información sobre nuevo Tipo de Expediente</Modal.Title>
+          <Modal.Title>Editar Tipo de Expediente</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <form>
             <div className="form-group">
-              <label>Descripcion *</label>
+              <label>Descripción</label>
               <input
+                autoComplete= 'off'
                 type="text"
                 className="form-control form-control-sm"
                 name="description"
