@@ -47,7 +47,7 @@ class Tipo_de_expediente_detalleListView(ListCreateAPIView):
     """
     Vista para lista de detalle tipo expediente, se permite crear en la misma vista.
     """
-    queryset = Tipo_de_expediente_detalle.objects.all()
+    queryset = Tipo_de_expediente_detalle.objects.all().order_by('orden')
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = Tipo_de_expediente_detalleFilter
 

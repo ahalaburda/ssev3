@@ -163,6 +163,7 @@ class NuevoTipoExpediente extends Component {
    * si ocurre un error se borra la cabecera.
    */
   saveHead = () => {
+      console.log(this.state.selectedOptions.length);
     TiposDeExpedientesService.create({
         descripcion: this.state.description,
         saltos : this.state.selectedOptions.length

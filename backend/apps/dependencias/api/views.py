@@ -43,6 +43,11 @@ class Dependencia_por_usuarioListView(ListCreateAPIView):
             return Dependencia_por_usuarioNewUpdateSerializer
         return Dependencia_por_usuarioSerializer
 
+    def list(self, request, *args, **kwargs):
+        filtered_list = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(filtered_list, many=True)
+        return Response(serializer.data)
+
 
 class Dependencia_por_usuarioDetailView(RetrieveUpdateDestroyAPIView):
     """

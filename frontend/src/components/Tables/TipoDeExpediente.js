@@ -6,7 +6,6 @@ import TiposDeExpedientesService from "../../services/TiposDeExpedientes";
 import VerTipoExpediente from "../Forms/VerTipoExpediente";
 import NuevoTipoExpediente from "../Forms/NuevoTipoExpediente";
 import EditTipoExpediente from "../Forms/EditTipoExpediente";
-import SimpleEdit from "../Forms/SimpleEdit";
 import Select from "react-select";
 
 
@@ -164,18 +163,9 @@ class TipoDeExpediente extends Component {
                label: d.dependencia_id.descripcion,
                id: d.dependencia_id.id
               }
-            }),
-          // dependencias: response.data.results.sort((a, b) => a.orden - b.orden).map(d => {
-          //   return d.dependencia_id.descripcion
-          // })
+            })
         })
       });
-    // TiposDeExpedientesService.getById(row.id)
-    //   .then(response => {
-    //     this.setState({
-    //       tipoExpediente: response.data
-    //     })
-    //   })
     this.setShowEdit(true);
   }
 
@@ -303,20 +293,27 @@ class TipoDeExpediente extends Component {
                 data-toggle="modal" data-target="#viewTipoExpedienteModal">
                 <FontAwesomeIcon icon="eye"/>
               </button>
-              {(sessionStorage.getItem('isAdmin') === 'true') ?
-                 <button
-                  className="btn btn-sm btn-link text-primary" onClick={() => this.handleEditClick(row)}>
+              {(sessionStorage.getItem('isAdmin') === 'true' && row.activo === 'Activo') ?
+              <>   
+                <button
+                  className="btn btn-sm btn-link text-success" onClick={() => this.handleEditClick(row)}>
                   <FontAwesomeIcon icon="edit"/>
-                </button>: <div/>}
+                </button>
+                <button
+                className="btn btn-sm btn-link text-danger"
+                onClick={() => {
+                  if (window.confirm("Estás seguro de eliminar?")) {this.handleDeleteClick(row)}}
+                }>
+                <FontAwesomeIcon icon="trash-alt"/>
+              </button></>:(sessionStorage.getItem('isAdmin') === 'true') ?
               
-              {(sessionStorage.getItem('isAdmin') === 'true') ?
               <button
                 className="btn btn-sm btn-link text-danger"
                 onClick={() => {
                   if (window.confirm("Estás seguro de eliminar?")) {this.handleDeleteClick(row)}}
                 }>
                 <FontAwesomeIcon icon="trash-alt"/>
-              </button>: <div/>}
+              </button>: <div/>}            
             </div>,
           button: true,
         }
@@ -395,16 +392,6 @@ class TipoDeExpediente extends Component {
           tipoExpediente={this.state.tipoExpediente}
           tdeDetalle={this.state.tdeDetalle}
           />
-
-        {/*Modal para editar tipo de expediente*/}
-        <SimpleEdit
-          title="Tipo de Expediente"
-          item={this.state.tipoExpediente}
-          saveModalEdit={this.updateItem}
-          service={TiposDeExpedientesService}
-          setShow={this.setShowEdit}
-          showModal={this.state.showEdit}
-        />
       </>
     );
   }

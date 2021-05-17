@@ -201,6 +201,9 @@ class NuevoTipoExpediente extends Component {
   handleSaveClick = () => {
     if (this.checkValid()) {
       this.saveHead();
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
       this.handleClose();
     }
   }
