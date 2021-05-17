@@ -9,13 +9,6 @@ class VerTipoExpediente extends Component {
     }
   }
 
-  // componentWillReceiveProps(nextProps, nextContext) {
-  //   this.setState({
-  //     titulo: nextProps.titulo,
-  //     dependencias: nextProps.dependencias
-  //   });
-  // }
-
   //reemplazo de funcion componentWillReceiveProps
   static getDerivedStateFromProps(nextProps) {
     return {
