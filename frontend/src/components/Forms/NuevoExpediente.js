@@ -101,7 +101,7 @@ class NuevoExpediente extends Component {
       DependenciasPorUsuarioService.getByUser(helper.getCurrentUserId())
       .then(response => {
         this.setState({
-          start_list: response.data.results.map(dxu => {
+          start_list: response.data.map(dxu => {
             return {
               id: dxu.dependencia_id.id,
               value: dxu.dependencia_id.descripcion,
