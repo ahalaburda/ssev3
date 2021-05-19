@@ -112,13 +112,11 @@ class Instancias {
   }
 
   /**
-   * Obtiene la instancia mas reciente
-   * teniendo en cuenta la depedencia, estado
-   * @param {*} dependencia 
-   * @param {*} estado 
+   * Obtiene la instancia con numero de Mesa de entrada mas alto
+   * del año en el que se trabaja
    */
-  getInstanciasPorDepEstAnho(dependencia, estado) {
-    return http.get(`/instancias_por_dependencia/${dependencia}/${estado}/`)
+  getInstanciasPorDepEstAnho() {
+    return http.get(`/last_instancia_mesa_entrada/`)
   }
 
 }

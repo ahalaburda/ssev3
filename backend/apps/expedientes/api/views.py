@@ -161,7 +161,7 @@ class InstanciasMEList(ListAPIView):
         day = datetime.datetime.now()
         formatedYear = day.strftime("%Y")
         queryset = self.get_queryset()\
-            .filter(dependencia_actual_id__descripcion=kwargs.get('dependencia'), estado_id__descripcion=kwargs.get('estado'), expediente_id__anho=formatedYear)[:1]
+            .filter(dependencia_actual_id__descripcion='Mesa Entrada', estado_id__descripcion='Recibido', expediente_id__anho=formatedYear)[:1]
         filtered_list = self.filter_queryset(queryset)
         serializer = self.get_serializer(filtered_list, many=True)
         return Response(serializer.data)
