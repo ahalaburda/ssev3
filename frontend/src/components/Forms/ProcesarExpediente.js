@@ -134,10 +134,10 @@ class ProcesarExpediente extends Component {
    * @param withMesaEntrada True generar nuevo numero mesa de entrada, False sin modificar numero.
    * @returns {Promise<AxiosResponse<*>>}
    */
-  setExpediente = (withMesaEntrada) =>{
+  async setExpediente(withMesaEntrada) {
    
     if (withMesaEntrada) {
-      Promise.all([
+      await Promise.all([
         this.getFechaServidor(),
         this.getNumeroMesaEntrada()
       ])
