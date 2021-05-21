@@ -10,10 +10,6 @@ import ComentariosService from "../../services/Comentarios";
 import TipoDeExpedienteService from "../../services/TiposDeExpedientes";
 import moment from "moment";
 
-const sleep = (milliseconds) => {
-  return new Promise(resolve => setTimeout(resolve, milliseconds))
-}
-
 
 const initialState = {
   instancia: {},
@@ -118,28 +114,19 @@ class ProcesarExpediente extends Component {
   }
 
   /**
-   * Setea la fecha de Mesa de entrada si withMesaEntrada es true, retorna false ni no lo es
-   * @param {*} withMesaEntrada 
+   * Trae del API el expediente que se esta procesando para obtener fecha y hora actualizada
+   * desde el servidor y poder asignarselo a la fecha_mesa_entrada
+   */
+  getFechaServidor = () =>{
+    return InstanciasService.getByExpedienteId(this.state.instancia.expediente_id.id)
+  }
+
+  /**
+   * Retorna el expediente con numero de ME mas alto que existe, para setear el prox numero de ME
    * @returns 
    */
-  async  setFechaMesaEntrada(withMesaEntrada){
-    if (withMesaEntrada) {
-      //Trae del API el expediente que se esta procesando para obtener el dia y fecha actualizada
-      // desde el servidor y poder asignarselo a la fecha_mesa_entrada
-      await InstanciasService.getByExpedienteId(this.state.instancia.expediente_id.id)
-      .then(resp => {
-        this.setState({
-          //se guarda la fecha y hora actual del API
-          fechaApi: resp.data.results[0].fecha_recepcion
-        })
-        return ExpedienteService.update(this.state.instancia.expediente_id.id,
-          {
-            fecha_mesa_entrada: this.state.fechaApi
-          })
-      })
-    } else {
-      return withMesaEntrada
-    }
+  getNumeroMesaEntrada = () =>{
+   return InstanciasService.getInstanciasPorDepEstAnho()
   }
 
   /**
@@ -147,28 +134,24 @@ class ProcesarExpediente extends Component {
    * @param withMesaEntrada True generar nuevo numero mesa de entrada, False sin modificar numero.
    * @returns {Promise<AxiosResponse<*>>}
    */
-  async setExpediente(withMesaEntrada) {
+  setExpediente = (withMesaEntrada) =>{
+   
     if (withMesaEntrada) {
-      //Se trae de la api la ultima instancia con dependencia en mesa de entrada y estado recibido del año actual, 
-      //para obtener su numero de mesa de entrada
-      await sleep(500);
-      await InstanciasService.getInstanciasPorDepEstAnho('Mesa Entrada', 'Recibido')
-      .then( response => {
-        this.setState({
-          lastInstanciaME : response.data.map((instancia) =>{
-            return instancia.expediente_id.numero_mesa_de_entrada
-          })
+      Promise.all([
+        this.getFechaServidor(),
+        this.getNumeroMesaEntrada()
+      ])
+      .then(response =>{
+        let fechaME = response[0].data.results[0].fecha_recepcion;
+        let new_numero_mesa_entrada = response[1].data.length === 1 ? this.getNewMesaEntrada(response[1].data[0].expediente_id.numero_mesa_de_entrada): 1;
+        return ExpedienteService.update(this.state.instancia.expediente_id.id, {
+          fecha_mesa_entrada: fechaME,
+          numero_mesa_de_entrada: new_numero_mesa_entrada,
+          estado_id: this.state.newEstado.id
         })
-        return ExpedienteService.update(this.state.instancia.expediente_id.id,
-          {
-            //si el tamaño del arreglo guardado en LastInstancia es 0 siginifica que
-            //aun no existen instancias en mesa de entrada en el corriente año y se le asigna
-            //1 como numero de mesa de entrada, si el tamaño es distinto el numero de ME se asigna a traves de la funcion
-            // getNewMesaEntrada
-            numero_mesa_de_entrada: this.state.lastInstanciaME.length === 0 ? 1 :
-            this.getNewMesaEntrada(this.state.lastInstanciaME[0]),
-            estado_id: this.state.newEstado.id
-          })
+      })
+      .catch(e => {
+        console.log(`setExpediente\n${e}`);
       })
     } else {
         return ExpedienteService.update(this.state.instancia.expediente_id.id,
@@ -206,12 +189,11 @@ class ProcesarExpediente extends Component {
       this.state.instancia.expediente_id.numero_mesa_de_entrada === 0;
     Promise.all([
       this.setInstanciaUserOut(userIdIn),
-      this.setFechaMesaEntrada(withMesaEntrada),
       this.setExpediente(withMesaEntrada),
       this.saveInstanciaRecibidoPausadoReanudado(userIdIn)
     ])
       .then(response => {
-        this.saveComment(response[3].data.id, userIdIn);
+        this.saveComment(response[2].data.id, userIdIn);
         Popups.success('Expediente procesado.');          
         setTimeout(() => {
           window.location.reload();

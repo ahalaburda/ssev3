@@ -537,7 +537,7 @@ class Expediente extends Component {
               <input type="radio" id="reanudados" value={helper.getEstado().REANUDADO} name="options"
                      checked={this.state.selectedOption === helper.getEstado().REANUDADO}
                      onChange={this.handleOptionChange}/>
-              {this.state.selectedOption === helper.getEstado().REAUNUDADO &&
+              {this.state.selectedOption === helper.getEstado().REANUDADO &&
               <FontAwesomeIcon id="reanudadosIcon" icon="check"/>}
               &nbsp;Reanudados
             </label>
