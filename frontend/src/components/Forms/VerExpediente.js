@@ -196,7 +196,7 @@ class VerExpediente extends Component {
                       </label>
                     </div>
                     <div>
-                      <label className='modal-text'><strong>Fecha:</strong> {this.state.fecha}</label>
+                      <label className='modal-text'><strong>Fecha ME:</strong> {this.state.fecha}</label>
                     </div>
                     <div>
                       <label className='modal-text'><strong>Descripción:</strong> {this.state.descripcion}</label>

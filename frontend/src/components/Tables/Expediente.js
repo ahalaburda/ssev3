@@ -228,7 +228,7 @@ class Expediente extends Component {
           return  {
             id: instancia.id,
             fecha:moment(instancia.fecha_creacion).isValid() ?
-              moment(instancia.fecha_creacion).format('DD/MM/YYYY') : 'Sin fecha',
+              moment(instancia.fecha_creacion).format('DD/MM/YYYY - kk:mm:ss') : 'Sin fecha',
             dependencia:instancia.dependencia_actual_id.descripcion,
             estado: instancia.estado_id.id
           }  
@@ -311,7 +311,7 @@ class Expediente extends Component {
         this.setState({
           fechaApi: resp.data.results[0].fecha_recepcion
         })
-      InstanciaService.getInstanciasPorDepEstAnho('Mesa Entrada', 'Recibido')
+      InstanciaService.getInstanciasPorDepEstAnho()
         .then( response => {
           this.setState({ 
             lastInstanciaME : response.data.map((expedienteData) =>{

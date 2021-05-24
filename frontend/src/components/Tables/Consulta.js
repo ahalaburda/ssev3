@@ -267,7 +267,7 @@ class Consulta extends Component {
           return  {
             id: instancia.id,
             fecha:moment(instancia.fecha_creacion).isValid() ?
-              moment(instancia.fecha_creacion).format('DD/MM/YYYY') : 'Sin fecha',
+              moment(instancia.fecha_creacion).format('DD/MM/YYYY - kk:mm:ss') : 'Sin fecha',
             dependencia:instancia.dependencia_actual_id.descripcion,
             estado: instancia.estado_id.id
           }  
