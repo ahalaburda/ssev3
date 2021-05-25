@@ -410,14 +410,6 @@ class NuevoExpediente extends Component {
                   {this.validator.message('description', this.state.description, 'required|max:200')}
                 </div>
               </Form.Row>
-              <Form.Row>
-                <Form.Check
-                  type="checkbox"
-                  label="Marcar como prioridad alta."
-                  value={this.state.high_priority}
-                  onChange={e => {this.handleCheckPriority(e)}}
-                />
-              </Form.Row>
             </Form.Group>
           </Form>
         </Modal.Body>

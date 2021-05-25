@@ -37,6 +37,8 @@ class Expediente extends Component {
       sig_dependencias:[],
       page : 1,
       lastInstanciaME:{},
+      expSelected:[],
+      selectedCount: 0,
       firstLoad: true
     };
     this.setShowNew = this.setShowNew.bind(this);
@@ -75,7 +77,7 @@ class Expediente extends Component {
           numero: inst.expediente_id.numero_mesa_de_entrada === 0 ? 'Sin nro.' :
             inst.expediente_id.numero_mesa_de_entrada + "/" + inst.expediente_id.anho,
           fecha_me: moment(inst.expediente_id.fecha_mesa_entrada).isValid() ?
-            moment(inst.expediente_id.fecha_mesa_entrada).format('DD/MM/YYYY - kk:mm:ss') : 'Sin fecha',
+            moment(inst.expediente_id.fecha_mesa_entrada).format('DD/MM/YYYY - kk:mm') : 'Sin fecha',
           origen: inst.expediente_id.dependencia_origen_id.descripcion,
           tipoExpediente: inst.expediente_id.tipo_de_expediente_id.descripcion,
           descripcion: inst.expediente_id.descripcion,
@@ -121,6 +123,18 @@ class Expediente extends Component {
     return InstanciaService.getInstanciaExpedienteEachUser(page, state);
   }
 
+  /**
+   * Retorna true si se encuentra en la pestaña de no recibidos,
+   * false sise encuetra en otra
+   * @returns
+   */
+  isNoRecibido = () => {
+    if (this.state.selectedOption === helper.getEstado().NORECIBIDO) {
+      return true
+    } else {
+      return false
+    }
+  }
   /**
    * Toma la pagina correspondiente de la tabla y llama al metodo filterExpedientes para traer los respectivos
    * expedientes de acuerdo al estado seleccionado (todos, recibido, no recibido, pausado).
@@ -266,8 +280,8 @@ class Expediente extends Component {
    * @param userIdOut Usuario id salida
    * @returns {Promise<AxiosResponse<*>>}
    */
-  setInstanciaUserOut = userIdOut => {
-    return InstanciaService.update(this.state.expedienteData.id, {
+  setInstanciaUserOut = (userIdOut, expId) => {
+    return InstanciaService.update(expId, {
       usuario_id_salida: userIdOut
     });
   }
@@ -286,104 +300,114 @@ class Expediente extends Component {
    * @param userIdIn Usuario id
    * @returns {Promise<AxiosResponse<*>>}
    */
-  saveInstanciaRecibido = userIdIn => {
-    return InstanciaService.create({
-      expediente_id: this.state.expedienteData.expediente_id.id,
-      dependencia_anterior_id: this.state.expedienteData.dependencia_anterior_id.id,
-      dependencia_actual_id: this.state.expedienteData.dependencia_actual_id.id,
-      dependencia_siguiente_id: this.state.expedienteData.dependencia_siguiente_id.id,
-      estado_id: 2,
-      usuario_id_entrada: userIdIn,
-      orden_actual: this.state.expedienteData.orden_actual
-    });
+  async saveInstanciaRecibido(userIdIn,expId) {
+
+    await InstanciaService.getByExpedienteId(expId)
+    .then(response => {
+      this.setState({
+        expedienteData : response.data.results[0]
+      })
+      return InstanciaService.create({
+        expediente_id: this.state.expedienteData.expediente_id.id,
+        dependencia_anterior_id: this.state.expedienteData.dependencia_anterior_id.id,
+        dependencia_actual_id: this.state.expedienteData.dependencia_actual_id.id,
+        dependencia_siguiente_id: this.state.expedienteData.dependencia_siguiente_id.id,
+        estado_id: 2,
+        usuario_id_entrada: userIdIn,
+        orden_actual: this.state.expedienteData.orden_actual
+      });
+    })
+    .catch(e => {
+      Popups.error("Ocurrió un error al procesar los expedientes")
+      console.log(`saveInstanciaRecibido\n${e}`);
+    })
   }
+  
+  /**
+   * Trae del API el expediente que se esta procesando para obtener fecha y hora actualizada
+   * desde el servidor y poder asignarselo a la fecha_mesa_entrada
+   */
+   getFechaServidor = (expId) =>{
+    return InstanciaService.getByExpedienteId(expId)
+  }
+
+  /**
+   * Retorna el expediente con numero de ME mas alto que existe, para setear el prox numero de ME
+   * @returns 
+   */
+  getNumeroMesaEntrada = () =>{
+   return InstanciaService.getInstanciasPorDepEstAnho()
+  }
+
    /**
    * Setea el nuevo estado y proporciona un numero de mesa de entrada al expediente si este no lo tiene aun
    * @param withMesaEntrada True generar nuevo numero mesa de entrada, False sin modificar numero.
    * @returns {Promise<AxiosResponse<*>>}
    */
-  async setExpediente(withMesaEntrada){
-    if (withMesaEntrada) {
-      //Se trae de la api la ultima instancia con dependencia en mesa de entrada y estado recibido del año actual, 
-      //para obtener su numero de mesa de entrada
-      await InstanciaService.getByExpedienteId(this.state.expedienteData.expediente_id.id)
-      .then(resp => {
-        this.setState({
-          fechaApi: resp.data.results[0].fecha_recepcion
+    async setExpediente(withMesaEntrada, expId) {
+   
+      if (withMesaEntrada) {
+        await Promise.all([
+          this.getFechaServidor(expId),
+          this.getNumeroMesaEntrada(expId)
+        ])
+        .then(response =>{
+          let fechaME = response[0].data.results[0].fecha_recepcion;
+          let new_numero_mesa_entrada = response[1].data.length === 1 ? this.getNewMesaEntrada(response[1].data[0].expediente_id.numero_mesa_de_entrada): 1;
+          console.log(new_numero_mesa_entrada);
+          return ExpedienteService.update(expId, {
+            fecha_mesa_entrada: fechaME,
+            numero_mesa_de_entrada: new_numero_mesa_entrada,
+            estado_id: 2
+          })
         })
-      InstanciaService.getInstanciasPorDepEstAnho()
-        .then( response => {
-          this.setState({ 
-            lastInstanciaME : response.data.map((expedienteData) =>{
-              return {
-              numero: expedienteData.expediente_id.numero_mesa_de_entrada,
-              id: expedienteData.id
-              }
-            })
-          }) 
-          return ExpedienteService.update(this.state.expedienteData.expediente_id.id,
-            {
-              //si el tamaño del arreglo guardado en LastInstancia es 0 siginifica que
-              //aun no existen instancias en mesa de entrada en el corriente y se le asigna
-              //1 como numero de mesa de entrada, si el tamaño es distinto el numero de ME se asigna a traves de la funcion
-              // getNewMesaEntrada
-              numero_mesa_de_entrada: this.state.lastInstanciaME.length === 0 ? 1 : 
-              this.getNewMesaEntrada(this.state.lastInstanciaME[0].numero),
-              estado_id: 2,
-              fecha_mesa_entrada: this.state.fechaApi
-            })
+        .catch(e => {
+          Popups.error("Ocurrió un error al procesar los expedientes")
+          console.log(`setExpediente\n${e}`);
         })
-      })
-    } else {
-     return ExpedienteService.update(this.state.expedienteData.expediente_id.id,
-        {
-          estado_id: 2
-        }); 
-    }  
-  }
+      } else {
+          return ExpedienteService.update(expId,
+          {
+            estado_id: 2
+          });
+      }
+    }
 
    /**
    * Procesa los expedientes con estado Recibido
    */
-   processExpediente = () => {
+   processExpediente = (exp) => {
     const userIdIn = helper.existToken() ? helper.getCurrentUserId() : null;
-    const withMesaEntrada = this.state.expedienteData.dependencia_actual_id.descripcion === 'Mesa Entrada' &&
-      this.state.expedienteData.expediente_id.numero_mesa_de_entrada === 0;
-    this.setInstanciaUserOut(userIdIn)  
-    this.setExpediente(withMesaEntrada)
-    this.saveInstanciaRecibido(userIdIn)
+    const withMesaEntrada = exp.dependenciaActual === 'Mesa Entrada' && exp.numero === 'Sin nro.';
+    this.setInstanciaUserOut(userIdIn, exp.id)  
+    this.setExpediente(withMesaEntrada, exp.id)
+    this.saveInstanciaRecibido(userIdIn, exp.id)
   }
 
 
   /**
-   * Funcion que se encarga de recibir todos los expedientes que se encuentran con el estado "NO recibido" en la dependencia
+   * recibe los expedientes seleccionados en la pestaña de no recibidos
    */
-  async  recibirTodos() {
-    if (this.state.list.length > 0) {
-      //Recorre todos los expedientes que se encuentran con estado no recibido y los procesa
-      for (let index = this.state.list.length; index > 0; index--) {
-        InstanciaService.getByExpedienteId(this.state.list[index-1].id)
-        .then(response => {
-          this.setState({
-             expedienteData: response.data.results[0]
-          });  
-          this.processExpediente();           
-        })
-        .catch(e => {
-          console.log(`Error handleProcessExpediente\n${e}`);
-        });
-       await sleep(500);
+  async recibirExpedientes() {
+    // ordena por ID los expedientes seleccionados
+   let  expedientes= this.state.expSelected.sort(function (a, b) {
+      if (a.id > b.id) {
+        return 1;
       }
-      Popups.success('Expedientes procesados');
+      if (a.id < b.id) {
+        return -1;
+      }
+      // a must be equal to b
+      return 0;
+    });
+    for (let index = 0; index < this.state.selectedCount; index++) {
+      this.processExpediente(expedientes[index]);
+      await sleep(500);   
+    }
+    Popups.success('Expedientes procesados');
       setTimeout(() => {
         window.location.reload();
       }, 1000);
-      
-    } else {
-      Popups.error('No existen expedientes para ser procesados')
-      
-    }
-    
   }
 
   /**
@@ -404,6 +428,19 @@ class Expediente extends Component {
       expedienteData: helper.getInstanciaInitialState()
     });
   }
+
+  /**
+   * Guarda en un estado los expedientes seleccionados
+   * y tambien la cantidad de exp seleccionados 
+   * @param {*} expSelected 
+   */
+ setRowSelected = (expSelected) =>{
+   this.setState({
+     expSelected: expSelected.selectedRows,
+     selectedCount: expSelected.selectedCount
+   })
+ }
+ 
 
   render() {
     // columnas para la tabla
@@ -551,11 +588,17 @@ class Expediente extends Component {
             </label>
           </div>
           <div className="btn-group mb-2">
-            {this.state.selectedOption === helper.getEstado().NORECIBIDO ? 
-             <button className="btn btn-success btn-icon-split"
-                     onClick={()=>this.recibirTodos()}><span className="icon text-white-50">
-                      <FontAwesomeIcon icon='check-double'/>
-                      </span><span className="text">Recibir {this.state.list.length} Expedientes</span></button> : <div/>}
+            {(this.state.selectedOption === helper.getEstado().NORECIBIDO && this.state.selectedCount > 0) ? 
+              <button className="btn btn-success btn-icon-split"
+                onClick={()=>this.recibirExpedientes()}><span className="icon text-white-50">
+                <FontAwesomeIcon icon='check-double'/>
+              </span><span className="text">Recibir {this.state.selectedCount} Expedientes</span></button> :
+            (this.state.selectedOption === helper.getEstado().NORECIBIDO && this.state.selectedCount === 0) ? 
+              <button className="btn btn-success btn-icon-split"
+                disabled={true} >
+                <span className="icon text-white-50">
+                <FontAwesomeIcon icon='check-double'/>
+              </span><span className="text">Recibir {this.state.selectedCount} Expedientes</span></button> : <div/>}
             <button className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
                     onClick={() => this.setShowNew(true)}>
               <FontAwesomeIcon icon="plus" size="sm" className="text-white-50"/>&nbsp;Nuevo
@@ -567,7 +610,12 @@ class Expediente extends Component {
           {/*Tabla de lista de expediente*/}
           <DataTable
             columns={columns}
+            selectableRows = {this.isNoRecibido()}
+            seleccionableRowsHighlight = {true}
+            seleccionableRowsVisibleOnly = {true}
+            onSelectedRowsChange = {expSelected => this.setRowSelected(expSelected)}
             data={this.state.list}
+            theme = {helper.getTheme()}
             defaultSortField="fecha me"
             pagination
             paginationServer
