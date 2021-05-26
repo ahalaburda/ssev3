@@ -9,7 +9,6 @@ import SeleccionarTema from './components/SeleccionarTema';
 function setTheme() {
 	let theme = helper.getTheme() === 'dark' ? "navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow bg-black " :
 	"navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow";
-	console.log(theme);
 	return theme
 }
 

@@ -105,7 +105,8 @@ class NuevoExpediente extends Component {
             return {
               id: dxu.dependencia_id.id,
               value: dxu.dependencia_id.descripcion,
-              label: dxu.dependencia_id.descripcion
+              label: dxu.dependencia_id.descripcion,
+              isDisabled: dxu.dependencia_id.id === 1 ? true : false
             }
           })
         })
@@ -393,6 +394,7 @@ class NuevoExpediente extends Component {
                     options={this.state.start_list}
                     placeholder="Selecciona..."
                     name="select"
+                    isOptionDisabled={(option) => option.isDisabled}
                     onChange={value => this.handleSelectOrigen(value)}
                   />
                 </div>

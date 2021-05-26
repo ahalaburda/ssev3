@@ -101,6 +101,7 @@ class Expediente extends Component {
               id: d.id,
               value: d.descripcion,
               label: d.descripcion,
+              isDisabled : d.id === 1 ? true : false
             }
           })
         })
