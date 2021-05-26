@@ -1,10 +1,11 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import ObjetosDeGastosService from "../../services/ObjetosDeGastos"
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import DataTable from "react-data-table-component";
 import SimpleEdit from "../Forms/SimpleEdit";
 import NuevoObjetoDeGasto from "../Forms/NuevoObjetoDeGasto";
 import Popups from "../Popups";
+import helper from "../../utils/helper";
 
 /**
  * Tabla para objeto de gastos
@@ -33,8 +34,8 @@ class ObjetoDeGasto extends Component {
 
   componentWillUnmount() {
     // fix Warning: Can't perform a React state update on an unmounted component
-    this.setState = (state,callback)=>{
-        return;
+    this.setState = (state, callback) => {
+      return;
     };
   }
 
@@ -56,14 +57,14 @@ class ObjetoDeGasto extends Component {
    * Obtener los objetos de gastos de la base de datos y cargarlos en la tabla
    */
   retrieveObjetosDeGastos(page) {
-    this.setState({loading: true});
+    this.setState({ loading: true });
     ObjetosDeGastosService.getAll(page)
       .then(response => {
         if (response.data.count > 0) {
           this.setListFromResponse(response);
-          this.setState({totalRows: response.data.count});
+          this.setState({ totalRows: response.data.count });
         } else {
-          this.setState({loading: false});
+          this.setState({ loading: false });
           Popups.error('No se encontro ningun objeto de gasto.');
         }
       })
@@ -82,14 +83,14 @@ class ObjetoDeGasto extends Component {
    * Setear el estado 'showNew' para mostrar u ocultar el modal
    */
   setShowNew = show => {
-    this.setState({showNew: show});
+    this.setState({ showNew: show });
   }
 
   /**
    * Setear el estado 'showEdit' para mostrar u ocultar el modal
    */
   setShowEdit = show => {
-    this.setState({showEdit: show})
+    this.setState({ showEdit: show })
   }
 
   /**
@@ -186,16 +187,16 @@ class ObjetoDeGasto extends Component {
             <button
               className="btn btn-sm btn-link text-primary" data-toggle="modal" data-target="#editModal"
               onClick={() => this.getObjectRow(row)}>
-              <FontAwesomeIcon icon="edit"/>
+              <FontAwesomeIcon icon="edit" />
             </button>
             <button
               className="btn btn-sm btn-link text-danger" onClick={() => {
-              if (window.confirm('Estás seguro de eliminar?')) {
-                this.handleDeleteClick(row)
+                if (window.confirm('Estás seguro de eliminar?')) {
+                  this.handleDeleteClick(row)
+                }
               }
-            }
-            }>
-              <FontAwesomeIcon icon="trash-alt"/>
+              }>
+              <FontAwesomeIcon icon="trash-alt" />
             </button>
           </div>,
         button: true,
@@ -212,8 +213,8 @@ class ObjetoDeGasto extends Component {
         <div className="d-sm-flex align-items-center justify-content-between mb-4">
           <h1 className="h3 mb-0 text-gray-800">Objetos de Gastos</h1>
           <button className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
-                  onClick={() => this.setShowNew(true)}>
-            <FontAwesomeIcon icon="plus" size="sm" className="text-white-50"/>&nbsp;Nuevo
+            onClick={() => this.setShowNew(true)}>
+            <FontAwesomeIcon icon="plus" size="sm" className="text-white-50" />&nbsp;Nuevo
           </button>
         </div>
         <div>
@@ -227,6 +228,7 @@ class ObjetoDeGasto extends Component {
             pagination
             paginationServer
             paginationPerPage={20}
+            theme={helper.getTheme()}
             paginationTotalRows={this.state.totalRows}
             onChangePage={this.handlePageChange}
             paginationComponentOptions={paginationOptions}

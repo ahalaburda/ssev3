@@ -11243,3 +11243,8 @@ body.sidebar-toggled footer.sticky-footer {
   size: auto;
   margin: 10mm;
 }
+
+.bg-black {
+  background-color: #424242!important;
+  color: #fff;
+}

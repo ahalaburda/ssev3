@@ -1,6 +1,6 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import DataTable from "react-data-table-component";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { EmptyTable } from "./EmptyTable";
 import moment from "moment";
 import InstanciaService from "../../services/Instancias";
@@ -8,15 +8,15 @@ import VerExpediente from "../Forms/VerExpediente";
 import ComentarioService from "../../services/Comentarios";
 import Popups from "../Popups";
 import SimpleReactValidator from 'simple-react-validator';
-import {Tabs, Tab} from "react-bootstrap";
-// import Consulta from "../../components/Tables/Consulta";
+import { Tabs, Tab } from "react-bootstrap";
+import helper from "../../utils/helper";
 
 
 class Consulta extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      recorrido:[],
+      recorrido: [],
       data: [],
       id: '',
       description: '',
@@ -45,7 +45,7 @@ class Consulta extends Component {
       }
     });
   }
-  
+
 
   /**
    * Setear el estado ID con el valor ingresado en el input.
@@ -53,7 +53,7 @@ class Consulta extends Component {
    * @param e
    */
   handleIdChange = e => {
-    this.setState({id: e.target.value});
+    this.setState({ id: e.target.value });
     this.validator.showMessageFor('id');
     this.validator.hideMessageFor('description');
     this.validator.hideMessageFor('numExp');
@@ -66,7 +66,7 @@ class Consulta extends Component {
    * @param e
    */
   handleDescriptionChange = e => {
-    this.setState({description: e.target.value});
+    this.setState({ description: e.target.value });
     this.validator.showMessageFor('description');
     this.validator.hideMessageFor('id');
     this.validator.hideMessageFor('numExp');
@@ -79,7 +79,7 @@ class Consulta extends Component {
    * @param e
    */
   handleNumChange = e => {
-    this.setState({num: e.target.value});
+    this.setState({ num: e.target.value });
     this.validator.showMessageFor('numExp');
     this.validator.hideMessageFor('id');
     this.validator.hideMessageFor('description');
@@ -91,7 +91,7 @@ class Consulta extends Component {
    * @param e
    */
   handleYearChange = e => {
-    this.setState({year: e.target.value});
+    this.setState({ year: e.target.value });
     this.validator.showMessageFor('year');
     this.validator.hideMessageFor('id');
     this.validator.hideMessageFor('description');
@@ -108,7 +108,7 @@ class Consulta extends Component {
       })
       .catch(e => {
         this.setState({
-          data:[],
+          data: [],
           mensaje: `ID no encontrado`
         })
         console.log(`Error findByExpedienteId: InstanciaService\n${e}`);
@@ -133,22 +133,22 @@ class Consulta extends Component {
    */
   setStateFromResponse = response => {
     //se controla el contador del response porque da codigo 200 aunque no encuentre ningun expediente
-      this.setState({
-        data: response.data.results.map(ie => {
-          return {
-            id: ie.expediente_id.id,
-            numero: ie.expediente_id.numero_mesa_de_entrada + "/" + ie.expediente_id.anho,
-            fechaMe: moment(ie.expediente_id.fecha_mesa_entrada).isValid() ?
-              moment(ie.expediente_id.fecha_mesa_entrada).format('DD/MM/YYYY - kk:mm:ss') : 'Sin fecha',
-            descripcion: ie.expediente_id.descripcion,
-            origen: ie.expediente_id.dependencia_origen_id.descripcion,
-            tipoExpediente: ie.expediente_id.tipo_de_expediente_id.descripcion,
-            dependenciaActual: ie.dependencia_actual_id.descripcion,
-            estado: ie.estado_id.descripcion
-          }
-        }),
-        totalRows: response.data.count
-      }); 
+    this.setState({
+      data: response.data.results.map(ie => {
+        return {
+          id: ie.expediente_id.id,
+          numero: ie.expediente_id.numero_mesa_de_entrada + "/" + ie.expediente_id.anho,
+          fechaMe: moment(ie.expediente_id.fecha_mesa_entrada).isValid() ?
+            moment(ie.expediente_id.fecha_mesa_entrada).format('DD/MM/YYYY - kk:mm:ss') : 'Sin fecha',
+          descripcion: ie.expediente_id.descripcion,
+          origen: ie.expediente_id.dependencia_origen_id.descripcion,
+          tipoExpediente: ie.expediente_id.tipo_de_expediente_id.descripcion,
+          dependenciaActual: ie.dependencia_actual_id.descripcion,
+          estado: ie.estado_id.descripcion
+        }
+      }),
+      totalRows: response.data.count
+    });
   }
 
   /**
@@ -161,7 +161,7 @@ class Consulta extends Component {
         if (response.data.count === 0) {
           this.setState({
             data: [],
-            mensaje:`Descripción no encontrada`
+            mensaje: `Descripción no encontrada`
           })
         } else {
           this.setStateFromResponse(response);
@@ -185,7 +185,7 @@ class Consulta extends Component {
     }
   }
 
-  handlePageChange= page =>{
+  handlePageChange = page => {
     if (this.state.isSearchByDescription) {
       this.findByDescription(this.state.description, page)
     }
@@ -201,7 +201,7 @@ class Consulta extends Component {
         if (response.data.count === 0) {
           this.setState({
             data: [],
-            mensaje:`Número de expediente/Año no encontrados`
+            mensaje: `Número de expediente/Año no encontrados`
           })
         } else {
           this.setStateFromResponse(response);
@@ -224,13 +224,13 @@ class Consulta extends Component {
       this.findByYearNum(this.state.year, this.state.num);
     }
   }
-   
+
   /**
    * Obtiene los datos de la fila de la tabla a traves de row y luego
    * los escribe en un frameContent para poder imprimirlos
    * @param {*} row 
    */
-  printExp = (row) =>{  
+  printExp = (row) => {
     let printDoc = document.getElementById("consultasContentsToPrint").contentWindow;
     printDoc.document.open();
     printDoc.document.write(`<Strong>Expediente N°${row.numero}</Strong><br>`);
@@ -249,59 +249,59 @@ class Consulta extends Component {
   /**
    * Funcion para cargar los datos del expediente seleccionado al modal 
    */
-  handleViewExpediente =row=>{ 
-      this.setState({
-        verNumero: row.numero,
-        verDescripcion: row.descripcion,
-        verFecha: row.fechaMe,
-        verEstado: row.estado,
-        verOrigen: row.origen,
-        verDependencia: row.dependenciaActual,
-        verTipo: row.tipoExpediente, 
-      });
+  handleViewExpediente = row => {
+    this.setState({
+      verNumero: row.numero,
+      verDescripcion: row.descripcion,
+      verFecha: row.fechaMe,
+      verEstado: row.estado,
+      verOrigen: row.origen,
+      verDependencia: row.dependenciaActual,
+      verTipo: row.tipoExpediente,
+    });
     //Obtiene todas las instancias del expediente a traves de su ID 
     InstanciaService.getInstanciasPorExp(row.id, '')
-    .then((response) =>{
-      this.setState({
-        recorrido: response.data.map((instancia) =>{
-          return  {
-            id: instancia.id,
-            fecha:moment(instancia.fecha_creacion).isValid() ?
-              moment(instancia.fecha_creacion).format('DD/MM/YYYY - kk:mm:ss') : 'Sin fecha',
-            dependencia:instancia.dependencia_actual_id.descripcion,
-            estado: instancia.estado_id.id
-          }  
-          
+      .then((response) => {
+        this.setState({
+          recorrido: response.data.map((instancia) => {
+            return {
+              id: instancia.id,
+              fecha: moment(instancia.fecha_creacion).isValid() ?
+                moment(instancia.fecha_creacion).format('DD/MM/YYYY - kk:mm:ss') : 'Sin fecha',
+              dependencia: instancia.dependencia_actual_id.descripcion,
+              estado: instancia.estado_id.id
+            }
+
+          })
         })
-      }) 
-    }) 
-    .catch((e) => {
-      Popups.error('Ocurrio un error al cargar la información.');
-      console.log(`Error handleViewExpediente: InstanciaService\n${e}`);
-    });   
- 
+      })
+      .catch((e) => {
+        Popups.error('Ocurrio un error al cargar la información.');
+        console.log(`Error handleViewExpediente: InstanciaService\n${e}`);
+      });
+
     //Obtiene todos los comentarios de un expediente a traves de su ID 
     ComentarioService.getComentarioPorExpedienteID(row.id)
-      .then((response) =>{
+      .then((response) => {
         this.setState({
-          comentarios: response.data.map((comentario) =>{
-            return{
+          comentarios: response.data.map((comentario) => {
+            return {
               id: comentario.id,
               instancia: comentario.instancia.id,
               comentario: comentario.descripcion
             }
           })
-        })  
+        })
       })
       .catch((e) => {
         Popups.error('Ocurrio un error al cargar la información.');
         console.log(`Error handleViewExpediente: ComentarioService\n${e}`);
-      });  
+      });
   }
 
   render() {
     // columnas para la tabla
-     const columns = [
+    const columns = [
       {
         name: 'ID',
         selector: 'id',
@@ -367,14 +367,14 @@ class Consulta extends Component {
             <button
               className="btn btn-sm btn-link text-primary"
               title="Ver expediente"
-              onClick= {()=> this.handleViewExpediente(row)}
+              onClick={() => this.handleViewExpediente(row)}
               data-toggle="modal" data-target="#viewExpedienteModal">
-              <FontAwesomeIcon icon="eye"/>
+              <FontAwesomeIcon icon="eye" />
             </button>
-            <button 
-            onClick= {()=> this.printExp(row)}
-            className="btn btn-sm btn-link text-info">
-              <FontAwesomeIcon icon="print"/>
+            <button
+              onClick={() => this.printExp(row)}
+              className="btn btn-sm btn-link text-info">
+              <FontAwesomeIcon icon="print" />
             </button>
           </div>,
         button: true
@@ -391,7 +391,7 @@ class Consulta extends Component {
 
     return (
       <>
-         <iframe title='conToPrint' id="consultasContentsToPrint" style={{display:'none'}}></iframe>
+        <iframe title='conToPrint' id="consultasContentsToPrint" style={{ display: 'none' }}></iframe>
         <div className="d-sm-flex align-items-center justify-content-between mb-4">
           <h1 className="h3 mb-0 text-gray-800">Consultas</h1>
         </div>
@@ -492,6 +492,7 @@ class Consulta extends Component {
           pagination
           paginationServer
           paginationPerPage={20}
+          theme={helper.getTheme()}
           paginationTotalRows={this.state.totalRows}
           paginationComponentOptions={paginationOptions}
           onChangePage={this.handlePageChange}
@@ -503,15 +504,15 @@ class Consulta extends Component {
         />
         {/*Modal para ver el expediente con detalle*/}
         <VerExpediente
-        verEstado = {this.state.verEstado}
-        verOrigen = {this.state.verOrigen}
-        verDependencia = {this.state.verDependencia}
-        verNumero = {this.state.verNumero}
-        verFecha = {this.state.verFecha}
-        verDescripcion = {this.state.verDescripcion}
-        verTipo = {this.state.verTipo}
-        verRecorrido = {this.state.recorrido}
-        comentarios = {this.state.comentarios}
+          verEstado={this.state.verEstado}
+          verOrigen={this.state.verOrigen}
+          verDependencia={this.state.verDependencia}
+          verNumero={this.state.verNumero}
+          verFecha={this.state.verFecha}
+          verDescripcion={this.state.verDescripcion}
+          verTipo={this.state.verTipo}
+          verRecorrido={this.state.recorrido}
+          comentarios={this.state.comentarios}
         />
       </>
     );
