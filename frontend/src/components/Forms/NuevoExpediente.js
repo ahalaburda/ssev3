@@ -105,7 +105,8 @@ class NuevoExpediente extends Component {
             return {
               id: dxu.dependencia_id.id,
               value: dxu.dependencia_id.descripcion,
-              label: dxu.dependencia_id.descripcion
+              label: dxu.dependencia_id.descripcion,
+              isDisabled: dxu.dependencia_id.id === 1 ? true : false
             }
           })
         })
@@ -393,6 +394,7 @@ class NuevoExpediente extends Component {
                     options={this.state.start_list}
                     placeholder="Selecciona..."
                     name="select"
+                    isOptionDisabled={(option) => option.isDisabled}
                     onChange={value => this.handleSelectOrigen(value)}
                   />
                 </div>
@@ -409,14 +411,6 @@ class NuevoExpediente extends Component {
                   />
                   {this.validator.message('description', this.state.description, 'required|max:200')}
                 </div>
-              </Form.Row>
-              <Form.Row>
-                <Form.Check
-                  type="checkbox"
-                  label="Marcar como prioridad alta."
-                  value={this.state.high_priority}
-                  onChange={e => {this.handleCheckPriority(e)}}
-                />
               </Form.Row>
             </Form.Group>
           </Form>

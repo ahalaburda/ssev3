@@ -35,7 +35,7 @@ class Helper {
    * @returns {string|string}
    */
   getCurrentYearSetting() {
-    return this.existYearSetting() ? sessionStorage.getItem('year_setting') :  moment().startOf('year').format('YYYY');
+    return this.existYearSetting() ? sessionStorage.getItem('year_setting') : moment().startOf('year').format('YYYY');
   }
 
   /**
@@ -221,7 +221,7 @@ class Helper {
     }
   }
 
-  selectColor =(estado)=>{
+  selectColor = (estado) => {
     switch (estado) {
       case 1:
         return '#f6c23e';
@@ -237,7 +237,7 @@ class Helper {
         return '#AF7AC5';
       default:
         return '#5a5c69';
-    } 
+    }
   }
   /**
    * Retorna todos los posibles estados de un expediente.
@@ -249,40 +249,45 @@ class Helper {
       {
         id: 2,
         value: 'Recibido',
-        label: <span style={{color:'#1cc88a'}}><FontAwesomeIcon icon='check-double'/> Recibido</span>,
+        label: <span style={{ color: '#1cc88a' }}><FontAwesomeIcon icon='check-double' /> Recibido</span>,
 
       },
       {
         id: 3,
         value: 'Derivado',
-        label: <span style={{color:'#36b9cc'}}><FontAwesomeIcon icon='forward'/> Derivado</span>
+        label: <span style={{ color: '#36b9cc' }}><FontAwesomeIcon icon='forward' /> Derivado</span>
       },
       {
         id: 4,
         value: 'Rechazado',
-        label: <span style={{color:'#e74a3b'}}><FontAwesomeIcon icon='backward'/> Rechazado</span>
+        label: <span style={{ color: '#e74a3b' }}><FontAwesomeIcon icon='backward' /> Rechazado</span>
       },
       {
         id: 5,
         value: 'Finalizado',
-        label: <span style={{color:'#858796'}}><FontAwesomeIcon icon='archive'/> Finalizado</span>
+        label: <span style={{ color: '#858796' }}><FontAwesomeIcon icon='archive' /> Finalizado</span>
       },
       {
         id: 6,
         value: 'Anulado',
-        label: <span style={{color:'#5a5c69'}}><FontAwesomeIcon icon='stop'/> Anulado</span>
+        label: <span style={{ color: '#5a5c69' }}><FontAwesomeIcon icon='stop' /> Anulado</span>
       },
       {
         id: 7,
         value: 'Pausado',
-        label: <span style={{color:'#5a5c69'}}><FontAwesomeIcon icon='hand-paper'/> Pausado</span>
+        label: <span style={{ color: '#5a5c69' }}><FontAwesomeIcon icon='hand-paper' /> Pausado</span>
       },
       {
         id: 8,
         value: 'Reanudado',
-        label: <span style={{color:'#AF7AC5'}}><FontAwesomeIcon icon='fast-forward'/> Reanudado</span>
+        label: <span style={{ color: '#AF7AC5' }}><FontAwesomeIcon icon='fast-forward' /> Reanudado</span>
       }
     ]
+  }
+
+  getTheme() {
+
+    return localStorage.getItem('theme')
   }
 }
 

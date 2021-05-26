@@ -1,5 +1,5 @@
-import React, {Component} from "react";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import React, { Component } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import DataTable from "react-data-table-component";
 import VerExpediente from "../Forms/VerExpediente";
 import InstanciaService from "../../services/Instancias";
@@ -10,7 +10,7 @@ import DependenciasService from "../../services/Dependencias";
 import ObjetosDeGastosService from "../../services/ObjetosDeGastos";
 import ComentarioService from "../../services/Comentarios";
 import helper from "../../utils/helper";
-import DatePicker, {registerLocale} from 'react-datepicker';
+import DatePicker, { registerLocale } from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import es from 'date-fns/locale/es';
 import { EmptyTable } from "./EmptyTable";
@@ -30,20 +30,20 @@ class Reporte extends Component {
       totalRows: 0,
       startDate: new Date(),
       endDate: new Date(),
-      formattedStartDate: `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}`,
-      formattedEndDate: `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}`,
+      formattedStartDate: `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`,
+      formattedEndDate: `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`,
       origen: [],
       origenSelected: '',
       objetoDeGasto: [],
       objetoSelected: '',
       description: '',
       estado: '',
-      recorrido:[],
+      recorrido: [],
       comentarios: [],
       mensaje: 'No hay expedientes que mostrar',
       searchExisted: false
     };
-     
+
   }
 
   componentDidMount() {
@@ -52,17 +52,17 @@ class Reporte extends Component {
   }
 
 
-   /**
-   * De acuerdo a los filtros aplicados, se encarga de cargar los expedientes a mostrar
-   * @param  response 
-   */
+  /**
+  * De acuerdo a los filtros aplicados, se encarga de cargar los expedientes a mostrar
+  * @param  response 
+  */
   setListFromResponse = response => {
     this.setState({
       data: response.data.results.map(exp => {
         return {
           id: exp.expediente_id.id,
           numero: exp.expediente_id.numero_mesa_de_entrada === 0 ? 'Sin nro.' : exp.expediente_id.numero_mesa_de_entrada
-           + "/" + exp.expediente_id.anho,
+            + "/" + exp.expediente_id.anho,
           fecha_me: moment(exp.expediente_id.fecha_mesa_entrada).isValid() ?
             moment(exp.expediente_id.fecha_mesa_entrada).format('DD/MM/YYYY - kk:mm:ss') : 'Sin fecha',
           origen: exp.expediente_id.dependencia_origen_id.descripcion,
@@ -74,21 +74,21 @@ class Reporte extends Component {
       }),
       loading: false,
       totalRows: response.data.count,
-      searchExisted : true
+      searchExisted: true
     });
   }
 
   componentWillUnmount() {
     // fix Warning: Can't perform a React state update on an unmounted component
-    this.setState = (state,callback)=>{
-        return;
+    this.setState = (state, callback) => {
+      return;
     };
   }
 
   /**
    * Funcion para cargar los datos del expediente seleccionado al modal 
    */
-  handleViewExpediente =row=>{
+  handleViewExpediente = row => {
     this.setState({
       verNumero: row.numero,
       verDescripcion: row.descripcion,
@@ -96,48 +96,48 @@ class Reporte extends Component {
       verEstado: row.estado,
       verOrigen: row.origen,
       verDependencia: row.dependencia,
-      verTipo: row.tipo, 
+      verTipo: row.tipo,
     });
-    
+
     //Obtiene todas las instancias del expediente a traves de su ID 
     InstanciaService.getInstanciasPorExp(row.id, '')
-    .then((response) =>{
-      this.setState({
-        recorrido: response.data.map((instancia) =>{
-          return {
-            id: instancia.id,
-            fecha: moment(instancia.fecha_creacion).isValid() ?
-            moment(instancia.fecha_creacion).format('DD/MM/YYYY') : 'Sin fecha',
-            dependencia: instancia.dependencia_actual_id.descripcion,
-            estado: instancia.estado_id.id
-          }
+      .then((response) => {
+        this.setState({
+          recorrido: response.data.map((instancia) => {
+            return {
+              id: instancia.id,
+              fecha: moment(instancia.fecha_creacion).isValid() ?
+                moment(instancia.fecha_creacion).format('DD/MM/YYYY - kk:mm:ss') : 'Sin fecha',
+              dependencia: instancia.dependencia_actual_id.descripcion,
+              estado: instancia.estado_id.id
+            }
+          })
         })
-      }) 
-    }) 
-    .catch((e) => {
-      Popups.error('Ocurrio un error durante la busqueda.');
-      console.log(`Error handleViewExpediente: InstanciaService\n${e}`);
-    });   
- 
+      })
+      .catch((e) => {
+        Popups.error('Ocurrio un error durante la busqueda.');
+        console.log(`Error handleViewExpediente: InstanciaService\n${e}`);
+      });
+
     //Obtiene todos los comentarios de un expediente a traves de su ID 
     ComentarioService.getComentarioPorExpedienteID(row.id)
-      .then((response) =>{
+      .then((response) => {
         this.setState({
-          comentarios: response.data.map((comentario) =>{
-            return{
+          comentarios: response.data.map((comentario) => {
+            return {
               id: comentario.id,
               instancia: comentario.instancia.id,
               comentario: comentario.descripcion
             }
           })
-        })  
+        })
       })
       .catch((e) => {
         Popups.error('Ocurrio un error durante la busqueda.');
         console.log(`Error handleViewExpediente: ComentarioService\n${e}`);
-      });     
+      });
   }
-  
+
 
   /**
    * Obtiene todas las dependencias de la base de datos y los carga como opciones para el select
@@ -175,7 +175,7 @@ class Reporte extends Component {
               label: d.descripcion,
             }
           })
-        })     
+        })
       })
       .catch(e => {
         Popups.error('Ocurrio un error al procesar la información');
@@ -185,7 +185,7 @@ class Reporte extends Component {
 
   //funcion para setear el estado 'description' con el valor ingresadoa traves del campo filtrar por descripcion
   handleDescriptionChange = e => {
-    this.setState({description: e.target.value});
+    this.setState({ description: e.target.value });
   }
 
   /**
@@ -195,9 +195,9 @@ class Reporte extends Component {
    */
   setOrigen = origen => {
     if (origen != null) {
-      this.setState({origenSelected: origen.value});  
-    }  else {
-      this.setState({origenSelected: ''})
+      this.setState({ origenSelected: origen.value });
+    } else {
+      this.setState({ origenSelected: '' })
     }
   }
 
@@ -207,10 +207,10 @@ class Reporte extends Component {
    * @param {*} objeto 
    */
   setObjetoGasto = objeto => {
-    if (objeto != null ) {
-      this.setState({objetoSelected : objeto.value})
-    }  else {
-      this.setState({objetoSelected: ''})
+    if (objeto != null) {
+      this.setState({ objetoSelected: objeto.value })
+    } else {
+      this.setState({ objetoSelected: '' })
     }
   }
 
@@ -219,9 +219,9 @@ class Reporte extends Component {
    * siempre teniendo en cuanta los filtros aplicados con anterioridad
    * @param {*} page 
    */
-  handlePageChange= page =>{
+  handlePageChange = page => {
     this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected, this.state.objetoSelected,
-      this.state.description, this.state.estado,  page);
+      this.state.description, this.state.estado, page);
   }
 
   /**
@@ -234,14 +234,14 @@ class Reporte extends Component {
    * @param {*} estado 
    * @param {*} page 
    */
-  findExp = (fecha_desde,fecha_hasta,origen, objeto, description,estado,page) => {
-    InstanciaService.getExpForReportes(fecha_desde, fecha_hasta, origen, objeto, description, estado,page)
+  findExp = (fecha_desde, fecha_hasta, origen, objeto, description, estado, page) => {
+    InstanciaService.getExpForReportes(fecha_desde, fecha_hasta, origen, objeto, description, estado, page)
       .then(response => {
         if (response.data.count === 0) {
           this.setState({
             data: [],
             mensaje: 'Expediente(s) no encontrado(s)',
-            searchExisted : true
+            searchExisted: true
           })
         } else {
           this.setListFromResponse(response);
@@ -252,14 +252,14 @@ class Reporte extends Component {
         console.log(`Error findByExp: InstanciaService\n${e}`);
       });
   }
-  
+
   /**
    * Metodo que ejecuta el servicio findExp teniendo en cuenta el estado que se solicita en el filtro,
    * teniendo en cuenta los demas filtros si es que se utilizo alguno 
    * @param {*} changeEvent 
    */
-  handleSearch = changeEvent => { 
-    this.setState({estado: changeEvent.target.value});
+  handleSearch = changeEvent => {
+    this.setState({ estado: changeEvent.target.value });
     switch (changeEvent.target.value) {
       case helper.getEstado().RECIBIDO:
         this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
@@ -272,24 +272,24 @@ class Reporte extends Component {
       case helper.getEstado().NORECIBIDO:
         this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
           this.state.objetoSelected, this.state.description, helper.getEstado().NORECIBIDO, 1);
-        break;  
+        break;
       case helper.getEstado().PAUSADO:
         this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
           this.state.objetoSelected, this.state.description, helper.getEstado().PAUSADO, 1);
         break;
-      case helper.getEstado().FINALIZADO:   
+      case helper.getEstado().FINALIZADO:
         this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
           this.state.objetoSelected, this.state.description, helper.getEstado().FINALIZADO, 1);
         break;
       case 'Todos':
         this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
           this.state.objetoSelected, this.state.description, '', 1);
-        break;    
+        break;
       default:
         this.findExp(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
           this.state.objetoSelected, this.state.description, '', 1);
         break;
-    }   
+    }
   }
 
   /**
@@ -298,14 +298,14 @@ class Reporte extends Component {
    * setea el estado formattedStartDate en un formato legible para la api
    * @param {*} date 
    */
-  setStartDate = (date) =>{
-    this.setState({startDate: date })
-    if (date != null) { 
-      this.setState({formattedStartDate:`${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`})  
-    }else{
-      this.setState({formattedStartDate:''})
+  setStartDate = (date) => {
+    this.setState({ startDate: date })
+    if (date != null) {
+      this.setState({ formattedStartDate: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}` })
+    } else {
+      this.setState({ formattedStartDate: '' })
     }
-    
+
   }
 
   /**
@@ -314,12 +314,12 @@ class Reporte extends Component {
    * setea el estado formattedEndtDate en un formato legible para la api
    * @param {*} date 
    */
-  setEndDate = (date) =>{
-    this.setState({endDate: date});
-    if (date != null) { 
-      this.setState({formattedEndDate:`${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`})  
-    } else{
-      this.setState({formattedEndDate:''});
+  setEndDate = (date) => {
+    this.setState({ endDate: date });
+    if (date != null) {
+      this.setState({ formattedEndDate: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}` })
+    } else {
+      this.setState({ formattedEndDate: '' });
     }
   }
 
@@ -327,7 +327,7 @@ class Reporte extends Component {
    * Funcion utilizada para la impresion de reportes,
    * realiza una llamada a la api para traer los datos filtrados sin paginacion
    */
-  printReporte = () =>{
+  printReporte = () => {
     //si es que se realizo alguna busqueda en la vista, procede a realizar la misma busqueda para generar la vista para impresion
     (this.state.searchExisted) ?
       InstanciaService.getExpForReportesSinPag(this.state.formattedStartDate, this.state.formattedEndDate, this.state.origenSelected,
@@ -361,16 +361,16 @@ class Reporte extends Component {
         .catch((e) => {
           Popups.error('Ocurrio un error al imprimir el Reporte.');
           console.log(`Error printReporte: InstanciaService\n${e}`);
-        }):
-      window.print();    
+        }) :
+      window.print();
   }
-  
+
   /**
    * Obtiene los datos de la fila de la tabla a traves de row y luego
    * los escribe en un frameContent para poder imprimirlos
    * @param {*} row 
    */
-  printExp = (row) =>{  
+  printExp = (row) => {
     let printDoc = document.getElementById("ifmcontentstoprint").contentWindow;
     printDoc.document.open();
     printDoc.document.write(`<Strong>Expediente N°${row.numero}</Strong><br>`);
@@ -386,7 +386,7 @@ class Reporte extends Component {
     printDoc.print();
   }
 
-  
+
   render() {
     let columns = [
       {
@@ -436,7 +436,7 @@ class Reporte extends Component {
             case "Recibido":
               return <div className="badge badge-success">{row.estado}</div>
             case "Reanudado":
-              return <div className="badge badge-custom">{row.estado}</div>    
+              return <div className="badge badge-custom">{row.estado}</div>
             case "No Recibido":
               return <div className="badge badge-warning">{row.estado}</div>
             case "Derivado":
@@ -462,14 +462,14 @@ class Reporte extends Component {
           <div>
             <button
               className="btn btn-sm btn-link text-primary"
-              onClick= {()=> this.handleViewExpediente(row)}
+              onClick={() => this.handleViewExpediente(row)}
               data-toggle="modal" data-target="#viewExpedienteModal">
-              <FontAwesomeIcon icon="eye"/>
+              <FontAwesomeIcon icon="eye" />
             </button>
             <button
-            onClick = {()=>this.printExp(row)}   
-            className="btn btn-sm btn-link text-info">
-              <FontAwesomeIcon icon="print"/>
+              onClick={() => this.printExp(row)}
+              className="btn btn-sm btn-link text-info">
+              <FontAwesomeIcon icon="print" />
             </button>
           </div>,
         button: true,
@@ -486,72 +486,72 @@ class Reporte extends Component {
         <div className="d-sm-flex align-items-center justify-content-between mb-4 oculto-impresion">
           <h1 className="h3 mb-0 text-gray-800">Reportes</h1>
         </div>
-          <div className= "col-12 oculto-impresion ">
-            <div className='row'>
-              <div className= "col-md-4">
-                <div className="row">
-                  <label className="col-form-label col-sm-8 font-weight-bold" name='filtroPorFecha'>Filtrar por fecha: </label>
-                  <div className='col-md-6'>
-                    <div className="form-group row">
-                      <label className="col-form-label col-sm-3" name='fechaDesde'>Desde:</label>
-                      <div  className = "col-md-9 ">
+        <div className="col-12 oculto-impresion ">
+          <div className='row'>
+            <div className="col-md-4">
+              <div className="row">
+                <label className="col-form-label col-sm-8 font-weight-bold" name='filtroPorFecha'>Filtrar por fecha: </label>
+                <div className='col-md-6'>
+                  <div className="form-group row">
+                    <label className="col-form-label col-sm-3" name='fechaDesde'>Desde:</label>
+                    <div className="col-md-9 ">
                       <DatePicker
-                        className = "form-control"
-                        locale = "es"
-                        dateFormat = "dd/MM/yyyy"                     
+                        className="form-control"
+                        locale="es"
+                        dateFormat="dd/MM/yyyy"
                         isClearable
-                        selected = {this.state.startDate}
-                        onChange = {date => this.setStartDate(date)}
+                        selected={this.state.startDate}
+                        onChange={date => this.setStartDate(date)}
                         selectsStart
-                        startDate = {this.state.startDate}
+                        startDate={this.state.startDate}
                         maxDate={new Date()}
-                        endDate = {this.state.endDate}
-                        value = {this.state.startDate} 
+                        endDate={this.state.endDate}
+                        value={this.state.startDate}
                       />
-                      </div>
-                      
                     </div>
+
                   </div>
-                  
-                  <div className='col-md-6'>
-                    <div className="form-group row">
+                </div>
+
+                <div className='col-md-6'>
+                  <div className="form-group row">
                     <label className="col-form-label col-sm-3" name='fechaHasta'>Hasta:</label>
-                    <div className = "col-md-9 ">
-                    <DatePicker
-                    className='form-control'
-                      locale = "es"  
-                      dateFormat = "dd/MM/yyyy"           
-                      isClearable
-                      selected = {this.state.endDate}
-                      onChange = {date => this.setEndDate(date)}
-                      selectsEnd
-                      startDate = {this.state.startDate}
-                      minDate = {this.state.startDate}
-                      maxDate={new Date()}
-                      endDate = {this.state.endDate}
-                      value = {this.state.endDate}
-                    />
+                    <div className="col-md-9 ">
+                      <DatePicker
+                        className='form-control'
+                        locale="es"
+                        dateFormat="dd/MM/yyyy"
+                        isClearable
+                        selected={this.state.endDate}
+                        onChange={date => this.setEndDate(date)}
+                        selectsEnd
+                        startDate={this.state.startDate}
+                        minDate={this.state.startDate}
+                        maxDate={new Date()}
+                        endDate={this.state.endDate}
+                        value={this.state.endDate}
+                      />
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className= "col-md-3">
+            <div className="col-md-3">
               <label className="col-form-label m-0 font-weight-bold" name='filtroPorOrigen'>Filtrar por Origen: </label>
               <div className="form-group row">
                 <label className=" col-form-label col-sm-3">Origen: </label>
-                  <div className="col-md-9">
-                    <Select
-                      options = {this.state.origen}
-                      placeholder = "Selecciona..."
-                      name = "selectOrigen" 
-                      value= {this.state.origenSelected.value}
-                      onChange = {origen => this.setOrigen(origen)}                  
-                      isClearable ="True"
-                      isSearchable ="True"                  
-                    />
-                  </div>
+                <div className="col-md-9">
+                  <Select
+                    options={this.state.origen}
+                    placeholder="Selecciona..."
+                    name="selectOrigen"
+                    value={this.state.origenSelected.value}
+                    onChange={origen => this.setOrigen(origen)}
+                    isClearable="True"
+                    isSearchable="True"
+                  />
+                </div>
               </div>
             </div>
 
@@ -576,78 +576,78 @@ class Reporte extends Component {
             <div className='col-md-3'>
               <label className="col-form-label col-md-12 font-weight-bold">Filtrar por Descripción: </label>
               <div className='form-group row'>
-              <label className=" col-form-label col-sm-4">Descripción: </label>
-              <input
-                type="text"
-                name='description'
-                className="form-control col-md-8"
-                onChange={e => this.handleDescriptionChange(e)}
-              />  
-              </div>         
+                <label className=" col-form-label col-sm-4">Descripción: </label>
+                <input
+                  type="text"
+                  name='description'
+                  className="form-control col-md-8"
+                  onChange={e => this.handleDescriptionChange(e)}
+                />
+              </div>
             </div>
           </div>
-          
-          <div className='col-md-12 oculto-impresion'>   
-            <div className='row'>  
+
+          <div className='col-md-12 oculto-impresion'>
+            <div className='row'>
               <div className='card-header py-3 col-md-9'>
-              <div className="btn-group ml-auto">
+                <div className="btn-group ml-auto">
                   <label className="btn btn-sm btn-dark shadow-sm">
-                    <input type='radio' id='todos' value='' 
-                    name="options" checked={this.state.estado === ''} onChange={this.handleSearch} />
-                    {this.state.estado === '' && <FontAwesomeIcon id="todosIcon" icon="check"/>}
+                    <input type='radio' id='todos' value=''
+                      name="options" checked={this.state.estado === ''} onChange={this.handleSearch} />
+                    {this.state.estado === '' && <FontAwesomeIcon id="todosIcon" icon="check" />}
                     &nbsp;Todos
                   </label>
                   <label className="btn btn-sm btn-success shadow-sm">
-                    <input type='radio' id='recibidos' value={helper.getEstado().RECIBIDO} 
-                    name="options" checked={this.state.estado === helper.getEstado().RECIBIDO} onChange={this.handleSearch} />
+                    <input type='radio' id='recibidos' value={helper.getEstado().RECIBIDO}
+                      name="options" checked={this.state.estado === helper.getEstado().RECIBIDO} onChange={this.handleSearch} />
                     {this.state.estado === helper.getEstado().RECIBIDO &&
-                      <FontAwesomeIcon id="recibidosIcon" icon="check"/>}&nbsp;Recibidos
+                      <FontAwesomeIcon id="recibidosIcon" icon="check" />}&nbsp;Recibidos
                   </label>
                   <label className="btn btn-sm btn-custom shadow-sm">
-                    <input type='radio' id='reanudados' value={helper.getEstado().REANUDADO} 
-                    name="options" checked={this.state.estado === helper.getEstado().REANUDADO} onChange={this.handleSearch} />
+                    <input type='radio' id='reanudados' value={helper.getEstado().REANUDADO}
+                      name="options" checked={this.state.estado === helper.getEstado().REANUDADO} onChange={this.handleSearch} />
                     {this.state.estado === helper.getEstado().REANUDADO &&
-                      <FontAwesomeIcon id="reaundadosIcon" icon="check"/>}&nbsp;Reanudados
+                      <FontAwesomeIcon id="reaundadosIcon" icon="check" />}&nbsp;Reanudados
                   </label>
                   <label className="btn btn-sm btn-warning shadow-sm">
-                    <input type='radio' id='noRecibidos' value={helper.getEstado().NORECIBIDO} 
-                    name="options" checked={this.state.estado === helper.getEstado().NORECIBIDO} onChange={this.handleSearch} />
-                     {this.state.estado === helper.getEstado().NORECIBIDO &&
-                    <FontAwesomeIcon id="noRecibidosIcon" icon="check"/>}&nbsp;No Recibidos
+                    <input type='radio' id='noRecibidos' value={helper.getEstado().NORECIBIDO}
+                      name="options" checked={this.state.estado === helper.getEstado().NORECIBIDO} onChange={this.handleSearch} />
+                    {this.state.estado === helper.getEstado().NORECIBIDO &&
+                      <FontAwesomeIcon id="noRecibidosIcon" icon="check" />}&nbsp;No Recibidos
                   </label>
                   <label className="btn btn-sm btn-dark shadow-sm">
-                    <input type='radio' id='pausados' value={helper.getEstado().PAUSADO} 
-                    name="options" checked={this.state.estado === helper.getEstado().PAUSADO} onChange={this.handleSearch} />
+                    <input type='radio' id='pausados' value={helper.getEstado().PAUSADO}
+                      name="options" checked={this.state.estado === helper.getEstado().PAUSADO} onChange={this.handleSearch} />
                     {this.state.estado === helper.getEstado().PAUSADO &&
-                    <FontAwesomeIcon id="pausadosIcon" icon="check"/>}&nbsp;Pausados
+                      <FontAwesomeIcon id="pausadosIcon" icon="check" />}&nbsp;Pausados
                   </label>
                   <label className="btn btn-sm btn-secondary shadow-sm">
-                    <input type='radio' id='finalizados' value={helper.getEstado().FINALIZADO} 
-                    name="options" checked={this.state.estado === helper.getEstado().FINALIZADO} onChange={this.handleSearch} />
+                    <input type='radio' id='finalizados' value={helper.getEstado().FINALIZADO}
+                      name="options" checked={this.state.estado === helper.getEstado().FINALIZADO} onChange={this.handleSearch} />
                     {this.state.estado === helper.getEstado().FINALIZADO &&
-                    <FontAwesomeIcon id="finalizadosIcon" icon="check"/>}&nbsp;Finalizados
+                      <FontAwesomeIcon id="finalizadosIcon" icon="check" />}&nbsp;Finalizados
                   </label>
 
-                </div>              
-              </div>   
+                </div>
+              </div>
 
               <div className="py-3 col-md-3 text-right">
                 <button
-                  onClick= {()=>this.printReporte()}
+                  onClick={() => this.printReporte()}
                   className="btn btn-sm btn-info"
-                > <FontAwesomeIcon icon="print"/>Imprimir
+                > <FontAwesomeIcon icon="print" />Imprimir
                 </button>
                 <button
                   value=''
                   className="btn btn-sm btn-primary"
                   onClick={this.handleSearch}
-                > <FontAwesomeIcon icon="search"/>Buscar
+                > <FontAwesomeIcon icon="search" />Buscar
                 </button>
-              </div> 
+              </div>
             </div>
           </div>
 
-        </div> 
+        </div>
         <div className='oculto-impresion'>
 
           {/*Tabla de lista de expediente*/}
@@ -658,6 +658,7 @@ class Reporte extends Component {
             pagination
             paginationServer
             paginationPerPage={20}
+            theme={helper.getTheme()}
             paginationTotalRows={this.state.totalRows}
             paginationComponentOptions={paginationOptions}
             onChangePage={this.handlePageChange}
@@ -668,34 +669,34 @@ class Reporte extends Component {
             className="table-responsive table-sm table-bordered"
           />
         </div>
-        
+
         {/*Modal para ver el expediente con detalle*/}
         <VerExpediente
-          verEstado = {this.state.verEstado}
-          verOrigen = {this.state.verOrigen}
-          verDependencia = {this.state.verDependencia}
-          verNumero = {this.state.verNumero}
-          verFecha = {this.state.verFecha}
-          verObjetoDeGasto = {this.state.verObjetoDeGasto}
-          verDescripcion = {this.state.verDescripcion}
-          verTipo = {this.state.verTipo}
-          verRecorrido = {this.state.recorrido}
-          comentarios = {this.state.comentarios}
-          /> 
+          verEstado={this.state.verEstado}
+          verOrigen={this.state.verOrigen}
+          verDependencia={this.state.verDependencia}
+          verNumero={this.state.verNumero}
+          verFecha={this.state.verFecha}
+          verObjetoDeGasto={this.state.verObjetoDeGasto}
+          verDescripcion={this.state.verDescripcion}
+          verTipo={this.state.verTipo}
+          verRecorrido={this.state.recorrido}
+          comentarios={this.state.comentarios}
+        />
 
-          {/* Vista solamente utilizada para la impresion de los reportes, no es visible  */}
+        {/* Vista solamente utilizada para la impresion de los reportes, no es visible  */}
         <div className='no_mostrar'>
           <ReporteToPrint
-          data = {this.state.dataToPrint}
-          mensaje = {this.state.mensaje}
-          fecha_desde = { moment(this.state.startDate).isValid() ? moment(this.state.startDate).format('DD/MM/YYYY') : ''}
-          fecha_hasta = { moment(this.state.endDate).isValid() ? moment(this.state.endDate).format('DD/MM/YYYY') : ''}
-          origen = {this.state.origenSelected}
-          description = {this.state.description}
-          estado = {this.state.estado}
-          searchExisted = {this.state.searchExisted}
+            data={this.state.dataToPrint}
+            mensaje={this.state.mensaje}
+            fecha_desde={moment(this.state.startDate).isValid() ? moment(this.state.startDate).format('DD/MM/YYYY') : ''}
+            fecha_hasta={moment(this.state.endDate).isValid() ? moment(this.state.endDate).format('DD/MM/YYYY') : ''}
+            origen={this.state.origenSelected}
+            description={this.state.description}
+            estado={this.state.estado}
+            searchExisted={this.state.searchExisted}
           />
-        </div>  
+        </div>
       </>
     );
   }

@@ -1,4 +1,4 @@
-import React, {Component, useEffect, useState} from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import Sidebar from './components/Sidebar/index'
 import Header from './components/Header/index'
 import Footer from './components/Footer/index'
@@ -12,7 +12,7 @@ import './App.css';
 import './styles/font.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min'
 import ReactNotification from "react-notifications-component";
-import {library} from '@fortawesome/fontawesome-svg-core';
+import { library } from '@fortawesome/fontawesome-svg-core';
 import {
   faSearch, faBell, faCogs, faUser,
   faSignOutAlt, faChartBar, faPlus, faPencilAlt,
@@ -20,7 +20,8 @@ import {
   faBars, faEye, faEdit, faTrashAlt,
   faCheck, faLessThan, faGreaterThan, faPrint,
   faComment, faPenAlt, faCalendarCheck, faCommentAlt, faBackward,
-  faForward, faArchive, faStop, faFastForward, faHandPaper, faCheckDouble
+  faForward, faArchive, faStop, faFastForward, faHandPaper, faCheckDouble,
+  faMoon, faLightbulb
 } from '@fortawesome/free-solid-svg-icons';
 import {
   BrowserRouter as Router,
@@ -45,7 +46,7 @@ function AutoLogout() {
         setIsTimeout(true);
       },
       onExpired: () => {
-        setIsTimeout(true); 
+        setIsTimeout(true);
       }
     });
     return () => {
@@ -53,7 +54,7 @@ function AutoLogout() {
       timer.cleanUp();
     };
   }, []);
-  return <div>{isTimeout }</div>;
+  return <div>{isTimeout}</div>;
 }
 
 
@@ -78,7 +79,7 @@ class App extends Component {
             const tokenParts = JSON.parse(atob(refreshToken.split('.')[1]));
             const now = Math.ceil(Date.now() / 1000);
             if (tokenParts.exp < now) {
-              this.setState({loggedIn: false});
+              this.setState({ loggedIn: false });
               sessionStorage.clear();
               Popups.error('Debes iniciar sesión.');
             }
@@ -106,7 +107,7 @@ class App extends Component {
       sessionStorage.setItem('access_token', response.data.access);
       sessionStorage.setItem('refresh_token', response.data.refresh);
       sessionStorage.setItem('username', data.username);
-      sessionStorage.setItem('isAdmin',response.data.admin);
+      sessionStorage.setItem('isAdmin', response.data.admin);
       sessionStorage.setItem('year_setting', moment().startOf('year').format('YYYY'));
       Popups.success('Sesión iniciada correctamente.');
       this.setState({
@@ -125,7 +126,7 @@ class App extends Component {
    * @param e Evento del input
    */
   handleUserChange = e => {
-    this.setState({username: e.target.value});
+    this.setState({ username: e.target.value });
   }
   /**
    * Agregar a la blacklist el token utilizado
@@ -150,42 +151,42 @@ class App extends Component {
       console.log(e);
     })
   }
-  
+
   render() {
     library.add(faSearch, faBell, faCogs, faUser,
       faSignOutAlt, faChartBar, faPlus, faPencilAlt,
       faTachometerAlt, faCommentDollar, faFolder, faChartArea,
-      faBars, faEye, faEdit, faTrashAlt,
-      faCheck, faLessThan, faGreaterThan, faPrint,
-      faComment, faPenAlt, faCalendarCheck, faCommentAlt, faBackward,
-      faForward, faArchive, faStop, faFastForward, faHandPaper, faCheckDouble);
+      faBars, faEye, faEdit, faTrashAlt, faCheck, faLessThan,
+      faGreaterThan, faPrint, faComment, faPenAlt,
+      faCalendarCheck, faCommentAlt, faBackward, faForward, faArchive,
+      faStop, faFastForward, faHandPaper, faCheckDouble, faMoon, faLightbulb);
     //TODO error de computedMatch por tener el Redirect fuera del Switch
     return (
       <>
         <AutoLogout />
-        <ReactNotification/>
+        <ReactNotification />
         <Router>
-          {this.state.loggedIn ? <Redirect to='/'/> : <Redirect to='/login'/>}
+          {this.state.loggedIn ? <Redirect to='/' /> : <Redirect to='/login' />}
           <Switch>
             <div id="wrapper">
-              {this.state.loggedIn && <Sidebar/>}
+              {this.state.loggedIn && <Sidebar />}
               <div id="content-wrapper" className="d-flex flex-column">
                 <div id="content">
-                  {this.state.loggedIn && <Header username={this.state.username} handleLogout={this.handleLogout}/>}
+                  {this.state.loggedIn && <Header username={this.state.username} handleLogout={this.handleLogout} />}
                   <div className="container-fluid">
-                    <Route exact path='/' component={Expedientes}/>
+                    <Route exact path='/' component={Expedientes} />
                     {/* <Route exact path='/graficos/' component={Graficos}/> */}
-                    <Route exact path='/consultas/' component={Consultas}/>
-                    <Route exact path='/reportes/' component={Reportes}/>
-                    <Route exact path='/tipos_de_expedientes/' component={TiposDeExpedientes}/>
-                    <Route exact path='/objetos_de_gastos/' component={ObjetosDeGastos}/>
+                    <Route exact path='/consultas/' component={Consultas} />
+                    <Route exact path='/reportes/' component={Reportes} />
+                    <Route exact path='/tipos_de_expedientes/' component={TiposDeExpedientes} />
+                    <Route exact path='/objetos_de_gastos/' component={ObjetosDeGastos} />
                     <Route exact path='/login'>
                       <Login handleLogin={this.handleLogin} username={this.state.username}
-                              handleUserChange={this.handleUserChange}/>
+                        handleUserChange={this.handleUserChange} />
                     </Route>
                   </div>
                 </div>
-                <Footer/>
+                <Footer />
               </div>
             </div>
           </Switch>
