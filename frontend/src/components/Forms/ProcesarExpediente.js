@@ -183,12 +183,12 @@ class ProcesarExpediente extends Component {
   /**
    * Procesa los expedientes con estado Recibido, Pausado y Reanudado
    */
-  processExpediente = () => {
+  async processExpediente() {
     const userIdIn = helper.existToken() ? helper.getCurrentUserId() : null;
     const withMesaEntrada = this.state.depNow.descripcion === 'Mesa Entrada' &&
       this.state.instancia.expediente_id.numero_mesa_de_entrada === 0;
     Promise.all([
-      this.setInstanciaUserOut(userIdIn),
+      await this.setInstanciaUserOut(userIdIn),
       this.setExpediente(withMesaEntrada),
       this.saveInstanciaRecibidoPausadoReanudado(userIdIn)
     ])
