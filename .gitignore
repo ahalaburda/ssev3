@@ -3,7 +3,6 @@
 # *.pyc
 # __pycache__/
 # local_settings.py
-requirements.txt.save
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

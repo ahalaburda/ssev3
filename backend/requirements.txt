@@ -9,3 +9,5 @@ django-money==1.0
 python-memcached==1.59
 djangorestframework-simplejwt==4.4.0
 pyjwt==1.7.1
+request-limiter==0.1.1
+

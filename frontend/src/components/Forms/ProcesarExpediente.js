@@ -10,6 +10,10 @@ import ComentariosService from "../../services/Comentarios";
 import TipoDeExpedienteService from "../../services/TiposDeExpedientes";
 import moment from "moment";
 
+//se utiliza para retrasar la ejecucion de una funcion
+const sleep = (milliseconds) => {
+  return new Promise(resolve => setTimeout(resolve, milliseconds))
+}
 
 const initialState = {
   instancia: {},
@@ -135,24 +139,35 @@ class ProcesarExpediente extends Component {
    * @returns {Promise<AxiosResponse<*>>}
    */
   async setExpediente(withMesaEntrada) {
-
     if (withMesaEntrada) {
-      await Promise.all([
+     const response = await Promise.all([
         this.getFechaServidor(),
         this.getNumeroMesaEntrada()
       ])
-        .then(response => {
+      //Si no puede obtener el ultimo nro de ME(debido a que en la API se limita a 1 request por seg),
+      //entra en el if y aguarda 2 seg y vuelve a realizar la consulta, esto se hace para que no hayan 2 o mas
+      //expedientes con el mismo numeor de ME
+        if (response[1] === undefined) {
+          await sleep (2000)
+          const resp= await this.getNumeroMesaEntrada()
+          let fechaME = response[0].data.results[0].fecha_recepcion;
+          let new_numero_mesa_entrada = resp.data.length === 1 ? this.getNewMesaEntrada(resp.data[0].expediente_id.numero_mesa_de_entrada) : 1;
+          return ExpedienteService.update(this.state.instancia.expediente_id.id, {
+            fecha_mesa_entrada: fechaME,
+            numero_mesa_de_entrada: new_numero_mesa_entrada,
+            estado_id: this.state.newEstado.id
+          }) 
+
+        } else {
           let fechaME = response[0].data.results[0].fecha_recepcion;
           let new_numero_mesa_entrada = response[1].data.length === 1 ? this.getNewMesaEntrada(response[1].data[0].expediente_id.numero_mesa_de_entrada) : 1;
           return ExpedienteService.update(this.state.instancia.expediente_id.id, {
             fecha_mesa_entrada: fechaME,
             numero_mesa_de_entrada: new_numero_mesa_entrada,
             estado_id: this.state.newEstado.id
-          })
-        })
-        .catch(e => {
-          console.log(`setExpediente\n${e}`);
-        })
+          }) 
+        }
+      
     } else {
       return ExpedienteService.update(this.state.instancia.expediente_id.id,
         {
@@ -198,7 +213,7 @@ class ProcesarExpediente extends Component {
         setTimeout(() => {
           window.location.reload();
         }, 500);
-      })
+       })
       .catch(e => {
         console.log(`Error processExpediente\n${e}`);
         Popups.error('Ocurrio un error al procesar expediente.');
