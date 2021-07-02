@@ -2,7 +2,9 @@ from django_filters import rest_framework as filters
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from rest_framework.response import Response
 from .serializers import *
+from request_limiter import request_limiter, LimitedIntervalStrategy, LimitException
 import datetime
+
 
 class ExpedienteFilter(filters.FilterSet):
     """
@@ -152,10 +154,14 @@ class InstanciaExpedienteList(ListAPIView):
         serializer = self.get_serializer(filtered_list, many=True)
         return Response(serializer.data)
 
+
 class InstanciasMEList(ListAPIView):
     queryset = Instancia.objects.all().order_by('-expediente_id__numero_mesa_de_entrada')
     serializer_class = InstanciaSerializer
 
+    #se limitan los request a la vista a 1 por segundo, para evitar que se asigne el mismo nro de mesa
+    #esto puede llegar a ocurrir cuando 2 o mas usuarios hacen el request al mismo tiempo
+    @request_limiter(strategy=LimitedIntervalStrategy(requests=1, interval=1))  # 1 request per second
     def list(self, request, *args, **kwargs):
         #se toma el año actual en el que corre el servidor para hacer la consulta a la BD
         day = datetime.datetime.now()
@@ -165,6 +171,7 @@ class InstanciasMEList(ListAPIView):
         filtered_list = self.filter_queryset(queryset)
         serializer = self.get_serializer(filtered_list, many=True)
         return Response(serializer.data)
+
 
 class ExpedienteInstaciasFilter(filters.FilterSet):
     orden = filters.NumberFilter(field_name='orden_actual', lookup_expr='exact')
